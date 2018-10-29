@@ -1,7 +1,10 @@
 package com.sae.gandhi.spring.vo;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
+
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
 public class AlumnosVO implements Serializable{
 
@@ -17,8 +20,9 @@ public class AlumnosVO implements Serializable{
 	private String alumnoTutorEmail;
 	private String alumnoTutorTelefono1;
 	private String alumnoTutorTelefono2;
-	private Date alumnoFechaNac;
+	private LocalDate alumnoFechaNac;
 	private byte[] alumnoImagen;
+	private MemoryBuffer alumnoImagenMemory;
 	private Boolean alumnoActivo;
 	private Integer alumnoEstatus;
 	private Date fechaCreacion;
@@ -71,10 +75,10 @@ public class AlumnosVO implements Serializable{
 	public void setAlumnoTutorTelefono2(String alumnoTutorTelefono2) {
 		this.alumnoTutorTelefono2 = alumnoTutorTelefono2;
 	}
-	public Date getAlumnoFechaNac() {
+	public LocalDate getAlumnoFechaNac() {
 		return alumnoFechaNac;
 	}
-	public void setAlumnoFechaNac(Date alumnoFechaNac) {
+	public void setAlumnoFechaNac(LocalDate alumnoFechaNac) {
 		this.alumnoFechaNac = alumnoFechaNac;
 	}
 	public byte[] getAlumnoImagen() {
@@ -82,6 +86,12 @@ public class AlumnosVO implements Serializable{
 	}
 	public void setAlumnoImagen(byte[] alumnoImagen) {
 		this.alumnoImagen = alumnoImagen;
+	}
+	public MemoryBuffer getAlumnoImagenMemory() {
+		return alumnoImagenMemory;
+	}
+	public void setAlumnoImagenMemory(MemoryBuffer alumnoImagenMemory) {
+		this.alumnoImagenMemory = alumnoImagenMemory;
 	}
 	public Boolean getAlumnoActivo() {
 		return alumnoActivo;

@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.service.impl;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,10 @@ public class AlumnosServiceImpl implements AlumnosService {
 	@Override
 	public void save(AlumnosVO alumnoVO) {
 		Alumnos alumno = AlumnosBuilder.createAlumnos(alumnoVO);
+		alumno.setAlumnoActivo(true);
+		alumno.setFechaCreacion(Calendar.getInstance().getTime());
+		alumno.setAlumnoEstatus(1);
+		
 		alumnosDAO.save(alumno);
 	}
 

@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 
@@ -52,7 +53,7 @@ public class ScriptStart implements ApplicationRunner{
 		alumnoVO.setAlumnoNombre("Victor Ivan");
 		alumnoVO.setAlumnoApPaterno("Cruz");
 		alumnoVO.setAlumnoApMaterno("Gonzalez");
-		alumnoVO.setAlumnoFechaNac(Calendar.getInstance().getTime());
+		alumnoVO.setAlumnoFechaNac(Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		alumnoVO.setAlumnoImagen(null);
 		alumnoVO.setAlumnoTutor("Maria Elena Gonzalez");
 		alumnoVO.setAlumnoTutorEmail("ivan@gmail.com");
@@ -66,7 +67,7 @@ public class ScriptStart implements ApplicationRunner{
 		alumnoVO2.setAlumnoNombre("Miranda");
 		alumnoVO2.setAlumnoApPaterno("Rivas");
 		alumnoVO2.setAlumnoApMaterno("X");
-		alumnoVO2.setAlumnoFechaNac(Calendar.getInstance().getTime());
+		alumnoVO2.setAlumnoFechaNac(Calendar.getInstance().getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		alumnoVO2.setAlumnoImagen(null);
 		alumnoVO2.setAlumnoTutor("Maria Elena Gonzalez");
 		alumnoVO2.setAlumnoTutorEmail("ivan@gmail.com");
