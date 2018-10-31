@@ -161,10 +161,10 @@ public class StudentDialog extends AbstractEditorDialog<AlumnosVO> {
 		txtEmail.getStyle().set("padding-top", "0px");
 		txtPhone2.getStyle().set("padding-top", "0px");
 		*/
-		txtPhone1.setPattern("\\d{0-10}?"); //10 digitos
+		txtPhone1.setPattern("^\\d{1,10}$"); //10 digitos
 		txtPhone1.setPreventInvalidInput(true);
 		
-		txtPhone2.setPattern("\\d{0-10}?"); //10 digitos
+		txtPhone2.setPattern("^\\d{1,10}$"); //10 digitos
 		txtPhone2.setPreventInvalidInput(true);
 		
 		txtTutor.getStyle().set("width", "100%").set("padding-top", "0px");
