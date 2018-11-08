@@ -63,7 +63,7 @@ public class CursosServiceImpl implements CursosService {
 	@Override
 	public void save(CursosVO cursoVo) {
 		Cursos curso = CursosBuilder.createCursos(cursoVo);
-		curso.setCursoStatus(cursoVo.getCursoStatus());
+		curso.setCursoStatus(1);
 		curso.setFechaCreacion(Calendar.getInstance().getTime());
 		cursosDAO.save(curso);
 	}

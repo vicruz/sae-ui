@@ -238,7 +238,7 @@ public class StudentsList extends VerticalLayout {
     	System.out.println(alumnosVo.getAlumnoNombre()+ " - " + alumnosVo.getAlumnoImagen());
     	System.out.println(form.getBuffer().getFileName());
     	System.out.println(form.getBuffer().getInputStream());
-    	if(Objects.nonNull(alumnosVo.getAlumnoImagen())){
+    	if(Objects.nonNull(form.getBuffer().getInputStream())){
     		try {
 				alumnosVo.setAlumnoImagen(IOUtils.toByteArray(form.getBuffer().getInputStream()));
 			} catch (IOException e) {}
