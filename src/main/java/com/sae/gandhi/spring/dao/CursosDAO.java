@@ -17,4 +17,9 @@ public interface CursosDAO extends JpaRepository<Cursos, Integer> {
 	
 	public List<Cursos> findAllByCursoStatusOrderByFechaCreacionDesc(Integer statusId);
 	
+	@Query("Select c from Cursos c where c.cursoId not in "
+			+ "(select ac.cursoId from AlumnoCurso ac where ac.alumnoId = ?1) order by c.fechaCreacion desc")
+	public List<Cursos> findCoursesNotInStudent(Integer alumnoId);
+	
+	
 }

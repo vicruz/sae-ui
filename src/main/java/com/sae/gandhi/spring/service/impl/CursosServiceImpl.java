@@ -92,4 +92,11 @@ public class CursosServiceImpl implements CursosService {
 		return null;
 	}
 
+	//Identifica los cursos a los que no se encuentra inscrito el alumno
+	@Override
+	public List<CursosVO> findCoursesNotInStudent(Integer alumnoId) {
+		List<Cursos> lst = cursosDAO.findCoursesNotInStudent(alumnoId);
+		return CursosBuilder.createListCursoVO(lst);
+	}
+
 }

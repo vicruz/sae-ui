@@ -45,15 +45,18 @@ public class AlumnosBuilder {
 	
 	public static AlumnosVO createAlumnosVO(Alumnos alumnos){
 		AlumnosVO vo = new AlumnosVO();
+		Alumnos alumnoTmp = new Alumnos();
 		try {
+			BeanUtils.copyProperties(alumnoTmp, alumnos);
+			
 			Calendar calendar = null;
 			
-			if(Objects.nonNull(alumnos.getAlumnoFechaNac())){
-				calendar = SaeDateUtils.getCalendarFromDate(alumnos.getAlumnoFechaNac());
-				alumnos.setAlumnoFechaNac(null);
+			if(Objects.nonNull(alumnoTmp.getAlumnoFechaNac())){
+				calendar = SaeDateUtils.getCalendarFromDate(alumnoTmp.getAlumnoFechaNac());
+				alumnoTmp.setAlumnoFechaNac(null);
 			}
 			
-			BeanUtils.copyProperties(vo, alumnos);
+			BeanUtils.copyProperties(vo, alumnoTmp);
 			if(Objects.nonNull(calendar)){
 				vo.setAlumnoFechaNac(calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());				
 			}

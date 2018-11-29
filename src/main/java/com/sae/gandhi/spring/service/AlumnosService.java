@@ -8,8 +8,8 @@ public interface AlumnosService {
 
 	public void save(AlumnosVO alumnoVO);
 	public List<AlumnosVO> findAll();
-	public AlumnosVO findById();
+	public AlumnosVO findById(Integer alumnoId);
 	public AlumnosVO findByName(String name);
 	public AlumnosVO findByAlumnoNameAndAlumnoApPaternoAndAlumnoApMaterno(String name, String apPaterno, String apMaterno);	
-	
+	public void update(AlumnosVO alumnoVO);
 }

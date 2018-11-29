@@ -204,14 +204,25 @@ public class StudentsList extends VerticalLayout {
         
         ///Boton para editar al alumno
         Button edit = new Button("");
-//        edit.addClickListener(event -> 
-//        		{edit.getUI().ifPresent(ui -> ui.navigate("cursos/edit/"+curso.getCursoId()));});
+        edit.addClickListener(event -> 
+        		{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/edit/"+alumno.getAlumnoId()));});
         edit.setIcon(new Icon(VaadinIcon.EDIT));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");
         edit.setWidth("15%");
         hlDataCourse.add(edit);
+        
+        ///Boton para ir a pagos del alumno
+        Button btnPayments = new Button("");
+//        btnPayments.addClickListener(event -> 
+//        		{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/edit/"+alumno.getAlumnoId()));});
+        btnPayments.setIcon(new Icon(VaadinIcon.BOOK_DOLLAR));
+        btnPayments.addClassName("review__edit");
+        btnPayments.getElement().setAttribute("theme", "tertiary");
+        btnPayments.getElement().setAttribute("title", "Pagos");
+        btnPayments.setWidth("15%");
+        hlDataCourse.add(btnPayments);
                 
         
         div.add(divImage);

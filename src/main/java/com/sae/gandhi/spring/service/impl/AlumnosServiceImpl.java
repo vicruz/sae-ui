@@ -26,9 +26,8 @@ public class AlumnosServiceImpl implements AlumnosService {
 	}
 
 	@Override
-	public AlumnosVO findById() {
-		// TODO Auto-generated method stub
-		return null;
+	public AlumnosVO findById(Integer alumnoId) {
+		return AlumnosBuilder.createAlumnosVO(alumnosDAO.getOne(alumnoId));
 	}
 
 	@Override
@@ -51,6 +50,12 @@ public class AlumnosServiceImpl implements AlumnosService {
 		alumno.setFechaCreacion(Calendar.getInstance().getTime());
 		alumno.setAlumnoEstatus(1);
 		
+		alumnosDAO.save(alumno);
+	}
+
+	@Override
+	public void update(AlumnosVO alumnoVO) {
+		Alumnos alumno = AlumnosBuilder.createAlumnos(alumnoVO);
 		alumnosDAO.save(alumno);
 	}
 

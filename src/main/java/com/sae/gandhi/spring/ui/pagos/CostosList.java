@@ -42,7 +42,7 @@ public class CostosList extends VerticalLayout {
     private CostosService costosService;
     
 
-    //Gris que contendrá los costos
+    //Grid que contendrá los costos
     private final Grid<CostosVO> grid = new Grid<>();
 
     @Autowired
