@@ -24,6 +24,8 @@ public class AlumnoCursoVO implements Serializable{
 	private BigDecimal alumnoCursoBeca;
 	private BigDecimal alumnoCursoDescuento;
 	private Boolean alumnoCursoActivo;
+	private Boolean alumnoCursoAplicaBeca;
+	private Boolean alumnoCursoAplicaDescuento;
 	
 	private CursosVO cursoVO;
 	
@@ -110,6 +112,18 @@ public class AlumnoCursoVO implements Serializable{
 	}
 	public void setCursoVO(CursosVO cursoVO) {
 		this.cursoVO = cursoVO;
+	}
+	public Boolean getAlumnoCursoAplicaBeca() {
+		return alumnoCursoAplicaBeca;
+	}
+	public void setAlumnoCursoAplicaBeca(Boolean alumnoCursoAplicaBeca) {
+		this.alumnoCursoAplicaBeca = alumnoCursoAplicaBeca;
+	}
+	public Boolean getAlumnoCursoAplicaDescuento() {
+		return alumnoCursoAplicaDescuento;
+	}
+	public void setAlumnoCursoAplicaDescuento(Boolean alumnoCursoAplicaDescuento) {
+		this.alumnoCursoAplicaDescuento = alumnoCursoAplicaDescuento;
 	}
 
 }

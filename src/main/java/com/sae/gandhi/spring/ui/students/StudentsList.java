@@ -215,8 +215,8 @@ public class StudentsList extends VerticalLayout {
         
         ///Boton para ir a pagos del alumno
         Button btnPayments = new Button("");
-//        btnPayments.addClickListener(event -> 
-//        		{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/edit/"+alumno.getAlumnoId()));});
+        btnPayments.addClickListener(event -> 
+        		{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/pagos/"+alumno.getAlumnoId()));});
         btnPayments.setIcon(new Icon(VaadinIcon.BOOK_DOLLAR));
         btnPayments.addClassName("review__edit");
         btnPayments.getElement().setAttribute("theme", "tertiary");

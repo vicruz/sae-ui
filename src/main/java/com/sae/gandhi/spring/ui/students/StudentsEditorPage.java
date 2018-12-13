@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +28,7 @@ import com.sae.gandhi.spring.ui.cursos.pagos.CursoCostosList;
 import com.sae.gandhi.spring.ui.students.cursos.AlumnoCursoAddDialog;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
+import com.sae.gandhi.spring.vo.CostosVO;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Text;
@@ -48,6 +51,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
@@ -337,18 +342,19 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 
 		// grid.setHeight("90px"); //
 		grid.addColumn(AlumnoCursoVO::getCursoNombre).setHeader("Curso").setResizable(true);
-		grid.addColumn(AlumnoCursoVO::getCursoFechaInicio).setHeader("Inicio").setResizable(true);
-		grid.addColumn(AlumnoCursoVO::getCursoFechaFin).setHeader("Fin").setResizable(true);
-		grid.addColumn(AlumnoCursoVO::getAlumnoCursoFechaIngreso).setHeader("Ingreso").setResizable(true);
+		grid.addColumn(new LocalDateRenderer<>(AlumnoCursoVO::getCursoFechaInicio,DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
+			.setHeader("Inicio").setResizable(true);
+		grid.addColumn(new LocalDateRenderer<>(AlumnoCursoVO::getCursoFechaFin,DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
+				.setHeader("Fin").setResizable(true);
+		grid.addColumn(new LocalDateRenderer<>(AlumnoCursoVO::getAlumnoCursoFechaIngreso,DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
+				.setHeader("Ingreso").setResizable(true);
 		// grid.addColumn(AlumnoCursoVO::getAlumnoCursoFechaLimite).setHeader("Limite").setResizable(true);
-		grid.addColumn(new NumberRenderer<>(AlumnoCursoVO::getCostoMonto, NumberFormat.getCurrencyInstance()))
-				.setHeader("Costo").setWidth("4em").setResizable(true);
+		/*grid.addColumn(new NumberRenderer<>(AlumnoCursoVO::getCostoMonto, NumberFormat.getCurrencyInstance()))
+				.setHeader("Costo").setWidth("4em").setResizable(true);*/
 		grid.addColumn(AlumnoCursoVO::getAlumnoCursoEstatus).setHeader("Estatus").setResizable(true);
 		// Se envian metodos que cumplen con la funcion requerida
-		// grid.addColumn(new
-		// ComponentRenderer<>(this::createEditButton)).setFlexGrow(0);
-		// grid.addColumn(new
-		// ComponentRenderer<>(this::createInactiveButton)).setFlexGrow(0);
+		grid.addColumn(new ComponentRenderer<>(this::createCoursePayButton)).setHeader("Pagos").setFlexGrow(0);
+		grid.addColumn(new ComponentRenderer<>(this::createCourseCancelButton)).setHeader("Borrar").setFlexGrow(0);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		updateView();
 		add(hlTab, grid);
@@ -493,4 +499,31 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
             header.setText("Costos");
         }*/
     }
+	
+	
+	///Botones de cursos asociados al alumno
+	//Boton de pagar
+    private Button createCoursePayButton(AlumnoCursoVO alumnoCursoVO) {
+        Button edit = new Button("");
+        edit.addClickListener(event -> 
+        	{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
+        edit.setIcon(new Icon(VaadinIcon.WALLET));
+        edit.addClassName("review__edit");
+        edit.getElement().setAttribute("theme", "tertiary");
+        edit.getElement().setAttribute("title", "Editar");
+        return edit;
+    }
+    
+    //
+    private Button createCourseCancelButton(AlumnoCursoVO alumnoCursoVO) {
+        Button edit = new Button("");
+//        edit.addClickListener(event -> 
+//        	{edit.getUI().ifPresent(ui -> ui.navigate("pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
+        edit.setIcon(new Icon(VaadinIcon.ERASER));
+        edit.addClassName("review__edit");
+        edit.getElement().setAttribute("theme", "tertiary");
+        edit.getElement().setAttribute("title", "Editar");
+        return edit;
+    }
+	
 }

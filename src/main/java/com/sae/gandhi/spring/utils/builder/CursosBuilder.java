@@ -18,8 +18,8 @@ public class CursosBuilder {
 		Calendar calFinal = SaeDateUtils.getCalendarFromDate(curso.getCursoFechaFin());
 		
 		cursoVO.setCursoStatus(curso.getCursoStatus());
-		cursoVO.setCursoFechaFin(calInicio.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		cursoVO.setCursoFechaInicio(calFinal.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		cursoVO.setCursoFechaFin(calFinal.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		cursoVO.setCursoFechaInicio(calInicio.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		cursoVO.setCursoId(curso.getCursoId());
 		cursoVO.setCursoNombre(curso.getCursoNombre());
 		//cursoVO.setInscritos(0);

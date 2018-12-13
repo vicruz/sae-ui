@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -51,6 +52,9 @@ public class Alumnos {
 	@Column(name="ALUMNO_IMAGEN")
 	@Lob
 	private byte[] alumnoImagen;
+	
+	@Column(name="ALUMNO_SALDO")
+	private BigDecimal alumnoSaldo;
 	
 	@Column(name="ALUMNO_ACTIVO")
 	private Boolean alumnoActivo;
@@ -139,6 +143,12 @@ public class Alumnos {
 	}
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
+	}
+	public BigDecimal getAlumnoSaldo() {
+		return alumnoSaldo;
+	}
+	public void setAlumnoSaldo(BigDecimal alumnoSaldo) {
+		this.alumnoSaldo = alumnoSaldo;
 	}
 	
 }

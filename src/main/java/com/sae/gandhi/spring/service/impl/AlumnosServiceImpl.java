@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sae.gandhi.spring.dao.AlumnoPagoDAO;
 import com.sae.gandhi.spring.dao.AlumnosDAO;
 import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.service.AlumnosService;
@@ -49,6 +51,7 @@ public class AlumnosServiceImpl implements AlumnosService {
 		alumno.setAlumnoActivo(true);
 		alumno.setFechaCreacion(Calendar.getInstance().getTime());
 		alumno.setAlumnoEstatus(1);
+		alumno.setAlumnoSaldo(BigDecimal.ZERO);
 		
 		alumnosDAO.save(alumno);
 	}

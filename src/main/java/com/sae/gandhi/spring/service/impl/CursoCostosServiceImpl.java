@@ -40,7 +40,11 @@ public class CursoCostosServiceImpl implements CursoCostosService {
 	@Override
 	public void save(CursoCostosVO cursoCostosVo) {
 		CursoCostos cursoCostos = CursoCostoBuilder.createCursoCosto(cursoCostosVo);
-		cursoCostos.setCostoId(cursoCostosVo.getCostosVO().getCostoId());
+		if(cursoCostosVo.getCostosVO()!=null){
+			cursoCostos.setCostoId(cursoCostosVo.getCostosVO().getCostoId());			
+		}else{
+			cursoCostos.setCostoId(cursoCostosVo.getCostoId());
+		}
 		cursoCostos.setCursoCostoActivo(true);
 		cursoCostos.setFechaCreacion(Calendar.getInstance().getTime());
 		cursoCostosDAO.save(cursoCostos);

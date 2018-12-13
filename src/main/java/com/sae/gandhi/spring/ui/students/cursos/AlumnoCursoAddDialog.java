@@ -151,6 +151,7 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 			txtBeca.setPrefixComponent(new Span("%"));
 			txtBeca.setEnabled(false);
 			
+			getBinder().forField(chBeca).bind(AlumnoCursoVO::getAlumnoCursoAplicaBeca, AlumnoCursoVO::setAlumnoCursoAplicaBeca);
 			getBinder().forField(txtBeca).withConverter(
 	                new StringToBigDecimalConverter(BigDecimal.ZERO, "Debe ingresar un porcentaje."))
 				.withNullRepresentation(BigDecimal.ZERO)
@@ -178,10 +179,11 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 			txtDiscount.setPrefixComponent(new Span("$"));
 			txtDiscount.setEnabled(false);
 			
+			getBinder().forField(chDiscount).bind(AlumnoCursoVO::getAlumnoCursoAplicaDescuento, AlumnoCursoVO::setAlumnoCursoAplicaDescuento);
 			getBinder().forField(txtDiscount).withConverter(
 	                new StringToBigDecimalConverter(BigDecimal.ZERO, "Debe ingresar un monto."))
 				.withNullRepresentation(BigDecimal.ZERO)
-				.bind(AlumnoCursoVO::getAlumnoCursoBeca, AlumnoCursoVO::setAlumnoCursoBeca);
+				.bind(AlumnoCursoVO::getAlumnoCursoDescuento, AlumnoCursoVO::setAlumnoCursoDescuento);
 			
 			flDiscounts.add(hlBeca, hlDescuento);
 			

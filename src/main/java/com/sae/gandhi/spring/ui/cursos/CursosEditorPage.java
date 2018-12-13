@@ -88,6 +88,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 	public void setParameter(BeforeEvent event, Integer parameter) {
 		cursoId = parameter;
 		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
+		cursoCostosList.updateView(cursoId);
 		loadData();
 		addTitle();
 		addFields();

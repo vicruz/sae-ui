@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -26,6 +27,7 @@ public class AlumnosVO implements Serializable{
 	private Boolean alumnoActivo;
 	private Integer alumnoEstatus;
 	private Date fechaCreacion;
+	private BigDecimal alumnoSaldo;
 
 	public Integer getAlumnoId() {
 		return alumnoId;
@@ -110,6 +112,12 @@ public class AlumnosVO implements Serializable{
 	}
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
+	}
+	public BigDecimal getAlumnoSaldo() {
+		return alumnoSaldo;
+	}
+	public void setAlumnoSaldo(BigDecimal alumnoSaldo) {
+		this.alumnoSaldo = alumnoSaldo;
 	}
 	
 }

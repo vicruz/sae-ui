@@ -44,7 +44,7 @@ public class AlumnoCursoBuilder {
 			vo.setCursoFechaInicio(calInit.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 			vo.setCursoFechaFin(calEnd.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 			vo.setCursoNombre(alumnoCurso.getCurso().getCursoNombre());
-			vo.setAlumnoCursoEstatus(1);//TODO
+			vo.setAlumnoCursoEstatus(1);//TODO Generar estatus preparado para el alumno
 			
 		}catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
