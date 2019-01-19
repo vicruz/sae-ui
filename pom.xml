@@ -93,6 +93,10 @@
 			<artifactId>textfieldformatter</artifactId>
 			<version>2.0</version>
 		</dependency>
+		<dependency>
+    		<groupId>com.vaadin</groupId>
+    		<artifactId>vaadin-upload-flow</artifactId>
+		</dependency>
 
 		<!-- Para mostrar una lista con varios datos (Cursos, Alumnos) -->
 		<dependency>

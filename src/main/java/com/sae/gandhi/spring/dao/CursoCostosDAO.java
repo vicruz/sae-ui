@@ -13,4 +13,8 @@ public interface CursoCostosDAO extends JpaRepository<CursoCostos, Integer> {
 	List<CursoCostos> findByCursoCostoActivo(Boolean status);
 	List<CursoCostos> findByCursoIdAndCursoCostoActivo(Integer cursoId, Boolean status);
 	
+	@Query("Select cc from AlumnoPagos ap join ap.cursoCostos cc where cc.cursoCostoAplicaBeca = true and ap.alumnoCursoId = ?1")
+	public List<CursoCostos> findByAlumnoCursoIdAndBeca(Integer alumnocursoId);
+	
+	
 }

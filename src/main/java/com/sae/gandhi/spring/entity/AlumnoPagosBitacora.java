@@ -23,6 +23,9 @@ public class AlumnoPagosBitacora {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ALUMNOPAGOSBITACORA_ID")
 	private Integer alumnoPagosBitacoraId;
+
+	@Column(name="ALUMNOPAGO_ID")
+	private Integer alumnopagoId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="ALUMNOPAGO_ID", insertable=false, updatable=false)
@@ -47,6 +50,14 @@ public class AlumnoPagosBitacora {
 
 	public void setAlumnoPagosBitacoraId(Integer alumnoPagosBitacoraId) {
 		this.alumnoPagosBitacoraId = alumnoPagosBitacoraId;
+	}
+
+	public Integer getAlumnopagoId() {
+		return alumnopagoId;
+	}
+
+	public void setAlumnopagoId(Integer alumnopagoId) {
+		this.alumnopagoId = alumnopagoId;
 	}
 
 	public AlumnoPagos getAlumnoPago() {

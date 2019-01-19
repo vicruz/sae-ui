@@ -94,5 +94,12 @@ public class CursosEditorDialog extends AbstractEditorDialog<CursosVO>{
 	protected void confirmDelete() {
 		
 	}
+
+
+	@Override
+	protected Boolean validateFields() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 }

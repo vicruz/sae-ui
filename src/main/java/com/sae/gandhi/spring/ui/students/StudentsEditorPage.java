@@ -3,7 +3,6 @@ package com.sae.gandhi.spring.ui.students;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import com.sae.gandhi.spring.ui.cursos.pagos.CursoCostosList;
 import com.sae.gandhi.spring.ui.students.cursos.AlumnoCursoAddDialog;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
-import com.sae.gandhi.spring.vo.CostosVO;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Text;
@@ -53,7 +51,6 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
-import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.internal.MessageDigestUtil;
@@ -354,7 +351,8 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		grid.addColumn(AlumnoCursoVO::getAlumnoCursoEstatus).setHeader("Estatus").setResizable(true);
 		// Se envian metodos que cumplen con la funcion requerida
 		grid.addColumn(new ComponentRenderer<>(this::createCoursePayButton)).setHeader("Pagos").setFlexGrow(0);
-		grid.addColumn(new ComponentRenderer<>(this::createCourseCancelButton)).setHeader("Borrar").setFlexGrow(0);
+		//grid.addColumn(new ComponentRenderer<>(this::createCourseCancelButton)).setHeader("Borrar").setFlexGrow(0);
+		grid.addColumn(new ComponentRenderer<>(this::createCourseEditButton)).setHeader("Editar").setFlexGrow(0);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		updateView();
 		add(hlTab, grid);
@@ -393,7 +391,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		alumnoCursoVO.setAlumnoId(alumnoId);
 		formCursoAdd = new AlumnoCursoAddDialog(this::saveAlumnoCurso, this::deleteAlumnoCurso, 
 				this.cursosService,	cursoCostoService, alumnoId);
-		formCursoAdd.init(); 
+		formCursoAdd.init(AbstractEditorDialog.Operation.ADD); 
 		formCursoAdd.open(alumnoCursoVO,
 		  AbstractEditorDialog.Operation.ADD); 
 	}
@@ -462,10 +460,11 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 	////////////////////////////////////////////////////////////////
 	// Metodo de salvar
 	private void saveAlumnoCurso(AlumnoCursoVO alumnoCurso, AbstractEditorDialog.Operation operation) {
-		String operationKind;
 		if (operation.getNameInText().equals(AbstractEditorDialog.Operation.ADD.getNameInText())) {
 			alumnoCurso.setAlumnoId(alumnoId);
 			alumnoCursoService.save(alumnoCurso);
+		}else{
+			alumnoCursoService.update(alumnoCurso);
 		}
 		/*	cursoCostoService.save(cursoCostos);
 			operationKind = " agregado";
@@ -520,6 +519,23 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 //        edit.addClickListener(event -> 
 //        	{edit.getUI().ifPresent(ui -> ui.navigate("pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
         edit.setIcon(new Icon(VaadinIcon.ERASER));
+        edit.addClassName("review__edit");
+        edit.getElement().setAttribute("theme", "tertiary");
+        edit.getElement().setAttribute("title", "Editar");
+        return edit;
+    }
+    
+    private Button createCourseEditButton(AlumnoCursoVO alumnoCursoVO) {
+        Button edit = new Button("");
+        edit.addClickListener(event -> 
+        	{
+        		formCursoAdd = new AlumnoCursoAddDialog(this::saveAlumnoCurso, this::deleteAlumnoCurso, 
+        				this.cursosService,	cursoCostoService, alumnoId);
+        		formCursoAdd.open(alumnoCursoVO,
+        				AbstractEditorDialog.Operation.EDIT); 
+        		formCursoAdd.init(AbstractEditorDialog.Operation.EDIT); 
+        	});
+        edit.setIcon(new Icon(VaadinIcon.PENCIL));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");

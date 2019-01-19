@@ -2,6 +2,7 @@ package com.sae.gandhi.spring.ui.students.cursos;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
-import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -31,13 +31,11 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 
 	private CursosService cursosService;
 	private CursoCostosService cursoCostoService;
-	private List<CursoCostosVO> lstCostoCursosVO;
 	private Integer alumnoId;
 	
 	private VerticalLayout vlCourse = new VerticalLayout();
 	private ComboBox<CursosVO> comboBox = new ComboBox<>();
 	
-	//private Label lbPagos = new Label("<strong>Pagos</strong><br/>");
 	private Label lbPagos = new Label();
 	private Checkbox chBeca;
 	private Checkbox chDiscount;
@@ -53,16 +51,21 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 		this.cursosService = cursosService;
 		this.cursoCostoService = cursoCostoService;
 		this.alumnoId = alumnoId;
-		init();
 	}
 	
 	
-	public void init(){
+	public void init(Operation operation){
+		if(operation==null){
+			setMainOperation(AbstractEditorDialog.Operation.ADD);
+		}else{
+			setMainOperation(operation);
+		}
 		addCursosCombobox();
-		getFormLayout().add(vlCourse);
+		getFormLayout().add(vlCourse);			
 	}
 	
 	public void addCursosCombobox(){
+		CursosVO cursoEdit = null;
 		comboBox.setLabel("Curso");
 		comboBox.setRequired(true);
 		//Muestra los pagos en un template indicando el nombre y debajo el costo de cada curso 
@@ -73,7 +76,22 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 		comboBox.setItemLabelGenerator(CursosVO::getCursoNombre);
 		
 		List<CursosVO> lst = cursosService.findCoursesNotInStudent(alumnoId);
+		
+		if(getMainOperation().getNameInText().equals(AbstractEditorDialog.Operation.ADD.getNameInText())){
+			lst = cursosService.findCoursesNotInStudent(alumnoId);
+		}else{
+			comboBox.setEnabled(false);
+			//comboBox.setPreventInvalidInput(true);
+			cursoEdit = cursosService.findById(getCurrentItem().getCursoId());
+			lst = new ArrayList<>();
+			lst.add(cursoEdit);
+		}
 		comboBox.setItems(lst);
+		
+		if(getMainOperation().getNameInText().equals(AbstractEditorDialog.Operation.EDIT.getNameInText())){
+			comboBox.setValue(cursoEdit);
+			addInfoPayment();
+		}
 		
 		comboBox.addValueChangeListener(event -> addInfoPayment());
 		
@@ -82,7 +100,7 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 		getBinder().forField(comboBox)
             .bind(AlumnoCursoVO::getCursoVO, AlumnoCursoVO::setCursoVO); //Establece setter y getter para su bindeo
 		
-	}
+	} 
 	
 	private void addInfoPayment(){
 		boolean aplicaBeca = false;
@@ -187,6 +205,21 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 			
 			flDiscounts.add(hlBeca, hlDescuento);
 			
+			//Al momento de editar
+			if(getCurrentItem().getAlumnoCursoBeca()!=null){
+				chBeca.setValue(true);
+				txtBeca.setValue(getCurrentItem().getAlumnoCursoBeca().toString());
+				chDiscount.setValue(false);
+				txtDiscount.setValue("");
+			}
+			if(getCurrentItem().getAlumnoCursoDescuento()!=null){
+				chDiscount.setValue(true);
+				txtDiscount.setValue(getCurrentItem().getAlumnoCursoBeca().toString());
+				chBeca.setValue(false);
+				txtBeca.setValue("");
+			}
+			
+			
 			vlCourse.add(flDiscounts);
 		}
 		
@@ -206,6 +239,13 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 	protected void confirmDelete() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	protected Boolean validateFields() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

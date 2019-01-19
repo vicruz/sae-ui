@@ -87,7 +87,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 	@Override
 	public void setParameter(BeforeEvent event, Integer parameter) {
 		cursoId = parameter;
-		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
+		//formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
 		cursoCostosList.updateView(cursoId);
 		loadData();
 		addTitle();
@@ -324,6 +324,9 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
     	if(tabs.getSelectedTab().getLabel().equals(COSTOS)){
     		CursoCostosVO costoVO = new CursoCostosVO(); 
     		costoVO.setCursoId(cursoId);
+    		costoVO.setCursoCostoDiaPago(5); //
+    		costoVO.setCursoCostoGeneraAdeudo(true);
+    		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
     		formCostoAdd.init();
     		formCostoAdd.open(costoVO, AbstractEditorDialog.Operation.ADD);
     	}else{

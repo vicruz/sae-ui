@@ -126,7 +126,7 @@ public class StudentDialog extends AbstractEditorDialog<AlumnosVO> {
 		
 		buffer = new MemoryBuffer();
 		upload = new Upload(buffer);
-		upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+		upload.setAcceptedFileTypes("image/jpeg", "image/png");
 
 		upload.addSucceededListener(event -> {
 		    Component component = createComponent(event.getMIMEType(),
@@ -296,5 +296,11 @@ public class StudentDialog extends AbstractEditorDialog<AlumnosVO> {
         outputContainer.add(p);
         outputContainer.add(content);
     }
+
+	@Override
+	protected Boolean validateFields() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 }

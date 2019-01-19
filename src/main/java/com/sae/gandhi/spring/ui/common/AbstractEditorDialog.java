@@ -80,6 +80,7 @@ public abstract class AbstractEditorDialog<T extends Serializable>
             cancelButton, deleteButton);
 
     private Binder<T> binder = new Binder<>();
+    private Boolean validFields;
     private T currentItem;
 
     private final ConfirmationDialog<T> confirmationDialog = new ConfirmationDialog<>();
@@ -87,7 +88,9 @@ public abstract class AbstractEditorDialog<T extends Serializable>
     private final String itemType;
     private final BiConsumer<T, Operation> itemSaver;
     private final Consumer<T> itemDeleter;
-
+    private Operation mainOperation;
+    
+    
     /**
      * Constructs a new instance.
      *
@@ -173,6 +176,7 @@ public abstract class AbstractEditorDialog<T extends Serializable>
      */
     public final void open(T item, Operation operation) {
         currentItem = item;
+        mainOperation = operation;
         
         titleField.setText(operation.getNameInTitle() + " " + itemType);
         if (registrationForSave != null) {
@@ -189,8 +193,9 @@ public abstract class AbstractEditorDialog<T extends Serializable>
 
     private void saveClicked(Operation operation) {
         boolean isValid = binder.writeBeanIfValid(currentItem);
+        boolean isValidFields = validateFields();
 
-        if (isValid) {
+        if (isValid && isValidFields) {
             itemSaver.accept(currentItem, operation);
             close();
         } else {
@@ -241,4 +246,23 @@ public abstract class AbstractEditorDialog<T extends Serializable>
     private void deleteConfirmed(T item) {
         doDelete(item);
     }
+
+	public Boolean getValidFields() {
+		return validFields;
+	}
+
+	public void setValidFields(Boolean validFields) {
+		this.validFields = validFields;
+	}
+	
+	/* Metodo para realizar las validaciones de los campos */
+	protected abstract Boolean validateFields();
+
+	public Operation getMainOperation() {
+		return mainOperation;
+	}
+
+	public void setMainOperation(Operation mainOperation) {
+		this.mainOperation = mainOperation;
+	}
 }

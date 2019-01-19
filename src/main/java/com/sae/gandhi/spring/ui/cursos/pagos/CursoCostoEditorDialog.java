@@ -82,8 +82,9 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 		
 		cmbDay.setLabel("Día Máximo de Pago");
 		cmbDay.setItems(lstDays);
-		cmbDay.setValue(5);
+		//cmbDay.setValue(5);
 		
+		//cbGeneradeDebit.setValue(true);
 		cbUniquePay.getElement().setAttribute("title", "Cuando el pago solo se realizará en una única ocasión. Ej. Inscripción");
 		cbUniquePay.addValueChangeListener(event -> enableControls(event));
 			
@@ -126,6 +127,12 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 	protected void confirmDelete() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected Boolean validateFields() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

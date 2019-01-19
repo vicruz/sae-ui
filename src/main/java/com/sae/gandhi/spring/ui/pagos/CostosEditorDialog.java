@@ -76,4 +76,10 @@ public class CostosEditorDialog extends AbstractEditorDialog<CostosVO> {
 		
 	}
 
+	@Override
+	protected Boolean validateFields() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }

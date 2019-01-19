@@ -10,7 +10,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.sae.gandhi.spring.service.AlumnoCursoService;
-import com.sae.gandhi.spring.service.AlumnoPagoService;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.service.CursoCostosService;
@@ -45,12 +44,13 @@ public class ScriptStart implements ApplicationRunner{
 		CostosVO costoVO = new CostosVO();
 		costoVO.setCostoActivo(true);
 		costoVO.setCostoMonto(BigDecimal.valueOf(1700));
-		costoVO.setCostoNombre("Inscripcion");
+		costoVO.setCostoNombre("Inscripción");
 		costoVO.setFechaCreacion(Calendar.getInstance().getTime());
 		costosService.save(costoVO);
 		
 		CursosVO cursoVO = new CursosVO();
 		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -5);
 		cursoVO.setCursoStatus(1); //Preparado
 		cursoVO.setCursoFechaInicio(calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		calendar.add(Calendar.MONTH, 10);
@@ -139,6 +139,13 @@ public class ScriptStart implements ApplicationRunner{
 		alumnoPagosVO1.setAlumnoPagoPago(BigDecimal.ZERO);
 		alumnoPagosVO1.setCursoCostosId(5);
 		alumnoPagoService.*/
+		
+		CostosVO costo2VO = new CostosVO();
+		costo2VO.setCostoActivo(true);
+		costo2VO.setCostoMonto(BigDecimal.valueOf(1800));
+		costo2VO.setCostoNombre("Colegiatura");
+		costo2VO.setFechaCreacion(Calendar.getInstance().getTime());
+		costosService.save(costo2VO);
 		
 		
 	}

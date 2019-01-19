@@ -17,4 +17,8 @@ public interface AlumnoPagoDAO extends JpaRepository<AlumnoPagos, Integer> {
 	@Query("Select ap from AlumnoPagos ap join ap.alumnoCurso ac where ac.alumnoId = ?1 and ac.cursoId = ?2")
 	public List<AlumnoPagos> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);
 	
+	@Query("Select ap from AlumnoPagos ap join ap.cursoCostos cc where cc.cursoCostoAplicaBeca = true and ap.alumnoCursoId = ?1")
+	public List<AlumnoPagos> findByAlumnoCursoIdAndBeca(Integer alumnocursoId);
+	
+	public List<AlumnoPagos> findByAlumnoCursoIdAndCursoCostoId(Integer alumnoCursoId, Integer cursoCostoId);
 }

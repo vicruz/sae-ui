@@ -11,5 +11,6 @@ public interface AlumnoPagoService {
 	public List<AlumnoPagoVO> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);
 	public AlumnoPagoVO update(AlumnoPagoVO vo);
 	public AlumnoPagoVO updateFecha(AlumnoPagoVO vo);
+	public AlumnoPagoVO save(AlumnoPagoVO vo);
 
 }
