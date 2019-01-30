@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring.ui.pagos;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class CostosList extends VerticalLayout {
     private final CostosEditorDialog form = new CostosEditorDialog(this::saveCosto, this::deleteCosto);
     
     private CostosService costosService;
+    private List<CostosVO> lstCostos;
     
 
     //Grid que contendrá los costos
@@ -54,7 +56,7 @@ public class CostosList extends VerticalLayout {
         addSearchBar();
         addContent();
 
-        updateView();
+        loadData();
     }
 
     private void initView() {
@@ -68,7 +70,7 @@ public class CostosList extends VerticalLayout {
 
         searchField.setPrefixComponent(new Icon("lumo", "search"));
         searchField.addClassName("view-toolbar__search-field");
-//        searchField.addValueChangeListener(e -> updateView());
+        searchField.addValueChangeListener(e -> updateView());
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
 //        Button newButton = new Button("Nuevo Costo", new Icon("lumo", "plus"));
@@ -126,16 +128,26 @@ public class CostosList extends VerticalLayout {
         return edit;
     }
     */
+    
     //Carga los datos del grid
-    private void updateView() {
-        List<CostosVO> lstCostos = costosService.findAllActive();
+    private void loadData(){
+    	lstCostos = costosService.findAllActive();
         grid.setItems(lstCostos);
-
-        if (searchField.getValue().length() > 0) {
-            header.setText("Search for “"+ searchField.getValue() +"”");
+    }
+    
+    //Filtro 
+    private void updateView() {
+    	List<CostosVO> lstCostosGrid = new ArrayList<>();
+        if (searchField.getValue().length() > 0 && !searchField.getValue().trim().equals("")) {
+        	for(CostosVO vo: lstCostos){
+        		if(vo.getCostoNombre().toUpperCase().contains(searchField.getValue().toUpperCase())){
+        			lstCostosGrid.add(vo);
+        		}
+        	}
         } else {
-            header.setText("Costos");
+        	lstCostosGrid = lstCostos;
         }
+        grid.setItems(lstCostosGrid);
     }
     
     //Metodo de salvar

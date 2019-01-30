@@ -2,6 +2,7 @@ package com.sae.gandhi.spring.ui.cursos;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.claspina.confirmdialog.ButtonOption;
@@ -50,6 +51,7 @@ public class CursosList extends VerticalLayout {
     private CursosEditorDialog form = new CursosEditorDialog(this::saveCurso, this::deleteCurso);
     
     private Grid<CursosVO> grid = new Grid<>();
+    List<CursosVO> lstCursos;
     
     @Autowired
     public CursosList(CursosService cursosService){
@@ -59,7 +61,7 @@ public class CursosList extends VerticalLayout {
         addSearchBar();
         addContent();
 
-        updateView();
+        loadData();
     }
     
     private void initView() {
@@ -73,7 +75,7 @@ public class CursosList extends VerticalLayout {
 
         searchField.setPrefixComponent(new Icon("lumo", "search"));
         searchField.addClassName("view-toolbar__search-field");
-//        searchField.addValueChangeListener(e -> updateView());
+        searchField.addValueChangeListener(e -> updateView());
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
         Button newButton = new Button("Nuevo Curso",event -> form.open(new CursosVO(),
@@ -88,36 +90,6 @@ public class CursosList extends VerticalLayout {
         add(viewToolbar);
     }
 
-    /*private void addContent() {
-        VerticalLayout container = new VerticalLayout();
-        container.setClassName("view-container");
-        container.setAlignItems(Alignment.STRETCH);
-        
-        IronList<CursosVO> list = new IronList<>();
-        list.setHeight("400px");
-        list.getStyle().set("border", "1px solid lightgray");
-        
-        DataProvider<CursosVO, ?> dataProvider = DataProvider
-                .ofCollection(cursosService.findAllActive());
-        
-        list.setDataProvider(dataProvider);
-        list.setGridLayout(true);
-        
-        // Uses the constructor of the PersonCard for each item in the list
-        //list.setRenderer(new ComponentRenderer<>(CursosVO::new));
-        list.setRenderer(new ComponentRenderer<>(CursosCard::new));
-        
-        // For a smooth scrolling experience use a placeholder item
-        CursosVO placeholder = new CursosVO();
-        placeholder.setCursoNombre("-----");
-        placeholder.setCursoFechaFin(Calendar.getInstance().getTime());
-        placeholder.setCursoFechaInicio(Calendar.getInstance().getTime());
-        placeholder.setCursoActivo(false);
-        list.setPlaceholderItem(placeholder);
-
-        container.add(header, list);
-        add(container);
-    }*/
     
     private void addContent() {
         VerticalLayout container = new VerticalLayout();
@@ -198,15 +170,23 @@ public class CursosList extends VerticalLayout {
     }
     
     //Carga los datos del grid
-    private void updateView() {
-        List<CursosVO> lstCursos = cursosService.findAllActive();
+    private void loadData(){
+    	lstCursos = cursosService.findAllActive();
         grid.setItems(lstCursos);
-
-        if (searchField.getValue().length() > 0) {
-            header.setText("Search for “"+ searchField.getValue() +"”");
+    }
+    
+    private void updateView() {
+    	List<CursosVO> lstCursosGrid = new ArrayList<>();
+        if (searchField.getValue().length() > 0 && !searchField.getValue().trim().equals("")) {
+        	for(CursosVO vo: lstCursos){
+        		if(vo.getCursoNombre().toUpperCase().contains(searchField.getValue().toUpperCase())){
+        			lstCursosGrid.add(vo);
+        		}
+        	}
         } else {
-            header.setText("Cursos");
+        	lstCursosGrid = lstCursos;
         }
+        grid.setItems(lstCursosGrid);
     }
     
     //Metodo de salvar
@@ -222,7 +202,7 @@ public class CursosList extends VerticalLayout {
     	}
         Notification.show(
                 "Curso " + curso.getCursoNombre() + operationKind , 3000, Position.BOTTOM_END);
-        updateView();
+        loadData();
     }
     
     //Eliminar
@@ -237,7 +217,7 @@ public class CursosList extends VerticalLayout {
             Notification.show("Curso "+curso.getCursoNombre() +" eliminado", 3000, Position.BOTTOM_END);
             RouterLink courses = new RouterLink(null, CursosEditorPage.class);
     		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
-            updateView();
+            loadData();
         }, ButtonOption.focus(), ButtonOption.caption("SI"))
         .withCancelButton(ButtonOption.caption("NO"))
         .open();

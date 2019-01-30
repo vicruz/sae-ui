@@ -21,7 +21,6 @@ import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.StreamImage;
-import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
@@ -315,9 +314,10 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		if(vo.getEstatusId() != SaeEnums.Pago.COMPLETO.getStatusId()){
 			button.setIcon(new Icon(VaadinIcon.DOLLAR));
 			button.addClickListener(event -> {
+				alumnoVO = alumnosService.findById(alumnoVO.getAlumnoId());
 				form = new StudentPaymentDialog(this::savePayment, this::deletePayment,
 						vo.getAlumnoPagoId(), createConceptLabel(vo).getText(), vo.getAlumnoPagoMonto(), 
-						vo.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago()), BigDecimal.ZERO
+						vo.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago()), alumnoVO.getAlumnoSaldo()
 						);
 				vo.setAlumnoPagoPago(BigDecimal.ZERO);
 				form.open(vo, AbstractEditorDialog.Operation.ADD);
@@ -344,9 +344,15 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			alumnoPagoVO.setAlumnoPagoPago(BigDecimal.ZERO);
 		}
 		
-		if(alumnoPagoVO.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)>0){
-			alumnoPagoVO.setAlumnoPagoFechaPago(SaeDateUtils.calendarToLocalDate(Calendar.getInstance()));
-			AlumnoPagoVO alumnoPagoVOtmp = alumnoPagoService.save(alumnoPagoVO);
+		if(alumnoPagoVO.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)>0 || alumnoPagoVO.getUsaSaldo()){
+			if(alumnoPagoVO.getAlumnoPagoFechaPago()==null){
+				alumnoPagoVO.setAlumnoPagoFechaPago(SaeDateUtils.calendarToLocalDate(Calendar.getInstance()));				
+			}
+			AlumnoPagoVO alumnoPagoVOtmp = alumnoPagoService.save(alumnoPagoVO, alumnoVO.getAlumnoId(), alumnoVO.getAlumnoSaldo());
+			
+			//restar el saldo al alumno/vista
+			//if(alumnoPagoVO.getUsaSaldo())
+			//alumnoVO.setAlumnoSaldo(alumnoVO.getAlumnoSaldo().subtract(alumnoPagoVO.get));
 			
 			try {
 				BeanUtils.copyProperties(alumnoPagoVO, alumnoPagoVOtmp);

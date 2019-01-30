@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring.ui.students;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +56,7 @@ public class StudentsList extends VerticalLayout {
     
     //Gris que contendrá los costos
     private final Grid<AlumnosVO> grid = new Grid<>();
+    List<AlumnosVO> lstAlumnos;
     
     @Autowired
     public StudentsList(AlumnosService alumnosService){
@@ -63,7 +65,7 @@ public class StudentsList extends VerticalLayout {
     	addSearchBar();
     	addContent();
     	
-    	updateView();
+    	loadData();
     }
 
     private void initView() {
@@ -77,7 +79,7 @@ public class StudentsList extends VerticalLayout {
 
         searchField.setPrefixComponent(new Icon("lumo", "search"));
         searchField.addClassName("view-toolbar__search-field");
-//        searchField.addValueChangeListener(e -> updateView());
+        searchField.addValueChangeListener(e -> updateView());
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
 //        Button newButton = new Button("Nuevo Costo", new Icon("lumo", "plus"));
@@ -232,15 +234,27 @@ public class StudentsList extends VerticalLayout {
     }
     
     //Carga los datos del grid
-    private void updateView() {
-        List<AlumnosVO> lstAlumnos = alumnosService.findAll();
+    private void loadData() {
+        lstAlumnos = alumnosService.findAll();
         grid.setItems(lstAlumnos);
-
-        /*if (searchField.getValue().length() > 0) {
-            header.setText("Search for “"+ searchField.getValue() +"”");
+    }
+    
+    private void updateView() {
+    	List<AlumnosVO> lstAlumnosGrid = new ArrayList<>();
+        if (searchField.getValue().length() > 0 && !searchField.getValue().trim().equals("")) {
+        	for(AlumnosVO vo: lstAlumnos){
+        		String nombre = vo.getAlumnoNombre()+" "+vo.getAlumnoApPaterno()+" "+vo.getAlumnoApMaterno();
+        		//alumno.getAlumnoTutor()
+        		//curso
+        		if(nombre.toUpperCase().contains(searchField.getValue().toUpperCase()) || 
+        				vo.getAlumnoTutor().toUpperCase().contains(searchField.getValue().toUpperCase())){
+        			lstAlumnosGrid.add(vo);
+        		}
+        	}
         } else {
-            header.setText("Costos");
-        }*/
+        	lstAlumnosGrid = lstAlumnos;
+        }
+        grid.setItems(lstAlumnosGrid);
     }
     
   //Metodo de salvar
@@ -262,7 +276,7 @@ public class StudentsList extends VerticalLayout {
     	
         Notification.show(
                 "Alumno " + alumnosVo.getAlumnoNombre() + " agregado", 3000, Position.BOTTOM_END);
-        updateView();
+        loadData();
     }
     
     //Eliminar

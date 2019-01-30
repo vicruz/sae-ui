@@ -83,6 +83,7 @@ public class ScriptStart implements ApplicationRunner{
 		alumnoVO.setFechaCreacion(Calendar.getInstance().getTime());
 		alumnoVO.setAlumnoEstatus(1);
 		alumnoVO.setAlumnoActivo(true);
+		alumnoVO.setAlumnoSaldo(BigDecimal.ZERO);
 		alumnosService.save(alumnoVO);
 		
 		AlumnosVO alumnoVO2 = new AlumnosVO();
@@ -97,6 +98,7 @@ public class ScriptStart implements ApplicationRunner{
 		alumnoVO2.setFechaCreacion(Calendar.getInstance().getTime());
 		alumnoVO2.setAlumnoEstatus(1);
 		alumnoVO2.setAlumnoActivo(false);
+		alumnoVO2.setAlumnoSaldo(BigDecimal.ZERO);
 		alumnosService.save(alumnoVO2);
 		
 		//////////////////////CURSO COSTO
@@ -146,6 +148,13 @@ public class ScriptStart implements ApplicationRunner{
 		costo2VO.setCostoNombre("Colegiatura");
 		costo2VO.setFechaCreacion(Calendar.getInstance().getTime());
 		costosService.save(costo2VO);
+		
+		CostosVO costo3VO = new CostosVO();
+		costo3VO.setCostoActivo(true);
+		costo3VO.setCostoMonto(BigDecimal.valueOf(200));
+		costo3VO.setCostoNombre("Extra");
+		costo3VO.setFechaCreacion(Calendar.getInstance().getTime());
+		costosService.save(costo3VO);
 		
 		
 	}

@@ -2,12 +2,16 @@ package com.sae.gandhi.spring.ui.students.pagos;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
+import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -17,7 +21,7 @@ import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 
 public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 	
-	private Integer alumnoPagoId;
+	//private Integer alumnoPagoId;
 	private String cursoNombre;
 	BigDecimal montoTotal;
 	BigDecimal montoPorPagar;
@@ -26,6 +30,7 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 	private Label lbCourse;
 	private Label lbTotalAmount;
 	private Checkbox cbUseSaldo;
+	private DatePicker dpFechaPago; 
 	private TextField txtPaymentAmount;
 	private VerticalLayout vlPayment = new VerticalLayout();
 
@@ -34,7 +39,7 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 			BigDecimal montoPorPagar, BigDecimal montoSaldo) {
 		super("Pago", itemSaver, itemDeleter);
 
-		this.alumnoPagoId = alumnoPagoId;
+		//this.alumnoPagoId = alumnoPagoId;
 		this.cursoNombre = cursoNombre;
 		this.montoTotal = montoTotal;
 		this.montoPorPagar = montoPorPagar;
@@ -62,6 +67,12 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		getBinder().forField(cbUseSaldo)
 		.bind(AlumnoPagoVO::getUsaSaldo, AlumnoPagoVO::setUsaSaldo);
 		
+		dpFechaPago = new DatePicker();
+		dpFechaPago.setValue(SaeDateUtils.calendarToLocalDate(Calendar.getInstance()));
+		System.out.println(LocalDate.now());
+		dpFechaPago.setLabel("Fecha de pago");
+		getBinder().forField(dpFechaPago).bind(AlumnoPagoVO::getAlumnoPagoFechaPago, AlumnoPagoVO::setAlumnoPagoFechaPago);
+		
 		txtPaymentAmount = new TextField("Monto a pagar:");
 		txtPaymentAmount.setRequired(true);
 		txtPaymentAmount.setPattern("\\d+(\\.)?(\\d{1,2})?"); //Formato #0.00
@@ -79,6 +90,10 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		if(montoSaldo.compareTo(BigDecimal.ZERO) >0){
 			vlPayment.add(cbUseSaldo);
 		}
+		
+		//TODO Solo mostrar cuando sea administrador
+		vlPayment.add(dpFechaPago);
+		
 		vlPayment.add(txtPaymentAmount);
 		getFormLayout().add(vlPayment);
 	}
@@ -97,15 +112,39 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 	@Override
 	protected Boolean validateFields() {
 		String txtPay = txtPaymentAmount.getValue();
+		BigDecimal payAmount = BigDecimal.ZERO;
 		NumberFormat nfc = NumberFormat.getCurrencyInstance();
-		
-		if(txtPay==null || txtPay.equals("") || txtPay.equals("0")){
-			Notification.show("El monto de pago debe ser mayor a $0.00",5000,Notification.Position.MIDDLE);
-			return false;
-		}
-		
+				
 		try{
-			BigDecimal payAmount = new BigDecimal(txtPay);
+			
+			//Toma el monto de la caja de pago
+			if(txtPay!=null && !txtPay.equals("")){
+				payAmount = payAmount.add(new BigDecimal(txtPay));
+			}
+			
+			//Complementa el monto del saldo a favor
+			if(cbUseSaldo.getValue()){
+				//Solo entrará si el monto en la caja es menor al monto por pagar
+				if(payAmount.compareTo(montoPorPagar)<0){
+					BigDecimal tmp = montoPorPagar.subtract(payAmount);
+					
+					//Si el valor tmp es mayor al saldo, el monto utilizado será el saldo completo
+					if(tmp.compareTo(montoSaldo)>=0){
+						payAmount = payAmount.add(montoSaldo);
+					}
+					//En caso contrario, el saldo utilizado será el del tmp
+					else{
+						payAmount = payAmount.add(tmp);
+					}
+				}
+			}
+			
+			
+			if(payAmount.equals(BigDecimal.ZERO)){
+				Notification.show("El monto de pago debe ser mayor a $0.00",5000,Notification.Position.MIDDLE);
+				return false;
+			}
+			
 			if(payAmount.compareTo(montoPorPagar)>0){
 				String notification = "El monto de pago debe ser menor o igual a " + 
 						nfc.format(montoPorPagar);

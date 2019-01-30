@@ -13,12 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sae.gandhi.spring.dao.AlumnoCursoDAO;
 import com.sae.gandhi.spring.dao.AlumnoPagoDAO;
+import com.sae.gandhi.spring.dao.AlumnosDAO;
 import com.sae.gandhi.spring.dao.CursoCostosDAO;
 import com.sae.gandhi.spring.entity.AlumnoCurso;
 import com.sae.gandhi.spring.entity.AlumnoPagos;
+import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.entity.CursoCostos;
 import com.sae.gandhi.spring.service.AlumnoCursoService;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
+import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.builder.AlumnoCursoBuilder;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 
@@ -37,6 +40,9 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	
 	@Autowired
 	private AlumnoPagoDAO alumnoPagoDAO;
+	
+	@Autowired
+	private AlumnosDAO alumnosDAO;
 	
 
 	@Override
@@ -96,12 +102,19 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 				continue;
 			}
 			
-			//Si el curso genera adeudo, se crea un pago por cada mes para la duracion del curso
-			if(cursoCostos.getCursoCostoGeneraAdeudo()){
-				//Crear el 1er pago con fecha límite el dí X del 1er mes
+			//Si el curso no es único, se crea un pago por cada mes para la duracion del curso
+			if(!cursoCostos.getCursoCostoPagoUnico()){
+				//Crear el 1er pago con fecha límite el día X del 1er mes del curso.				
 				Calendar calLimite = Calendar.getInstance();
 				calLimite.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaInicio()));				
 				calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
+				
+				//Si el alumno entró después de iniciado el curso, los pagos se crearan con el mes de ingreso del alumno al curso
+				Calendar calIngresoAlumno = Calendar.getInstance();
+				calIngresoAlumno.setTime(alumnoCurso.getAlumnoCursoIngreso());
+				if(calLimite.before(calIngresoAlumno)){
+					calLimite = calIngresoAlumno;
+				}
 				
 				Calendar calEnd = Calendar.getInstance();
 				calEnd.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
@@ -162,24 +175,29 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	@Override
 	public void update(AlumnoCursoVO alumnoCursoVO) {
 		AlumnoCurso alumnoCurso;
+		Alumnos alumno;
 		Optional<AlumnoCurso> optional;
+		Optional<Alumnos> alumnoOptional;
 		BigDecimal saldo = BigDecimal.ZERO;
 		
 		optional = alumnoCursoDAO.findById(alumnoCursoVO.getAlumnoCursoId());
+		alumnoOptional = alumnosDAO.findById(alumnoCursoVO.getAlumnoId());
 		
-		if(!optional.isPresent()){
+		if(!optional.isPresent() || !alumnoOptional.isPresent()){
 			//TODO enviar mensaje de error indicando que no existe el curso en el alumno
 			return;
 		}
 
 		alumnoCurso = optional.get();
+		alumno = alumnoOptional.get();
+		saldo = alumno.getAlumnoSaldo();
 		
 		//Si la beca y descuento son iguales, no realiza ninguna acción de evaluación
-		if( ((alumnoCurso.getAlumnoCursoBeca()==null && alumnoCursoVO.getAlumnoCursoBeca()==null) || 
-				alumnoCurso.getAlumnoCursoBeca().compareTo(alumnoCursoVO.getAlumnoCursoBeca())==0) &&
-			((alumnoCurso.getAlumnoCursoDescuento()==null && alumnoCursoVO.getAlumnoCursoDescuento()==null) || 
-						alumnoCurso.getAlumnoCursoDescuento().compareTo(alumnoCursoVO.getAlumnoCursoDescuento())==0)
-				){
+		BigDecimal becaBase = alumnoCurso.getAlumnoCursoBeca()==null?BigDecimal.ZERO:alumnoCurso.getAlumnoCursoBeca();
+		BigDecimal becaEdicion = alumnoCursoVO.getAlumnoCursoBeca()==null?BigDecimal.ZERO:alumnoCursoVO.getAlumnoCursoBeca();
+		BigDecimal descuentoBase = alumnoCurso.getAlumnoCursoDescuento()==null?BigDecimal.ZERO:alumnoCurso.getAlumnoCursoDescuento();
+		BigDecimal descuentoEdicion = alumnoCursoVO.getAlumnoCursoDescuento()==null?BigDecimal.ZERO:alumnoCursoVO.getAlumnoCursoDescuento();
+		if( becaBase.compareTo(becaEdicion)==0 && descuentoBase.compareTo(descuentoEdicion)==0){
 			return;
 		}
 
@@ -212,12 +230,40 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 			//Obtener los alumnosPagos que correspondan al curso costo y descontar el monto al valor total
 			List<AlumnoPagos> lstAlumnoPago = alumnoPagoDAO.findByAlumnoCursoIdAndCursoCostoId(alumnoCurso.getAlumnoCursoId(), cursoCosto.getCursoCostoId());
 			for(AlumnoPagos alumnoPago : lstAlumnoPago){
+				//Se ajusta el monto a pagar
 				alumnoPago.setAlumnoPagoMonto(alumnoPago.getAlumnoPagoMonto().subtract(montoDescuento));
-				saldo = saldo.add(alumnoPago.getAlumnoPagoMonto().subtract(alumnoPago.getAlumnoPagoPago()));
+				
+				//Solo se realizaran operaciones si se ha realizado un pago
+				if(alumnoPago.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0){
+					continue;
+				}
+				
+				//El saldo solamente se ajustará si el pago realizado es mayor al monto a cobrar
+				if(alumnoPago.getAlumnoPagoPago().compareTo(alumnoPago.getAlumnoPagoMonto())>0)
+					saldo = saldo.add(alumnoPago.getAlumnoPagoPago().subtract(alumnoPago.getAlumnoPagoMonto()));
+				
+				//Modificar etiqueta de pago
+				if(alumnoPago.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0){
+					//Se mantiene el estatus 1 (PARCIAL)
+					continue;
+				}else if(alumnoPago.getAlumnoPagoPago().compareTo(alumnoPago.getAlumnoPagoMonto())>=0 && 
+						alumnoPago.getAlumnoPagoEstatus().intValue()!=SaeEnums.Pago.COMPLETO.getStatusId()){
+					//Se establece el pago 2 (COMPLETO)
+					alumnoPago.setAlumnoPagoEstatus(SaeEnums.Pago.COMPLETO.getStatusId());
+					continue;
+				}else if(alumnoPago.getAlumnoPagoPago().compareTo(alumnoPago.getAlumnoPagoMonto())<0 &&
+						alumnoPago.getAlumnoPagoEstatus().intValue()!=SaeEnums.Pago.PARCIAL.getStatusId()){
+					//Se establece el pago 3 (PARCIAL)
+					alumnoPago.setAlumnoPagoEstatus(SaeEnums.Pago.PARCIAL.getStatusId());
+					continue;
+					
+				}
 			}
 		}
 		
 		System.out.println("Saldo: " + saldo);
+		alumno.setAlumnoSaldo(saldo);
+		//Si el saldo es mayor a 0, sumar al saldo actual del alumno
 		
 /*		
 		//////////////////////////////////////

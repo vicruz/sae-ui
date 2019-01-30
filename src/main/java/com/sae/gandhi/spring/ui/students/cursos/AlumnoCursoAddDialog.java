@@ -214,7 +214,7 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 			}
 			if(getCurrentItem().getAlumnoCursoDescuento()!=null){
 				chDiscount.setValue(true);
-				txtDiscount.setValue(getCurrentItem().getAlumnoCursoBeca().toString());
+				txtDiscount.setValue(getCurrentItem().getAlumnoCursoDescuento().toString());
 				chBeca.setValue(false);
 				txtBeca.setValue("");
 			}

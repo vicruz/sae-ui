@@ -53,6 +53,7 @@ public class Alumnos {
 	@Lob
 	private byte[] alumnoImagen;
 	
+	//Default 0
 	@Column(name="ALUMNO_SALDO")
 	private BigDecimal alumnoSaldo;
 	

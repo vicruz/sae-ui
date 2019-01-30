@@ -39,11 +39,8 @@ public class AlumnoPagosBitacora {
     private Date alumnoPagosBitacoraFechaPago;
     
     @Column(name="ALUMNOPAGOSBITACORA_SALDO")
-    private Boolean alumnoPagosBitacoraSaldo;
+    private BigDecimal alumnoPagosBitacoraSaldo;
     
-    @Column(name="ALUMNOPAGOSBITACORA_MONTO_SALDO")
-    private BigDecimal alumnoPagosBitacoraMontoSaldo;
-
 	public Integer getAlumnoPagosBitacoraId() {
 		return alumnoPagosBitacoraId;
 	}
@@ -84,20 +81,12 @@ public class AlumnoPagosBitacora {
 		this.alumnoPagosBitacoraFechaPago = alumnoPagosBitacoraFechaPago;
 	}
 
-	public Boolean getAlumnoPagosBitacoraSaldo() {
+	public BigDecimal getAlumnoPagosBitacoraSaldo() {
 		return alumnoPagosBitacoraSaldo;
 	}
 
-	public void setAlumnoPagosBitacoraSaldo(Boolean alumnoPagosBitacoraSaldo) {
+	public void setAlumnoPagosBitacoraSaldo(BigDecimal alumnoPagosBitacoraSaldo) {
 		this.alumnoPagosBitacoraSaldo = alumnoPagosBitacoraSaldo;
-	}
-
-	public BigDecimal getAlumnoPagosBitacoraMontoSaldo() {
-		return alumnoPagosBitacoraMontoSaldo;
-	}
-
-	public void setAlumnoPagosBitacoraMontoSaldo(BigDecimal alumnoPagosBitacoraMontoSaldo) {
-		this.alumnoPagosBitacoraMontoSaldo = alumnoPagosBitacoraMontoSaldo;
 	}
     
 }

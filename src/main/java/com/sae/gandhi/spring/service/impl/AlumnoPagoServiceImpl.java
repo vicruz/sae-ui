@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sae.gandhi.spring.dao.AlumnoPagoBitacoraDAO;
 import com.sae.gandhi.spring.dao.AlumnoPagoDAO;
+import com.sae.gandhi.spring.dao.AlumnosDAO;
 import com.sae.gandhi.spring.entity.AlumnoPagos;
 import com.sae.gandhi.spring.entity.AlumnoPagosBitacora;
+import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.service.AlumnoPagoService;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
@@ -26,6 +29,9 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	
 	@Autowired
 	AlumnoPagoBitacoraDAO alumnoPagoBitacoraDAO;
+	
+	@Autowired
+	AlumnosDAO alumnosDAO;
 
 	@Override
 	public List<AlumnoPagoVO> findByAlumnoId(Integer alumnoId) {
@@ -60,28 +66,52 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	}
 
 	@Override
-	public AlumnoPagoVO save(AlumnoPagoVO vo) {
+	public AlumnoPagoVO save(AlumnoPagoVO vo, Integer alumnoId, BigDecimal alumnoSaldo) {
 		
 		AlumnoPagosBitacora alumnoPagoBitacora = new AlumnoPagosBitacora();
-		alumnoPagoBitacora.setAlumnopagoId(vo.getAlumnoPagoId());
-		alumnoPagoBitacora.setAlumnoPagosBitacoraFechaPago(
-				SaeDateUtils.localDateToDate(vo.getAlumnoPagoFechaPago()));
-		alumnoPagoBitacora.setAlumnoPagosBitacoraPago(vo.getAlumnoPagoPago());
-		//TODO Falta almacenar el saldo y saber si el pago se realizó con saldo y el monto del saldo utilizado
-		
-		//Almacenar el pago
-		alumnoPagoBitacoraDAO.save(alumnoPagoBitacora);
-		
-		//Actualizar el pago
 		Optional<AlumnoPagos> alumnoPago = alumnoPagoDAO.findById(vo.getAlumnoPagoId());
+		AlumnoPagos alumnoPagos;
+		BigDecimal montoSaldo = BigDecimal.ZERO;
+		
 		if(alumnoPago.isPresent()){
-			alumnoPago.get().setAlumnoPagoPago(alumnoPago.get().getAlumnoPagoPago().add(vo.getAlumnoPagoPago()));
-			alumnoPago.get().setAlumnoPagoFechaPago(alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago());
+			alumnoPagos = alumnoPago.get();
+			alumnoPagoBitacora.setAlumnopagoId(vo.getAlumnoPagoId());
+			alumnoPagoBitacora.setAlumnoPagosBitacoraFechaPago(
+					SaeDateUtils.localDateToDate(vo.getAlumnoPagoFechaPago()));
+			alumnoPagoBitacora.setAlumnoPagosBitacoraPago(vo.getAlumnoPagoPago());
 			
-			if(alumnoPago.get().getAlumnoPagoPago().compareTo(alumnoPago.get().getAlumnoPagoMonto())==0)
-				alumnoPago.get().setAlumnoPagoEstatus(SaeEnums.Pago.COMPLETO.getStatusId());
+			//Calculos del saldo
+			//saber si el pago se realizó con saldo y el monto del saldo utilizado
+			if(vo.getUsaSaldo() && alumnoSaldo.compareTo(BigDecimal.ZERO)>0){
+				Optional<Alumnos> optional = alumnosDAO.findById(alumnoId);
+				Alumnos alumno = optional.get();
+				BigDecimal tmp = alumnoPagos.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago());
+				
+				//Si el valor tmp es mayor al saldo, el monto utilizado será el saldo completo
+				if(tmp.compareTo(alumnoSaldo)>=0){
+					montoSaldo = alumnoSaldo;
+				}
+				//En caso contrario, el saldo utilizado será el del tmp
+				else{
+					montoSaldo = tmp;
+				}
+				
+				//Actualizacion del saldo en el alumno
+				alumno.setAlumnoSaldo(alumno.getAlumnoSaldo().subtract(montoSaldo));
+			}
+			alumnoPagoBitacora.setAlumnoPagosBitacoraSaldo(montoSaldo);
+
+			//Almacenar el pago
+			alumnoPagoBitacoraDAO.save(alumnoPagoBitacora);
+
+			//Actualizar el pago
+			alumnoPagos.setAlumnoPagoPago(alumnoPago.get().getAlumnoPagoPago().add(vo.getAlumnoPagoPago()).add(montoSaldo));
+			alumnoPagos.setAlumnoPagoFechaPago(alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago());
+			
+			if(alumnoPagos.getAlumnoPagoPago().compareTo(alumnoPago.get().getAlumnoPagoMonto())==0)
+				alumnoPagos.setAlumnoPagoEstatus(SaeEnums.Pago.COMPLETO.getStatusId());
 			else
-				alumnoPago.get().setAlumnoPagoEstatus(SaeEnums.Pago.PARCIAL.getStatusId());
+				alumnoPagos.setAlumnoPagoEstatus(SaeEnums.Pago.PARCIAL.getStatusId());
 		}
 		
 		return AlumnoPagoBuilder.createAlumnoPagoVO(alumnoPago.get());		

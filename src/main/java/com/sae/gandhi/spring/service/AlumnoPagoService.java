@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.sae.gandhi.spring.vo.AlumnoPagoVO;
@@ -11,6 +12,6 @@ public interface AlumnoPagoService {
 	public List<AlumnoPagoVO> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);
 	public AlumnoPagoVO update(AlumnoPagoVO vo);
 	public AlumnoPagoVO updateFecha(AlumnoPagoVO vo);
-	public AlumnoPagoVO save(AlumnoPagoVO vo);
+	public AlumnoPagoVO save(AlumnoPagoVO vo, Integer alumnoId, BigDecimal alumnoSaldo);
 
 }
