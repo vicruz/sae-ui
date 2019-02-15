@@ -11,6 +11,8 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.claspina.confirmdialog.ButtonOption;
+import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.MainView;
@@ -34,13 +36,16 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
@@ -209,8 +214,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 
 		grid.addColumn(new ComponentRenderer<>(this::createConceptLabel)).setHeader("Concepto").setFlexGrow(5)
 				.setResizable(true);
-		grid.addColumn(new NumberRenderer<>(AlumnoPagoVO::getAlumnoPagoMonto, NumberFormat.getCurrencyInstance()))
+		Column<AlumnoPagoVO> columnMonto = grid.addColumn(new NumberRenderer<>(AlumnoPagoVO::getAlumnoPagoMonto, NumberFormat.getCurrencyInstance()))
 				.setHeader("Monto").setFlexGrow(1);
+		//Fecha Límite
 		Column<AlumnoPagoVO> columnDate = grid
 				.addColumn(new LocalDateRenderer<>(AlumnoPagoVO::getAlumnoPagoFechaLimite,
 						DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
@@ -237,6 +243,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))).setHeader("Fecha Pago").setFlexGrow(1);
 		grid.addColumn(new ComponentRenderer<>(this::createEstatusLabel)).setHeader("Estatus").setFlexGrow(1);
 		grid.addColumn(new ComponentRenderer<>(this::createPayButton)).setHeader("Pago").setFlexGrow(1);
+		
+		grid.addColumn(new ComponentRenderer<>(this::createDeleteButton)).setHeader("Eliminar").setFlexGrow(1);
+		
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.getStyle().set("fontSize", "14px");
@@ -247,9 +256,33 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		validationStatus.setId("dateChange");
 
 		DatePicker dp = new DatePicker();
-		binder.forField(dp).withStatusLabel(validationStatus).bind("alumnoPagoFechaLimite");
+		binder.forField(dp)
+		.withStatusLabel(validationStatus).bind("alumnoPagoFechaLimite");
 		columnDate.setEditorComponent(dp);
 
+		//// Editor de monto
+		TextField tfMonto = new TextField();
+		tfMonto.setPattern("\\d+(\\.)?(\\d{1,2})?");
+		tfMonto.setPrefixComponent(new Span("$"));
+		Label lbMonto = new Label();
+		Runnable bindMonto = () -> binder.forField(tfMonto).withConverter(
+                new StringToBigDecimalConverter(BigDecimal.ZERO, "Debe ingresar un costo."))
+				.bind("alumnoPagoMonto");
+		
+		Runnable setMonto = () -> columnMonto.setEditorComponent(item -> {
+			if(item.getAlumnoPagoPago()!=null && item.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==	0){
+				tfMonto.setValue(NumberFormat.getCurrencyInstance().format(item.getAlumnoPagoMonto()));
+				bindMonto.run();
+				return tfMonto;
+			}else{
+				lbMonto.setText(NumberFormat.getCurrencyInstance().format(item.getAlumnoPagoMonto()));
+				return lbMonto;
+			}
+		});
+		
+		setMonto.run();
+		
+		
 		// Botones que apareceran al momento de editar
 		Button save = new Button("", e -> editor.save());
 		save.setIcon(new Icon(VaadinIcon.CHECK));
@@ -275,9 +308,12 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		editor.addSaveListener(event -> {
 			// System.out.println(event.getItem().getAlumnoPagoId() + " - "
 			// +event.getItem().getAlumnoPagoFechaLimite());
-			alumnoPagoService.updateFecha(event.getItem());
+			alumnoPagoService.updateFechaMonto(event.getItem());
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			Notification
-					.show("Se ha actualizado la fecha límite de pago a " + event.getItem().getAlumnoPagoFechaLimite());
+					.show("Se ha actualizado el monto a $" +NumberFormat.getCurrencyInstance().format(event.getItem().getAlumnoPagoMonto()) + 
+							" y la fecha límite de pago a " + 
+							event.getItem().getAlumnoPagoFechaLimite().format(formatter));
 		});
 
 		add(grid);
@@ -321,6 +357,20 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 						);
 				vo.setAlumnoPagoPago(BigDecimal.ZERO);
 				form.open(vo, AbstractEditorDialog.Operation.ADD);
+			});			
+		}
+		return button;
+	}
+	
+	private Button createDeleteButton(AlumnoPagoVO vo) {
+		Button button = new Button("");
+		button.addClassName("review__edit");
+		button.getElement().setAttribute("theme", "tertiary");
+		button.getElement().setAttribute("title", "Editar");
+		if(vo.getAlumnoPagoPago() == null || vo.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0 ){
+			button.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
+			button.addClickListener(event -> {
+				deletePayment(vo);
 			});			
 		}
 		return button;
@@ -369,12 +419,20 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 
 	// Eliminar
 	private void deletePayment(AlumnoPagoVO alumnoPagoVO) {
-		/*
-		 * cursoCostoService.delete(cursoCostos.getCursoCostoId());
-		 * 
-		 * Notification.show("Costo eliminado", 3000, Position.BOTTOM_END);
-		 * cursoCostosList.updateView(cursoId);
-		 */
+		ConfirmDialog
+        .createQuestion()
+        .withCaption("Eliminar Pago")
+        .withMessage("Deseas eliminar el Pago?")
+        .withOkButton(() -> {
+//            System.out.println("YES. Implement logic here.");
+        	alumnoPagoService.delete(alumnoPagoVO);
+            Notification.show("Pago eliminado", 3000, Position.BOTTOM_END);
+            //RouterLink courses = new RouterLink(null, CursosEditorPage.class);
+    		//courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
+            update();
+        }, ButtonOption.focus(), ButtonOption.caption("SI"))
+        .withCancelButton(ButtonOption.caption("NO"))
+        .open();
 	}
 
 }

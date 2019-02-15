@@ -12,4 +12,5 @@ public interface AlumnosService {
 	public AlumnosVO findByName(String name);
 	public AlumnosVO findByAlumnoNameAndAlumnoApPaternoAndAlumnoApMaterno(String name, String apPaterno, String apMaterno);	
 	public void update(AlumnosVO alumnoVO);
+	public void changeActivo(boolean status, Integer alumnoId);
 }

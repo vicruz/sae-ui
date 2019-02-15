@@ -14,6 +14,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.claspina.confirmdialog.ButtonOption;
+import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.MainView;
@@ -41,6 +43,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -274,7 +277,16 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		btnSave = new Button("Guardar");
 		btnSave.addClickListener(e -> saveButton());
 		btnSave.getStyle().set("padding-top", "10px");
-		add(btnSave);
+		
+		if(alumnoVO.getAlumnoActivo()){
+			btnChangeStatus = new Button("Baja");			
+		}else{
+			btnChangeStatus = new Button("Activar");
+		}
+		btnChangeStatus.addClickListener(e -> changeStatusButton());
+		btnChangeStatus.getStyle().set("padding-top", "10px");
+		
+		add(btnSave,btnChangeStatus);
 	}
 
 	// private void addTabs() {
@@ -370,6 +382,35 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 
 		alumnosService.update(alumnoVO);
 		Notification.show("Alumno actualizado", 5000, Notification.Position.BOTTOM_END);
+	}
+	
+	private void changeStatusButton(){
+		String mensaje;
+		String mensajeNotification;
+		if(alumnoVO.getAlumnoActivo()){
+			mensaje = "Deseas dar de Baja al Alumno?";
+			mensajeNotification = "Alumno dado de baja";
+		}else{
+			mensaje = "Deseas dar de Alta al Alumno?";
+			mensajeNotification = "Alumno dado de alta";
+		}
+		
+		
+		ConfirmDialog .createQuestion() .withCaption("Estatus de Alumno")
+		  .withMessage(mensaje) .withOkButton(() -> {
+			  alumnosService.changeActivo(!alumnoVO.getAlumnoActivo(), alumnoVO.getAlumnoId());			  
+			  alumnoVO.setAlumnoActivo(!alumnoVO.getAlumnoActivo());
+			  
+			  if(alumnoVO.getAlumnoActivo()){
+					btnChangeStatus.setText("Baja");			
+				}else{
+					btnChangeStatus.setText("Activar");
+				}
+			  
+			  Notification.show(mensajeNotification,
+					  3000, Position.BOTTOM_END); }, ButtonOption.focus(),
+				  ButtonOption.caption("SI"))
+		  	.withCancelButton(ButtonOption.caption("NO")) .open();
 	}
 
 	private void cancelButton() {

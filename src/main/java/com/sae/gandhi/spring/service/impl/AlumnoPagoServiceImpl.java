@@ -57,11 +57,12 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	}
 
 	@Override
-	public AlumnoPagoVO updateFecha(AlumnoPagoVO vo) {
+	public AlumnoPagoVO updateFechaMonto(AlumnoPagoVO vo) {
 		AlumnoPagos alumnoPago = alumnoPagoDAO.findById(vo.getAlumnoPagoId()).get();
 		alumnoPago.setAlumnoPagoFechaLimite(SaeDateUtils.localDateToDate(vo.getAlumnoPagoFechaLimite()));
+		alumnoPago.setAlumnoPagoMonto(vo.getAlumnoPagoMonto());
+		alumnoPago.setAlumnoPagoEstatus(SaeEnums.Pago.PREPARADO.getStatusId());
 		
-		//TODO Cambiar el estatus del pago a preparado y modificar el monto del pago dependiendo de la fecha límite
 		return vo;
 	}
 
@@ -115,6 +116,15 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 		}
 		
 		return AlumnoPagoBuilder.createAlumnoPagoVO(alumnoPago.get());		
+	}
+
+	@Override
+	public void delete(AlumnoPagoVO vo) {
+		if(vo.getAlumnoPagoPago()!=null && vo.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)>0){
+			return;
+		}
+		alumnoPagoDAO.deleteById(vo.getAlumnoPagoId());
+		
 	}
 
 
