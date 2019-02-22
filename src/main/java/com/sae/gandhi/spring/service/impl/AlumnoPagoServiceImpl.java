@@ -1,6 +1,8 @@
 package com.sae.gandhi.spring.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,6 +126,54 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 			return;
 		}
 		alumnoPagoDAO.deleteById(vo.getAlumnoPagoId());
+		
+	}
+
+	@Override
+	public void updateMontoFechaExceed() {
+		Calendar fechaActual = Calendar.getInstance();
+		//Solo busca los pagos que hayan excedido la fecha límite y se encuentren en "pendiente" o "Adeudo
+		//Pagos que tenga activo el campo "Genera Adeudo"
+		List<AlumnoPagos> lstAlumno = alumnoPagoDAO.findPagoLimitExceed(SaeEnums.Pago.PREPARADO.getStatusId(),
+				SaeEnums.Pago.ADEUDO.getStatusId(),fechaActual.getTime());
+		
+		int mesesDiff;
+		BigDecimal montoOriginal;
+		BigDecimal montoCalculado;
+		int porcentaje;
+		Alumnos alumno;
+		
+		for(AlumnoPagos alumnoPagos : lstAlumno){
+			mesesDiff = SaeDateUtils.calcularMesesAFecha(alumnoPagos.getAlumnoPagoFechaLimite(), fechaActual.getTime());
+			
+			//Se agrega un mes a la diferencia de meses ya que si solo ha pasado 1 día de retardo no
+			//se hará modificación alguna
+			mesesDiff +=1;
+			
+			//////////////////////////////////
+			//Calculo del % a sumar al pago
+			/////////////////////////////////
+			//Monto original
+			montoOriginal = alumnoPagos.getCursoCostos().getCostos().getCostoMonto();
+			
+			//Porcentaje
+			porcentaje = mesesDiff * 10;
+			
+			//Monto calculado
+			montoCalculado = montoOriginal.add(montoOriginal.multiply(BigDecimal.valueOf(porcentaje))
+					.divide(BigDecimal.valueOf(100),RoundingMode.HALF_UP));
+			
+			//Nuevo monto
+			alumnoPagos.setAlumnoPagoMonto(montoCalculado);
+			alumnoPagos.setAlumnoPagoEstatus(SaeEnums.Pago.ADEUDO.getStatusId());
+			
+			//Se agrega el Id del alumno modificado a la lista para posteriormente modificar su estatus
+			alumno = alumnoPagos.getAlumnoCurso().getAlumno();
+			alumno.setAlumnoEstatus(SaeEnums.Pago.ADEUDO.getStatusId());
+			
+			alumnosDAO.save(alumno);
+			alumnoPagoDAO.save(alumnoPagos);
+		}
 		
 	}
 

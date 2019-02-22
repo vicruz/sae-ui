@@ -14,5 +14,6 @@ public interface AlumnoPagoService {
 	public AlumnoPagoVO updateFechaMonto(AlumnoPagoVO vo);
 	public AlumnoPagoVO save(AlumnoPagoVO vo, Integer alumnoId, BigDecimal alumnoSaldo);
 	public void delete(AlumnoPagoVO vo);
+	public void updateMontoFechaExceed();
 
 }
