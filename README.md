@@ -16,3 +16,5 @@ Open http://localhost:8080/ in browser
 For documentation on using Vaadin Flow and Spring, visit [vaadin.com/docs](https://vaadin.com/docs/v10/flow/spring/tutorial-spring-basic.html)
 
 For more information on Vaadin Flow, visit https://vaadin.com/flow.
+
+Para realizar el deploy en tomcat, las capetas dentro de `resources` se deben copiar a la raiz del proyecto
