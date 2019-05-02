@@ -10,4 +10,5 @@ public interface AlumnoCursoDAO extends JpaRepository<AlumnoCurso, Integer> {
 
 	public List<AlumnoCurso> findByAlumnoId(Integer alumnoId);
 	
+	public List<AlumnoCurso> findByCursoId(Integer cursoId);
 }

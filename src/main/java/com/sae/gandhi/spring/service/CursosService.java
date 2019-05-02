@@ -11,8 +11,11 @@ public interface CursosService {
 	public CursosVO findById(Integer cursoId);
 	public void save(CursosVO cursoVo);
 	public void update(CursosVO cursoVo);
-	public void delete(Integer cursoId);
+	public boolean delete(Integer cursoId);
 	public List<CursosVO> findByName(String cursNombre);
 	public List<CursosVO> findCoursesNotInStudent(Integer alumnoId);
+	public void updateStartedCourses();
+	public void updateFinishedCourses();
+	public void updateCourse(Integer cursoStatus, Integer cursoId);
 	
 }

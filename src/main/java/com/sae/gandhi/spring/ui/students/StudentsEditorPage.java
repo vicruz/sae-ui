@@ -131,7 +131,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		alumnoId = parameter;
 		// formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto,
 		// this::deleteCursoCosto, this.costosService, cursoId);
-		hlContent.setHeight("1200px");
+		//hlContent.setHeight("1200px");
 		hlContent.getStyle().set("padding-bottom", "20px");
 
 		loadData();
@@ -159,7 +159,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		header.getStyle().set("width", "50%");
 		lbStatus.getStyle().set("textAlign", "right").set("width", "50%").set("paddingTop", "30px");
 		hl.add(header, lbStatus);
-		hl.setSizeFull();
+		//hl.setSizeFull();
 		add(hl);
 	}
 
@@ -274,9 +274,11 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 	}
 
 	private void addButtons() {
+		HorizontalLayout hlButtons = new HorizontalLayout();
+		hlButtons.getStyle().set("align-items", "start");
 		btnSave = new Button("Guardar");
 		btnSave.addClickListener(e -> saveButton());
-		btnSave.getStyle().set("padding-top", "10px");
+		//btnSave.getStyle().set("padding-top", "10px");
 		
 		if(alumnoVO.getAlumnoActivo()){
 			btnChangeStatus = new Button("Baja");			
@@ -284,9 +286,10 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 			btnChangeStatus = new Button("Activar");
 		}
 		btnChangeStatus.addClickListener(e -> changeStatusButton());
-		btnChangeStatus.getStyle().set("padding-top", "10px");
+		//btnChangeStatus.getStyle().set("padding-top", "10px");
 		
-		add(btnSave,btnChangeStatus);
+		hlButtons.add(btnSave,btnChangeStatus);
+		add(hlButtons);
 	}
 
 	// private void addTabs() {

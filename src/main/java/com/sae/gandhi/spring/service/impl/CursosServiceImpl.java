@@ -6,11 +6,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sae.gandhi.spring.dao.AlumnoCursoDAO;
 import com.sae.gandhi.spring.dao.CursosDAO;
+import com.sae.gandhi.spring.entity.AlumnoCurso;
 import com.sae.gandhi.spring.entity.Cursos;
 import com.sae.gandhi.spring.service.CursosService;
 import com.sae.gandhi.spring.utils.SaeEnums;
@@ -23,6 +26,9 @@ public class CursosServiceImpl implements CursosService {
 	
 	@Autowired
 	private CursosDAO cursosDAO;
+	
+	@Autowired
+	private AlumnoCursoDAO alumnoCursoDAO;
 
 	@Override
 	public List<CursosVO> findAllActive() {
@@ -79,11 +85,20 @@ public class CursosServiceImpl implements CursosService {
 	}
 
 	@Override
-	public void delete(Integer cursoId) {
+	public boolean delete(Integer cursoId) {
 		Optional<Cursos> optionalCurso = cursosDAO.findById(cursoId);
 		Cursos curso = optionalCurso.get();
+		
+		List<AlumnoCurso> listAlumnos = alumnoCursoDAO.findByCursoId(cursoId);
+		
+		if(!listAlumnos.isEmpty()){
+			return false;
+		}
+		
 		curso.setCursoStatus(SaeEnums.Curso.CANCELADO.getStatusId());
 		cursosDAO.save(curso);
+		
+		return true;
 	}
 
 	@Override
@@ -97,6 +112,23 @@ public class CursosServiceImpl implements CursosService {
 	public List<CursosVO> findCoursesNotInStudent(Integer alumnoId) {
 		List<Cursos> lst = cursosDAO.findCoursesNotInStudent(alumnoId);
 		return CursosBuilder.createListCursoVO(lst);
+	}
+
+	@Override
+	public void updateStartedCourses() {
+		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+		cursosDAO.updateStartedCourses(today);
+	}
+
+	@Override
+	public void updateFinishedCourses() {
+		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+		cursosDAO.updateFinishedCourses(today);
+	}
+
+	@Override
+	public void updateCourse(Integer cursoStatus, Integer cursoId) {
+		cursosDAO.updateCourse(cursoStatus, cursoId);
 	}
 
 }

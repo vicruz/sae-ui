@@ -91,9 +91,9 @@ public class CostosList extends VerticalLayout {
         container.setClassName("view-container");
         container.setAlignItems(Alignment.STRETCH);
 
-        grid.addColumn(CostosVO::getCostoNombre).setHeader("Costo").setWidth("6em").setResizable(true);
+        grid.addColumn(CostosVO::getCostoNombre).setHeader("COSTO").setWidth("6em").setResizable(true);
         grid.addColumn(new NumberRenderer<>(CostosVO::getCostoMonto, NumberFormat.getCurrencyInstance()))
-        	.setHeader("Monto").setWidth("4em").setResizable(true);
+        	.setHeader("MONTO").setWidth("4em").setResizable(true);
 
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createEditButton)).setFlexGrow(0);

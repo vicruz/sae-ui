@@ -3,7 +3,6 @@ package com.sae.gandhi.spring.entity;
 import java.io.Serializable;
 
 import com.sae.gandhi.spring.utils.CustomerStatus;
-import com.vaadin.flow.tutorial.annotations.Helper;
 
 
 /**
@@ -11,7 +10,6 @@ import com.vaadin.flow.tutorial.annotations.Helper;
  * application this could for example be a JPA entity.
  */
 @SuppressWarnings("serial")
-@Helper
 public class Customer implements Serializable, Cloneable {
 
 	private Long id;

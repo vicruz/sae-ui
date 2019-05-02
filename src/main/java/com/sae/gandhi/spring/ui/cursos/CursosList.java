@@ -210,14 +210,19 @@ public class CursosList extends VerticalLayout {
     	
     	ConfirmDialog
         .createQuestion()
-        .withCaption("Eliminar Curso")
-        .withMessage("Deseas eliminar el curso?")
+        .withCaption("Cancelar Curso")
+        .withMessage("Deseas cancelar el curso?")
         .withOkButton(() -> {
+        	if(cursosService.delete(curso.getCursoId())){
+        		Notification.show("Curso "+curso.getCursoNombre() +" Cancelado", 3000, Position.BOTTOM_END);
+//        		RouterLink courses = new RouterLink(null, CursosEditorPage.class);
+ //       		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
+        		loadData();
+        	}else{
+        		Notification.show("El curso "+ curso.getCursoNombre() +" tiene alumnos registrados y no puede ser dado de baja", 
+        				3000, Position.BOTTOM_END);
+        	}
 //            System.out.println("YES. Implement logic here.");
-            Notification.show("Curso "+curso.getCursoNombre() +" eliminado", 3000, Position.BOTTOM_END);
-            RouterLink courses = new RouterLink(null, CursosEditorPage.class);
-    		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
-            loadData();
         }, ButtonOption.focus(), ButtonOption.caption("SI"))
         .withCancelButton(ButtonOption.caption("NO"))
         .open();

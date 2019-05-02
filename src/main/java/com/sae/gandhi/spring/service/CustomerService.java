@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import com.sae.gandhi.spring.entity.Customer;
 import com.sae.gandhi.spring.utils.CustomerStatus;
-import com.vaadin.flow.tutorial.annotations.Helper;
 
 /**
  * An in memory dummy "database" for the example purposes. In a typical Java app
@@ -20,7 +19,6 @@ import com.vaadin.flow.tutorial.annotations.Helper;
  * In demos/tutorials/examples, get a reference to this service class with
  * {@link CustomerService#getInstance()}.
  */
-@Helper
 public class CustomerService {
 
 	private static CustomerService instance;
