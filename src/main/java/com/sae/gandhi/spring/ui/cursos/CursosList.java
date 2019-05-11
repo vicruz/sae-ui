@@ -14,7 +14,6 @@ import com.sae.gandhi.spring.service.CursosService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.CursosVO;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -32,7 +31,6 @@ import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLink;
 
 @Route(value = "cursos", layout = MainView.class)
 @PageTitle("Cursos")
@@ -154,6 +152,10 @@ public class CursosList extends VerticalLayout {
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");
         
+        if(curso.getCursoStatus()==3 || curso.getCursoStatus()==4){
+        	edit.setEnabled(false);
+        }
+        
         return edit;
     }
     
@@ -166,6 +168,11 @@ public class CursosList extends VerticalLayout {
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Eliminar");
+        
+        if(curso.getCursoStatus()==3 || curso.getCursoStatus()==4){
+        	edit.setEnabled(false);
+        }
+        
         return edit;
     }
     

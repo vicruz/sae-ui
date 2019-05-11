@@ -11,7 +11,7 @@ public interface CursoCostosService {
 	public CursoCostosVO findById(Integer cursoCostoId);
 	public void save(CursoCostosVO cursoCostosVo);
 	public void update(CursoCostosVO cursoCostosVo);
-	public void delete(Integer cursoCostoId);
+	public boolean delete(Integer cursoCostoId);
 	public List<CursoCostosVO> findByCurso(Integer cursoId, Boolean estatus);
 	
 }

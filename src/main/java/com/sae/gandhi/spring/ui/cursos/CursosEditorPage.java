@@ -254,6 +254,8 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 		HorizontalLayout hlTab = new HorizontalLayout();
 		Tab tabCostos = new Tab(COSTOS);
 		Tab tabStudents = new Tab(ALUMNOS);
+		tabStudents.setEnabled(false);
+		
 		Button addButton = new Button();
 		addButton.setIcon(new Icon(VaadinIcon.PLUS));
 		addButton.getStyle().set("borderRadius", "50%"); //Se hace redondo

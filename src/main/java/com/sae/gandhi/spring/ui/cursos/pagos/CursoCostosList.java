@@ -1,10 +1,10 @@
 package com.sae.gandhi.spring.ui.cursos.pagos;
 
-
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
+import org.claspina.confirmdialog.ButtonOption;
+import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -12,15 +12,17 @@ import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.service.CursoCostosService;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.NumberRenderer;
-import com.vaadin.ui.Label;
 
 @Controller
 public class CursoCostosList extends VerticalLayout {
@@ -33,16 +35,27 @@ public class CursoCostosList extends VerticalLayout {
 //	private CursoCostoEditorDialog form;
 	
     private CursoCostosService cursoCostoService;
-	
+//    private Binder<CursoCostosVO> binder;
+//    private Editor<CursoCostosVO> editor;
+    
     //private final CursosEditorDialog form = new CursosEditorDialog(this::saveCursoCosto, this::deleteCursoCosto);
     private Div viewTab = new Div();
     private final Grid<CursoCostosVO> grid = new Grid<>();
     
+//    private Grid.Column<CursoCostosVO> columnBeca = grid.addColumn(CursoCostosVO::getCursoCostoAplicaBeca).setHeader("Beca");
+//    private Grid.Column<CursoCostosVO> columnAdeudo = grid.addColumn(CursoCostosVO::getCursoCostoGeneraAdeudo).setHeader("Adeudo");
+//    private Grid.Column<CursoCostosVO> columnUnico = grid.addColumn(CursoCostosVO::getCursoCostoPagoUnico).setHeader("Unico");
+	
     //El autowired en atributos privados no esta funcionando
     @Autowired
     public CursoCostosList(CostosService costosService, CursoCostosService cursoCostoService){
     	this.cursoCostoService = cursoCostoService;
 //    	form = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, costosService);
+//    	binder = new Binder<>(CursoCostosVO.class);
+//    	editor = grid.getEditor();
+//    	editor.setBinder(binder);
+//    	editor.setBuffered(true);
+    	
     	initView();
         addContent();
 //        updateView();
@@ -60,18 +73,13 @@ public class CursoCostosList extends VerticalLayout {
 //        grid.addColumn(CursoCostosVO::getCostoId).setHeader("Pago").setFlexGrow(0);
         grid.addColumn(CursoCostosVO::getCostoNombre).setHeader("Concepto").setWidth("6em").setResizable(true);
         grid.addColumn(new NumberRenderer<>(CursoCostosVO::getCostoMonto, "$%(,.2f",Locale.US, "$0.00")).setHeader("Monto").setFlexGrow(0);
-        //grid.addColumn(new TextRenderer<>(this::createMonthLabel)).setHeader("Mes").setWidth("6em").setResizable(true);
-        //grid.addColumn(CursoCostosVO::getCursoCostoAnio).setHeader("Año").setWidth("6em").setResizable(true);
-        //grid.addColumn(CursoCostosVO::getCursoCostoFechaLimite).setHeader("Límite de Pago").setWidth("6em").setResizable(true);
-        //grid.addColumn(CursosVO::getCursoStatus).setHeader("Estatus").setWidth("6em").setResizable(true);
-//        grid.addColumn(new ComponentRenderer<>(this::createDay)).setHeader("Día de Pago").setFlexGrow(0);
         grid.addColumn(new NumberRenderer<>(CursoCostosVO::getCursoCostoDiaPago,"")).setHeader("Dia de pago").setWidth("6em").setResizable(true);
         
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createUniqueIcon)).setHeader("Único").setFlexGrow(0);
         grid.addColumn(new ComponentRenderer<>(this::createScholarshipIcon)).setHeader("Beca").setFlexGrow(0);
         grid.addColumn(new ComponentRenderer<>(this::createDebitIcon)).setHeader("Adeudo").setFlexGrow(0);
-        grid.addColumn(new ComponentRenderer<>(this::createEditButton)).setHeader("Editar").setFlexGrow(0);
+//        grid.addColumn(new ComponentRenderer<>(this::createEditButton)).setHeader("Editar").setFlexGrow(0);
         grid.addColumn(new ComponentRenderer<>(this::createDeleteButton)).setHeader("Borrar").setFlexGrow(0);
         grid.setSelectionMode(SelectionMode.SINGLE);
         
@@ -112,39 +120,45 @@ public class CursoCostosList extends VerticalLayout {
     }
 */    
     
-    private Icon createUniqueIcon(CursoCostosVO cursoCosto) {
-        Icon icon;
+    private Checkbox createUniqueIcon(CursoCostosVO cursoCosto) {
+        //Icon icon;
+        Checkbox cbUnico = new Checkbox();
+        cbUnico.setEnabled(false);
+        cbUnico.setValue(false);
+        
+//        binder.bind(cbUnico, "Unico");
+//        columnUnico.setEditorComponent(cbUnico);
         
         if(cursoCosto.getCursoCostoPagoUnico())
-        	icon = new Icon(VaadinIcon.CHECK_CIRCLE_O);
-        else
-        	icon = new Icon(VaadinIcon.CLOSE_CIRCLE_O);
+        	//icon = new Icon(VaadinIcon.CHECK_CIRCLE_O);
+        	cbUnico.setValue(true);
                 
-        return icon;
+        return cbUnico;
     }
     
-    private Icon createScholarshipIcon(CursoCostosVO cursoCosto) {
-        Icon icon;
+    private Checkbox createScholarshipIcon(CursoCostosVO cursoCosto) {
+    	Checkbox cbBeca = new Checkbox();
+    	cbBeca.setEnabled(false);
+    	cbBeca.setValue(false);
         
         if(cursoCosto.getCursoCostoAplicaBeca())
-        	icon = new Icon(VaadinIcon.CHECK_CIRCLE_O);
-        else
-        	icon = new Icon(VaadinIcon.CLOSE_CIRCLE_O);
+        	cbBeca.setValue(true);
                 
-        return icon;
+        return cbBeca;
     }
     
-    private Icon createDebitIcon(CursoCostosVO cursoCosto) {
-        Icon icon;
-        
+    private Checkbox createDebitIcon(CursoCostosVO cursoCosto) {
+    	Checkbox cbAdeudo = new Checkbox();
+    	//cbAdeudo.setReadOnly(true);
+    	cbAdeudo.setValue(false);
+        cbAdeudo.setEnabled(false);
+    	
         if(cursoCosto.getCursoCostoGeneraAdeudo())
-        	icon = new Icon(VaadinIcon.CHECK_CIRCLE_O);
-        else
-        	icon = new Icon(VaadinIcon.CLOSE_CIRCLE_O);
-                
-        return icon;
+        	cbAdeudo.setValue(true);    
+        
+        return cbAdeudo;
     }
-    
+/*    
     private Label createDay(CursoCostosVO cursoCosto) {
     	Label label = new Label();
         if(Objects.nonNull(cursoCosto.getCursoCostoDiaPago()))
@@ -156,9 +170,9 @@ public class CursoCostosList extends VerticalLayout {
     //Boton de editar
     private Button createEditButton(CursoCostosVO cursoCosto) {
         Button edit = new Button("");
-//        edit.addClickListener(event -> form.open(cursoCosto,
-//                AbstractEditorDialog.Operation.EDIT));
-//        		{edit.getUI().ifPresent(ui -> ui.navigate("cursos/edit/"+curso.getCursoId()));});
+//        edit.addClickListener(event -> {
+//        	editor.editItem(cursoCosto);
+//        });
         edit.setIcon(new Icon(VaadinIcon.EDIT));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
@@ -166,12 +180,13 @@ public class CursoCostosList extends VerticalLayout {
         
         return edit;
     }
-    
+  */  
     //Boton de Eliminar
     private Button createDeleteButton(CursoCostosVO curso) {
-        Button edit = new Button();//"",event -> deleteCurso(curso));
-//                AbstractEditorDialog.Operation.EDIT));
-        //edit.setIcon(new Icon("lumo", "close"));
+        Button edit = new Button();
+        edit.addClickListener(event -> {
+        	deleteCost(curso);
+        });
         edit.setIcon(new Icon(VaadinIcon.CLOSE_CIRCLE));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
@@ -215,4 +230,24 @@ public class CursoCostosList extends VerticalLayout {
     }
     
  
+ // Eliminar
+ 	private void deleteCost(CursoCostosVO cursoCostosVO) {
+ 		ConfirmDialog
+         .createQuestion()
+         .withCaption("Eliminar Costo")
+         .withMessage("Deseas eliminar el Costo?")
+         .withOkButton(() -> {
+        	 boolean deleted = cursoCostoService.delete(cursoCostosVO.getCursoCostoId());
+        	 
+        	 if(deleted){
+        		 Notification.show("Costo eliminado", 3000, Position.BOTTOM_END);
+        		 updateView(cursoCostosVO.getCursoId());
+        	 }else{
+        		 Notification.show("El costo tiene un pago realizado por algún alumno", 3000, Position.BOTTOM_END);
+        	 }
+         }, ButtonOption.focus(), ButtonOption.caption("SI"))
+         .withCancelButton(ButtonOption.caption("NO"))
+         .open();
+ 	}
+    
 }

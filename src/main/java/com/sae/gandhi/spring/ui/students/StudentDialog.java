@@ -149,6 +149,7 @@ public class StudentDialog extends AbstractEditorDialog<AlumnosVO> {
 //		txtPhone1.getStyle().set("width", "100%").set("padding-top", "0px");
 //		txtPhone2.getStyle().set("width", "100%").set("padding-top", "0px");
 		txtEmail.setValueChangeMode(ValueChangeMode.EAGER);
+		
 //		
 		Div divTutorPhone = new Div();
 		VerticalLayout vlTutorPhone = new VerticalLayout();
@@ -182,6 +183,7 @@ public class StudentDialog extends AbstractEditorDialog<AlumnosVO> {
 		.withValidator(new EmailValidator("Email incorrecto"))
 		.withNullRepresentation("") //cuando no existe un texto, debe haber una validación para el bindeo
 		.bind(AlumnosVO::getAlumnoTutorEmail, AlumnosVO::setAlumnoTutorEmail); //Establece setter y getter para su bindeo
+		txtEmail.setRequired(false);
 		
 		getBinder().forField(txtPhone1)
 		.withConverter(String::trim, String::trim) //Quita espacios a la cadena introducida

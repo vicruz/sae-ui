@@ -29,4 +29,9 @@ public interface AlumnoPagoDAO extends JpaRepository<AlumnoPagos, Integer> {
 			+ "and (ap.alumnoPagoEstatus = ?1 or ap.alumnoPagoEstatus = ?2) "
 			+ "and ap.alumnoPagoFechaLimite < ?3")
 	List<AlumnoPagos> findPagoLimitExceed(Integer semaforoPendiente, Integer semaforoAdeudo, Date today);
+	
+	@Query("Select ap from AlumnoPagos ap where ap.alumnoPagoPago is not null and ap.alumnoPagoPago > 0 and ap.cursoCostoId = ?1")
+	public List<AlumnoPagos> findByCursoCostoIdPayed(Integer cursoCostoId);
+	
+	public void deleteByCursoCostoId(Integer cursoCostoId);
 }
