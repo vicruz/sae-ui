@@ -18,3 +18,5 @@ For documentation on using Vaadin Flow and Spring, visit [vaadin.com/docs](https
 For more information on Vaadin Flow, visit https://vaadin.com/flow.
 
 Para realizar el deploy en tomcat, las capetas dentro de `resources` se deben copiar a la raiz del proyecto
+
+1. Eliminar cursos y pagos
