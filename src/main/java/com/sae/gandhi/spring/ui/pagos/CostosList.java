@@ -155,12 +155,23 @@ public class CostosList extends VerticalLayout {
             AbstractEditorDialog.Operation operation) {
     	String operationKind;
     	if(operation.getNameInText().equals(AbstractEditorDialog.Operation.ADD.getNameInText())){
-    		costosService.save(costos);
+    		costos = costosService.save(costos);
     		operationKind = " agregado";
     	}else{
     		costosService.update(costos);
     		operationKind = " modificado";
     	}
+    	
+    	int index = lstCostos.indexOf(costos);
+    	if(index < 0){
+    		lstCostos.add(costos);
+    	}else{
+    		CostosVO costosInList = lstCostos.get(index);
+    		costosInList.setCostoActivo(costos.getCostoActivo());
+    		costosInList.setCostoMonto(costos.getCostoMonto());
+    		costosInList.setCostoNombre(costos.getCostoNombre());
+    	}
+    	
         Notification.show(
                 "Costo " + costos.getCostoNombre() + operationKind , 3000, Position.BOTTOM_END);
         updateView();
@@ -169,6 +180,7 @@ public class CostosList extends VerticalLayout {
     //Eliminar
     private void deleteCosto(CostosVO costos) {
     	costosService.deactivate(costos);
+    	lstCostos.remove(costos);
     	
         Notification.show("Costo "+costos.getCostoNombre() +" eliminado", 3000, Position.BOTTOM_END);
         updateView();

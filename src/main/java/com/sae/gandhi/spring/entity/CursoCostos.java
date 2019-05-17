@@ -23,8 +23,7 @@ public class CursoCostos {
 
 	@Id
 	@Column(name="CURSOCOSTO_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@NotNull
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer cursoCostoId;
 	
 	@Column(name="CURSO_ID")

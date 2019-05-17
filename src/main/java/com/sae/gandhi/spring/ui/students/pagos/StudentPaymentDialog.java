@@ -33,10 +33,12 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 	private DatePicker dpFechaPago; 
 	private TextField txtPaymentAmount;
 	private VerticalLayout vlPayment = new VerticalLayout();
+	
+	boolean isAdmin;
 
 	protected StudentPaymentDialog(BiConsumer<AlumnoPagoVO, Operation> itemSaver,
 			Consumer<AlumnoPagoVO> itemDeleter, Integer alumnoPagoId, String cursoNombre, BigDecimal montoTotal,
-			BigDecimal montoPorPagar, BigDecimal montoSaldo) {
+			BigDecimal montoPorPagar, BigDecimal montoSaldo, boolean isAdmin) {
 		super("Pago", itemSaver, itemDeleter);
 
 		//this.alumnoPagoId = alumnoPagoId;
@@ -44,6 +46,7 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		this.montoTotal = montoTotal;
 		this.montoPorPagar = montoPorPagar;
 		this.montoSaldo = montoSaldo;
+		this.isAdmin = isAdmin;
 		
 		addDataPaymentFields();
 	}
@@ -91,8 +94,9 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 			vlPayment.add(cbUseSaldo);
 		}
 		
-		//TODO Solo mostrar cuando sea administrador
-		vlPayment.add(dpFechaPago);
+		//Solo mostrar cuando sea administrador
+		if(isAdmin)
+			vlPayment.add(dpFechaPago);
 		
 		vlPayment.add(txtPaymentAmount);
 		getFormLayout().add(vlPayment);
@@ -105,7 +109,7 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 
 	@Override
 	protected void confirmDelete() {
-		// TODO Auto-generated method stub
+		// Sin uso en esta clase
 		
 	}
 

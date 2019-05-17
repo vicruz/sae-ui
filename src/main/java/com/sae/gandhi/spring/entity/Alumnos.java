@@ -12,7 +12,6 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="ALUMNOS")
@@ -20,8 +19,7 @@ public class Alumnos {
 
 	@Id
 	@Column(name="ALUMNO_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@NotNull
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer alumnoId;
 	
 	@Column(name="ALUMNO_NOMBRE")

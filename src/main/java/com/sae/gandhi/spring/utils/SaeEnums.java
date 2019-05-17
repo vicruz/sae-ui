@@ -204,4 +204,38 @@ public class SaeEnums {
 		}
 	}
 	
+	public enum Rol{
+		ADMIN(1,"admin"),
+		USER(2,"user");
+		
+		private Integer rolId;
+		private String rolName;
+		
+		Rol(Integer rolId, String rolName){
+			this.rolId = rolId;
+			this.rolName = rolName;
+		}
+		
+		public Integer getRolId(){
+			return rolId;
+		}
+
+		public String getRolName(){
+			return rolName;
+		}
+		
+		public static Rol getRol(Integer rolId){
+			switch(rolId){
+			case 1:
+				return ADMIN;
+			default:
+				return USER;
+			}
+		}
+		
+		public static String[] getAllRoles(){
+			return new String[] {Rol.ADMIN.getRolName(), Rol.USER.getRolName()};
+		}
+	}
+
 }

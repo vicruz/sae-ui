@@ -28,12 +28,13 @@ public class CostosServiceImpl implements CostosService {
 	}
 
 	@Override
-	public void save(CostosVO costoDto) {
+	public CostosVO save(CostosVO costoDto) {
 		Costos costo = CostosBuilder.createCosto(costoDto);
 		costo.setCostoActivo(true);		
 		costo.setFechaCreacion(Calendar.getInstance().getTime());
 		
-		costosDAO.save(costo);
+		Costos costo2 = costosDAO.save(costo);
+		return CostosBuilder.createCostoVO(costo2);
 	}
 
 	@Override

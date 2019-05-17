@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.MainView;
 import com.sae.gandhi.spring.service.CursosService;
+import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.CursosVO;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
@@ -50,10 +52,16 @@ public class CursosList extends VerticalLayout {
     
     private Grid<CursosVO> grid = new Grid<>();
     List<CursosVO> lstCursos;
+    private SessionService sessionService;
+    private boolean isAdmin;
     
     @Autowired
-    public CursosList(CursosService cursosService){
+    public CursosList(//SessionService sessionService, 
+    		CursosService cursosService){
     	this.cursosService = cursosService;
+    	//this.sessionService = sessionService;
+    	isAdmin = UI.getCurrent().getSession().getAttribute("isAdmin")==null?false:
+    		(boolean)UI.getCurrent().getSession().getAttribute("isAdmin");
     	initView();
 
         addSearchBar();
@@ -146,7 +154,11 @@ public class CursosList extends VerticalLayout {
         Button edit = new Button("");
         edit.addClickListener(event -> //form.open(curso,
                 //AbstractEditorDialog.Operation.EDIT));
-        		{edit.getUI().ifPresent(ui -> ui.navigate("cursos/edit/"+curso.getCursoId()));});
+        		{
+        			UI.getCurrent().getSession().lock();
+        			edit.getUI().ifPresent(ui -> ui.navigate("cursos/edit/"+curso.getCursoId()));
+        			UI.getCurrent().getSession().unlock();
+        		});
         edit.setIcon(new Icon(VaadinIcon.EDIT));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
@@ -168,6 +180,12 @@ public class CursosList extends VerticalLayout {
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Eliminar");
+        
+        //Si el usuario NO es ADMIN, se deshabilita
+        //if(!sessionService.isAdmin()){
+        if(!isAdmin){
+        	edit.setEnabled(false);
+        }
         
         if(curso.getCursoStatus()==3 || curso.getCursoStatus()==4){
         	edit.setEnabled(false);

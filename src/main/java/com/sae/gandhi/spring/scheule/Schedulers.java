@@ -34,7 +34,7 @@ public class Schedulers {
 	
 	//Se ejecuta todos los dias a las 00:20 a.m.
 	//@Scheduled(cron="0 20 0 * * *")
-	@Scheduled(cron="0 0/1 * * * *") //Para debug cada 2 minutos
+	@Scheduled(cron="0 0/10 * * * *") //Para debug cada 2 minutos
 	public void updateStatedAndFinishedCourses(){
 		log.info("Iniciando la actualización de estatus de cursos: " + Calendar.getInstance().getTime());
 		cursosService.updateStartedCourses();

@@ -6,6 +6,7 @@ public class UsuariosVO {
 	private String usuarioNombre;
 	private String usuarioPassword;
 	private Integer usuarioRol;
+	private String usuarioLogin;
 	
 	public String getUsuarioEmail() {
 		return usuarioEmail;
@@ -30,6 +31,12 @@ public class UsuariosVO {
 	}
 	public void setUsuarioRol(Integer usuarioRol) {
 		this.usuarioRol = usuarioRol;
+	}
+	public String getUsuarioLogin() {
+		return usuarioLogin;
+	}
+	public void setUsuarioLogin(String usuarioLogin) {
+		this.usuarioLogin = usuarioLogin;
 	}
 	
 }

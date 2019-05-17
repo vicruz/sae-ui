@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -20,8 +19,7 @@ public class Costos {
 
 	@Id
 	@Column(name="COSTO_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@NotNull
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer costoId;
 	
 	@Column(name="COSTO_NOMBRE")

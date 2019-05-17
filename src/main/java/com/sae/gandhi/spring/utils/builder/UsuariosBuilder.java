@@ -12,8 +12,21 @@ public class UsuariosBuilder {
 		usuario.setUsuarioNombre(vo.getUsuarioNombre());
 		usuario.setUsuarioPassword(vo.getUsuarioPassword());
 		usuario.setUsuarioRol(vo.getUsuarioRol());
+		usuario.setUsuarioLogin(vo.getUsuarioLogin());
 		
 		return usuario;
+	}
+	
+	public static UsuariosVO createUsuariosVO(Usuarios usuario){
+		UsuariosVO vo = new UsuariosVO();
+		
+		vo.setUsuarioEmail(usuario.getUsuarioEmail());
+		vo.setUsuarioNombre(usuario.getUsuarioNombre());
+		vo.setUsuarioPassword(usuario.getUsuarioPassword());
+		vo.setUsuarioRol(usuario.getUsuarioRol());
+		vo.setUsuarioLogin(usuario.getUsuarioLogin());
+		
+		return vo;
 	}
 	
 }

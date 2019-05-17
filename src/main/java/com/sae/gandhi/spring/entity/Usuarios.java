@@ -11,6 +11,10 @@ import javax.validation.constraints.NotNull;
 public class Usuarios {
 	
 	@Id
+	@Column(name="USUARIO_LOGIN")
+	@NotNull
+	private String usuarioLogin;
+	
 	@Column(name="USUARIO_EMAIL")
 	@NotNull
 	private String usuarioEmail;
@@ -26,7 +30,7 @@ public class Usuarios {
 	@Column(name="USUARIO_ROL")
 	@NotNull
 	private Integer usuarioRol;
-
+	
 	public String getUsuarioEmail() {
 		return usuarioEmail;
 	}
@@ -57,6 +61,14 @@ public class Usuarios {
 
 	public void setUsuarioRol(Integer usuarioRol) {
 		this.usuarioRol = usuarioRol;
+	}
+
+	public String getUsuarioLogin() {
+		return usuarioLogin;
+	}
+
+	public void setUsuarioLogin(String usuarioLogin) {
+		this.usuarioLogin = usuarioLogin;
 	}
 
 }

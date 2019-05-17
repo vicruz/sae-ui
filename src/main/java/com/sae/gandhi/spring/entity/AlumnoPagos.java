@@ -19,7 +19,7 @@ public class AlumnoPagos {
 
 	@Id
 	@Column(name = "ALUMNOPAGO_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer alumnoPagoId;
 	
 	@Column(name="ALUMNOCURSO_ID")

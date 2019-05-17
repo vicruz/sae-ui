@@ -19,6 +19,7 @@ import com.sae.gandhi.spring.MainView;
 import com.sae.gandhi.spring.service.AlumnoPagoService;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.service.CursosService;
+import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
@@ -26,6 +27,7 @@ import com.sae.gandhi.spring.utils.StreamImage;
 import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
@@ -78,19 +80,25 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	private AlumnosService alumnosService;
 	private CursosService cursosService;
 	private AlumnoPagoService alumnoPagoService;
-
+	private SessionService sessionService;
+	
 	private Grid<AlumnoPagoVO> grid;
 	private Binder<AlumnoPagoVO> binder;
 	private Editor<AlumnoPagoVO> editor;
 
 	private StudentPaymentDialog form;
+	private boolean isAdmin;
 
 	@Autowired
-	public StudentPaymentsEditorPage(AlumnosService alumnosService, CursosService cursosService,
-			AlumnoPagoService alumnoPagoService) {
+	public StudentPaymentsEditorPage(//SessionService sessionService, 
+			AlumnosService alumnosService, 
+			CursosService cursosService, AlumnoPagoService alumnoPagoService) {
 		this.alumnosService = alumnosService;
 		this.cursosService = cursosService;
 		this.alumnoPagoService = alumnoPagoService;
+		//this.sessionService = sessionService;
+		isAdmin = UI.getCurrent().getSession().getAttribute("isAdmin")==null?false:
+    		(boolean)UI.getCurrent().getSession().getAttribute("isAdmin");
 	}
 
 	@Override
@@ -99,7 +107,6 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		binder = new Binder<>(AlumnoPagoVO.class);
 
 		addTitle();
-
 		// Si no hay parámetros no agrega ningún dato
 		if (parameter != null && !parameter.equals("")) {
 			StringTokenizer st = new StringTokenizer(parameter, "/");
@@ -131,9 +138,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		searchField.addClassName("view-toolbar__search-field");
 		// searchField.addValueChangeListener(e -> updateView());
 		searchField.setValueChangeMode(ValueChangeMode.EAGER);
-		searchField.getStyle().set("width", "100%");
 
 		viewToolbar.add(searchField);
+		viewToolbar.getStyle().set("width", "100%");
 		add(viewToolbar);
 		add(header);
 	}
@@ -215,12 +222,12 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		grid.addColumn(new ComponentRenderer<>(this::createConceptLabel)).setHeader("Concepto").setFlexGrow(5)
 				.setResizable(true);
 		Column<AlumnoPagoVO> columnMonto = grid.addColumn(new NumberRenderer<>(AlumnoPagoVO::getAlumnoPagoMonto, NumberFormat.getCurrencyInstance()))
-				.setHeader("Monto").setFlexGrow(1);
+				.setHeader("Monto").setFlexGrow(1).setResizable(true);
 		//Fecha Límite
 		Column<AlumnoPagoVO> columnDate = grid
 				.addColumn(new LocalDateRenderer<>(AlumnoPagoVO::getAlumnoPagoFechaLimite,
 						DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
-				.setHeader("Fecha Límite").setFlexGrow(1);
+				.setHeader("Fecha Límite").setFlexGrow(2).setResizable(true);
 		// Boton para editar
 		Column<AlumnoPagoVO> editorColumn = grid.addComponentColumn(vo -> {
 			if (vo.getEstatusId() == SaeEnums.Pago.ADEUDO.getStatusId()
@@ -231,6 +238,11 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 				buttonEdit.getElement().setAttribute("theme", "tertiary");
 				buttonEdit.getElement().setAttribute("title", "Editar");
 				buttonEdit.addClickListener(e -> editor.editItem(vo));
+				
+				//if(!sessionService.isAdmin()){
+				if(!isAdmin){
+					buttonEdit.setEnabled(false);
+				}
 
 				return buttonEdit;
 			} else {
@@ -238,13 +250,15 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			}
 		});
 		grid.addColumn(new NumberRenderer<>(AlumnoPagoVO::getAlumnoPagoPago, NumberFormat.getCurrencyInstance()))
-				.setHeader("Pago").setFlexGrow(1);
+				.setHeader("Pago").setResizable(true).setFlexGrow(1);
 		grid.addColumn(new LocalDateRenderer<>(AlumnoPagoVO::getAlumnoPagoFechaPago,
-				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))).setHeader("Fecha Pago").setFlexGrow(1);
+				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))).setHeader("Fecha Pago").setResizable(true).setFlexGrow(2);
 		grid.addColumn(new ComponentRenderer<>(this::createEstatusLabel)).setHeader("Estatus").setFlexGrow(1);
 		grid.addColumn(new ComponentRenderer<>(this::createPayButton)).setHeader("Pago").setFlexGrow(1);
 		
-		grid.addColumn(new ComponentRenderer<>(this::createDeleteButton)).setHeader("Eliminar").setFlexGrow(1);
+		//if(sessionService.isAdmin())
+		if(isAdmin)
+			grid.addColumn(new ComponentRenderer<>(this::createDeleteButton)).setHeader("Eliminar").setFlexGrow(1);
 		
 		grid.setWidth("100%");
 		grid.setSelectionMode(SelectionMode.SINGLE);
@@ -353,8 +367,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 				alumnoVO = alumnosService.findById(alumnoVO.getAlumnoId());
 				form = new StudentPaymentDialog(this::savePayment, this::deletePayment,
 						vo.getAlumnoPagoId(), createConceptLabel(vo).getText(), vo.getAlumnoPagoMonto(), 
-						vo.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago()), alumnoVO.getAlumnoSaldo()
-						);
+						vo.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago()), alumnoVO.getAlumnoSaldo(),
+						//sessionService.isAdmin());
+						isAdmin);
 				vo.setAlumnoPagoPago(BigDecimal.ZERO);
 				form.open(vo, AbstractEditorDialog.Operation.ADD);
 			});			

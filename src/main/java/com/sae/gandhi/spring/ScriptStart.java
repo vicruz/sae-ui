@@ -4,43 +4,54 @@ import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.Calendar;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sae.gandhi.spring.service.AlumnoCursoService;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.service.CursoCostosService;
 import com.sae.gandhi.spring.service.CursosService;
+import com.sae.gandhi.spring.service.UsuariosService;
+import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.sae.gandhi.spring.vo.CostosVO;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
+import com.sae.gandhi.spring.vo.UsuariosVO;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 
-@Component
-public class ScriptStart implements ApplicationRunner{
+//@SpringComponent
+public class ScriptStart {//implements ApplicationRunner{
 	
 	private CostosService costosService;
 	private CursosService cursosService;
 	private AlumnosService alumnosService;
 	private CursoCostosService cursoCostosService;
 	private AlumnoCursoService alumnoCursoService;
+	private UsuariosService usuarioService;
+	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
+//	@Autowired
 	public ScriptStart(CostosService costosService, CursosService cursosService, AlumnosService alumnosService,
-			CursoCostosService cursoCostosService, AlumnoCursoService alumnoCursoService){
+			CursoCostosService cursoCostosService, AlumnoCursoService alumnoCursoService, UsuariosService usuarioService,
+			PasswordEncoder passwordEncoder){
 		this.costosService = costosService;
 		this.cursosService = cursosService;
 		this.alumnosService = alumnosService;
 		this.cursoCostosService = cursoCostosService;
 		this.alumnoCursoService = alumnoCursoService;
+		this.usuarioService = usuarioService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
+//	@PostConstruct
+	//@Override
+	public void run() throws Exception {
 		CostosVO costoVO = new CostosVO();
 		costoVO.setCostoActivo(true);
 		costoVO.setCostoMonto(BigDecimal.valueOf(1700));
@@ -157,6 +168,22 @@ public class ScriptStart implements ApplicationRunner{
 		costosService.save(costo3VO);
 		
 		
+		//Usuarios
+		UsuariosVO usuariosVO = new UsuariosVO();
+		usuariosVO.setUsuarioEmail("admin@admin.com");
+		usuariosVO.setUsuarioNombre("Admin");
+		usuariosVO.setUsuarioPassword(passwordEncoder.encode("admin"));
+		usuariosVO.setUsuarioRol(SaeEnums.Rol.ADMIN.getRolId());
+		usuariosVO.setUsuarioLogin("admin");
+		usuarioService.save(usuariosVO);
+		
+		UsuariosVO usuariosVO2 = new UsuariosVO();
+		usuariosVO2.setUsuarioEmail("user@user.com");
+		usuariosVO2.setUsuarioNombre("User");
+		usuariosVO2.setUsuarioPassword(passwordEncoder.encode("user"));
+		usuariosVO2.setUsuarioRol(SaeEnums.Rol.USER.getRolId());
+		usuariosVO2.setUsuarioLogin("user");
+		usuarioService.save(usuariosVO2);
 	}
 
 }
