@@ -26,8 +26,7 @@ public class SessionServiceImpl implements SessionService{
 
 	@Override
 	public boolean isAdmin() {
-		if(usuarioVO!=null &&
-				usuarioVO.getUsuarioRol()==SaeEnums.Rol.ADMIN.getRolId())
+		if(usuarioVO!=null && usuarioVO.getUsuarioRol())
 			return true;
 		
 		return false;

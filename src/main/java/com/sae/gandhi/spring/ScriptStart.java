@@ -7,7 +7,6 @@ import java.util.Calendar;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sae.gandhi.spring.service.AlumnoCursoService;
@@ -173,7 +172,7 @@ public class ScriptStart {//implements ApplicationRunner{
 		usuariosVO.setUsuarioEmail("admin@admin.com");
 		usuariosVO.setUsuarioNombre("Admin");
 		usuariosVO.setUsuarioPassword(passwordEncoder.encode("admin"));
-		usuariosVO.setUsuarioRol(SaeEnums.Rol.ADMIN.getRolId());
+		usuariosVO.setUsuarioRol(true);
 		usuariosVO.setUsuarioLogin("admin");
 		usuarioService.save(usuariosVO);
 		
@@ -181,7 +180,7 @@ public class ScriptStart {//implements ApplicationRunner{
 		usuariosVO2.setUsuarioEmail("user@user.com");
 		usuariosVO2.setUsuarioNombre("User");
 		usuariosVO2.setUsuarioPassword(passwordEncoder.encode("user"));
-		usuariosVO2.setUsuarioRol(SaeEnums.Rol.USER.getRolId());
+		usuariosVO2.setUsuarioRol(true);
 		usuariosVO2.setUsuarioLogin("user");
 		usuarioService.save(usuariosVO2);
 	}

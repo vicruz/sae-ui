@@ -1,6 +1,10 @@
 package com.sae.gandhi.spring.utils.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sae.gandhi.spring.entity.Usuarios;
+import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.UsuariosVO;
 
 public class UsuariosBuilder {
@@ -11,7 +15,7 @@ public class UsuariosBuilder {
 		usuario.setUsuarioEmail(vo.getUsuarioEmail());
 		usuario.setUsuarioNombre(vo.getUsuarioNombre());
 		usuario.setUsuarioPassword(vo.getUsuarioPassword());
-		usuario.setUsuarioRol(vo.getUsuarioRol());
+		usuario.setUsuarioRol(vo.getUsuarioRol()?SaeEnums.Rol.ADMIN.getRolId():SaeEnums.Rol.USER.getRolId());
 		usuario.setUsuarioLogin(vo.getUsuarioLogin());
 		
 		return usuario;
@@ -23,10 +27,21 @@ public class UsuariosBuilder {
 		vo.setUsuarioEmail(usuario.getUsuarioEmail());
 		vo.setUsuarioNombre(usuario.getUsuarioNombre());
 		vo.setUsuarioPassword(usuario.getUsuarioPassword());
-		vo.setUsuarioRol(usuario.getUsuarioRol());
+		vo.setUsuarioRol(usuario.getUsuarioRol()==SaeEnums.Rol.ADMIN.getRolId()?true:false);
 		vo.setUsuarioLogin(usuario.getUsuarioLogin());
 		
 		return vo;
+	}
+	
+	public static List<UsuariosVO> createListUsuariosVO(List<Usuarios> lst){
+		List<UsuariosVO> lstUsuarios = new ArrayList<>();
+		
+		for(Usuarios usr : lst){
+			lstUsuarios.add(createUsuariosVO(usr));
+		}
+		
+		return lstUsuarios;
+		
 	}
 	
 }

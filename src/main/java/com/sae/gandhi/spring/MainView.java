@@ -48,8 +48,7 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		UsuariosVO usuarioVO = usuariosService.findByUsuarioLogin(SecurityUtils.getUsername());
 		//sessionService.setUsuarioVO(usuarioVO);
 		boolean isAdmin = false;
-		if(usuarioVO!=null && 
-				usuarioVO.getUsuarioRol()==SaeEnums.Rol.ADMIN.getRolId()){
+		if(usuarioVO!=null && usuarioVO.getUsuarioRol()){
 			isAdmin = true;
 		}
 		UI.getCurrent().getSession().lock();
