@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.ui.students.pagos;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -19,7 +20,8 @@ import com.sae.gandhi.spring.MainView;
 import com.sae.gandhi.spring.service.AlumnoPagoService;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.service.CursosService;
-import com.sae.gandhi.spring.service.SessionService;
+import com.sae.gandhi.spring.service.ReportService;
+//import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
@@ -34,6 +36,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
@@ -80,7 +83,8 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	private AlumnosService alumnosService;
 	private CursosService cursosService;
 	private AlumnoPagoService alumnoPagoService;
-	private SessionService sessionService;
+	private ReportService reportService;
+//	private SessionService sessionService;
 	
 	private Grid<AlumnoPagoVO> grid;
 	private Binder<AlumnoPagoVO> binder;
@@ -92,10 +96,11 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	@Autowired
 	public StudentPaymentsEditorPage(//SessionService sessionService, 
 			AlumnosService alumnosService, 
-			CursosService cursosService, AlumnoPagoService alumnoPagoService) {
+			CursosService cursosService, AlumnoPagoService alumnoPagoService, ReportService reportService) {
 		this.alumnosService = alumnosService;
 		this.cursosService = cursosService;
 		this.alumnoPagoService = alumnoPagoService;
+		this.reportService = reportService;
 		//this.sessionService = sessionService;
 		isAdmin = UI.getCurrent().getSession().getAttribute("isAdmin")==null?false:
     		(boolean)UI.getCurrent().getSession().getAttribute("isAdmin");
@@ -148,10 +153,13 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	// Datos del alumno
 	public void addStudentData() {
 		HorizontalLayout hlLayout = new HorizontalLayout();
+		String alumnoNombre;
 		alumnoVO = alumnosService.findById(alumnoId);
 		if (cursoId != null) {
 			cursosVO = cursosService.findById(cursoId);
 		}
+		
+		alumnoNombre = alumnoVO.getAlumnoNombre() + " " + alumnoVO.getAlumnoApPaterno() + " " + alumnoVO.getAlumnoApMaterno();
 
 		// Imagen del alumno
 		Image image;
@@ -181,8 +189,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		lbStudent.getStyle().set("fontSize", "14px");
 		lbStudent.getStyle().set("fontWeight", "bold");
 		lbStudent.getStyle().set("width", "30%");
-		lbStudent.setText(
-				alumnoVO.getAlumnoNombre() + " " + alumnoVO.getAlumnoApPaterno() + " " + alumnoVO.getAlumnoApMaterno());
+		lbStudent.setText(alumnoNombre);
 
 		// Nombre del curso
 		// Tamaño 14 y en negritas
@@ -206,9 +213,21 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		edit.getElement().setAttribute("theme", "tertiary");
 		edit.getElement().setAttribute("title", "Editar");
 		edit.setWidth("30%");
-
+		
+		
+		Anchor download = new Anchor(new StreamResource(alumnoNombre+".pdf", () -> getReport()),"");
+		download.getElement().setAttribute("download", true);
+		Button report = new Button("Reporte");
+		report.setIcon(new Icon(VaadinIcon.CLOUD_DOWNLOAD));
+		report.addClassName("review__edit");
+		report.getElement().setAttribute("theme", "tertiary");
+		report.getElement().setAttribute("title", "Descargar");
+		//report.setWidth("30%");
+		//download.add(new Button(new Icon(VaadinIcon.DOWNLOAD_ALT)));
+		download.add(report);
+		 
 		hlLayout.getStyle().set("width", "100%");
-		hlLayout.add(divImage, lbStudent, lbCurso, edit);
+		hlLayout.add(divImage, lbStudent, lbCurso, edit, download);
 		add(hlLayout);
 
 	}
@@ -450,4 +469,8 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
         .open();
 	}
 
+	
+	private InputStream getReport(){
+		return reportService.generateReport(alumnoVO, cursosVO, alumnoId, cursoId);
+	}
 }

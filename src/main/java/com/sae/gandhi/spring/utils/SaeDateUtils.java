@@ -44,7 +44,7 @@ public class SaeDateUtils {
 	}
 	
 	/**
-     * Método que calcula los meses que han pasado dese fecha inicio hasta
+     * Método que calcula los meses que han pasado desde fecha inicio hasta
      * fecha fin.
      * @param fechaInicio: fecha de inicio de comparación.
      * @param fechaFin: fecha de finalización de comparación.
@@ -108,7 +108,7 @@ public class SaeDateUtils {
     }
     
     /**
-     * Método que formatea un afecha en base al formato pasado como
+     * Método que formatea una fecha en base al formato pasado como
      * parámetro.
      * @param fecha: fecha a formatear
      * @param pattern: formato que se dará a la fecha.
@@ -125,4 +125,15 @@ public class SaeDateUtils {
             return fechaFormateada;
         }
     } 
+    
+    /**
+     * Dada una fecha, obtiene el mes y el año y los concatena en una cadena
+     * @param date
+     * @return
+     */
+    public static String formatMonthYear(Date date){
+    	LocalDate localDate = dateToLocalDate(date);
+    	return (localDate.getMonth().getValue()<10?"0"+localDate.getMonth().getValue():localDate.getMonth().getValue())
+    			+ "/" + localDate.getYear();
+    }
 }

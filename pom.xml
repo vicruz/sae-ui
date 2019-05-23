@@ -147,6 +147,19 @@
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-config</artifactId>
 		</dependency>
+		
+		<!-- JasperReports -->
+		<dependency>
+    		<groupId>net.sf.jasperreports</groupId>
+    		<artifactId>jasperreports</artifactId>
+    		<version>5.6.1</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>com.itextpdf</groupId>
+    		<artifactId>itextpdf</artifactId>
+    		<version>5.5.3</version>
+		</dependency>
         
 	</dependencies>
 

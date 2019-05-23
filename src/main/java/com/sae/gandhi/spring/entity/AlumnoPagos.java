@@ -2,6 +2,7 @@ package com.sae.gandhi.spring.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -50,6 +52,9 @@ public class AlumnoPagos {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="CURSOCOSTO_ID", insertable=false, updatable=false)
 	private CursoCostos cursoCostos;
+	
+	@OneToMany(mappedBy="alumnoPago", fetch = FetchType.LAZY)
+	private List<AlumnoPagosBitacora> lstAlumnoPagosBitacora;
 	
 	public Integer getAlumnoPagoId() {
 		return alumnoPagoId;
@@ -129,6 +134,14 @@ public class AlumnoPagos {
 
 	public void setCursoCostos(CursoCostos cursoCostos) {
 		this.cursoCostos = cursoCostos;
+	}
+
+	public List<AlumnoPagosBitacora> getLstAlumnoPagosBitacora() {
+		return lstAlumnoPagosBitacora;
+	}
+
+	public void setLstAlumnoPagosBitacora(List<AlumnoPagosBitacora> lstAlumnoPagosBitacora) {
+		this.lstAlumnoPagosBitacora = lstAlumnoPagosBitacora;
 	}
 	
 }
