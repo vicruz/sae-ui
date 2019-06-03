@@ -2,6 +2,7 @@ package com.sae.gandhi.spring.service;
 
 import java.util.List;
 
+import com.sae.gandhi.spring.vo.AlumnosListVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 
 public interface AlumnosService {
@@ -13,4 +14,5 @@ public interface AlumnosService {
 	public AlumnosVO findByAlumnoNameAndAlumnoApPaternoAndAlumnoApMaterno(String name, String apPaterno, String apMaterno);	
 	public void update(AlumnosVO alumnoVO);
 	public void changeActivo(boolean status, Integer alumnoId);
+	public List<AlumnosListVO> getAlumnosList();
 }

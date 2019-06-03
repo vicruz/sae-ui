@@ -3,14 +3,13 @@ package com.sae.gandhi.spring;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.security.SecurityUtils;
-import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.service.UsuariosService;
 import com.sae.gandhi.spring.ui.cursos.CursosList;
+import com.sae.gandhi.spring.ui.dashboard.DashboardUI;
 import com.sae.gandhi.spring.ui.pagos.CostosList;
 import com.sae.gandhi.spring.ui.students.StudentsList;
 import com.sae.gandhi.spring.ui.user.UsersList;
 import com.sae.gandhi.spring.utils.SaeConstants;
-import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.UsuariosVO;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -58,11 +57,11 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		H2 title = new H2("Gandhi");
 		title.addClassName("main-layout__title");
 
-		RouterLink reviews = new RouterLink();
-		reviews.add(new Icon(VaadinIcon.LIST), new Text("Dashboard"));
+		RouterLink dahsboard = new RouterLink(null, DashboardUI.class);
+		dahsboard.add(new Icon(VaadinIcon.LIST), new Text("Dashboard"));
 		// Only show as active for the exact URL, but not for sub paths
-		reviews.setHighlightCondition(HighlightConditions.sameLocation());
-		reviews.getElement().getStyle().set("padding-right", "5px");
+		dahsboard.setHighlightCondition(HighlightConditions.sameLocation());
+		dahsboard.getElement().getStyle().set("padding-right", "5px");
 		
 /*
 		RouterLink categories = new RouterLink(null, CategoriesList.class);
@@ -99,7 +98,7 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		
 
 		//Div navigation = new Div(reviews, categories, payments, courses);
-		Div navigation = new Div(reviews, payments, courses, students);//,users,divLogout);
+		Div navigation = new Div(dahsboard, payments, courses, students);//,users,divLogout);
 		if (SecurityUtils.isAccessGranted(UsersList.class)) {
 			navigation.add(users);
 		}

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sae.gandhi.spring.dao.AlumnosDAO;
+import com.sae.gandhi.spring.dao.CursosDAO;
 import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.utils.builder.AlumnosBuilder;
+import com.sae.gandhi.spring.vo.AlumnosListVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 
 @Transactional
@@ -21,6 +23,9 @@ public class AlumnosServiceImpl implements AlumnosService {
 
 	@Autowired
 	private AlumnosDAO alumnosDAO;
+	
+	@Autowired
+	private CursosDAO cursosDAO;
 	
 	@Override
 	public List<AlumnosVO> findAll() {
@@ -71,6 +76,18 @@ public class AlumnosServiceImpl implements AlumnosService {
 			alumno.setAlumnoActivo(status);
 		}
 		//alumnosDAO.changeActivo(status, alumnoId);
+	}
+
+	@Override
+	public List<AlumnosListVO> getAlumnosList() {
+		List<AlumnosListVO> lst = alumnosDAO.getAlumnosList(); 
+
+		//Obtener el curso del alumno
+		for(AlumnosListVO vo : lst){
+			vo.setCursoNombre(cursosDAO.getGradeCourseByStudent(vo.getAlumnoId()));
+		}
+		
+		return lst;
 	}
 
 }

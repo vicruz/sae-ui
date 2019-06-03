@@ -12,6 +12,7 @@ import com.sae.gandhi.spring.MainView;
 import com.sae.gandhi.spring.service.AlumnosService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.StreamImage;
+import com.sae.gandhi.spring.vo.AlumnosListVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -55,8 +56,8 @@ public class StudentsList extends VerticalLayout {
     private StudentDialog form;// = new StudentDialog(this::saveStudent, this::deleteStudent);
     
     //Gris que contendrá los costos
-    private final Grid<AlumnosVO> grid = new Grid<>();
-    List<AlumnosVO> lstAlumnos;
+    private final Grid<AlumnosListVO> grid = new Grid<>();
+    List<AlumnosListVO> lstAlumnos;
     
     @Autowired
     public StudentsList(AlumnosService alumnosService){
@@ -111,7 +112,7 @@ public class StudentsList extends VerticalLayout {
     }
     
     
-    private Div createDivStudents(AlumnosVO alumno) {
+    private Div createDivStudents(AlumnosListVO alumno) {
         Div div = new Div();
         Div divImage = new Div();
         Div divData = new Div();
@@ -185,17 +186,17 @@ public class StudentsList extends VerticalLayout {
 
         
         //Nombre del curso
-        //TODO
         Label lbCourse = new Label();
         lbCourse.getStyle().set("fontSize", "14px")
         	.set("fontWeight", "bold");
-        lbCourse.setText("3° DE PRIMARIA 2018 - 2019");
+        lbCourse.setText(alumno.getCursoNombre());
         lbCourse.setWidth("70%");
         hlDataCourse.add(lbCourse);
         hlDataCourse.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, lbCourse);
         
         
         //Estatus de pago del alumno
+        //TODO
         Label lbStatus = new Label();
         lbStatus.getStyle().set("fontSize", "12px");
         lbStatus.setText("pagado");
@@ -235,17 +236,15 @@ public class StudentsList extends VerticalLayout {
     
     //Carga los datos del grid
     private void loadData() {
-        lstAlumnos = alumnosService.findAll();
+        lstAlumnos = alumnosService.getAlumnosList();
         grid.setItems(lstAlumnos);
     }
     
     private void updateView() {
-    	List<AlumnosVO> lstAlumnosGrid = new ArrayList<>();
+    	List<AlumnosListVO> lstAlumnosGrid = new ArrayList<>();
         if (searchField.getValue().length() > 0 && !searchField.getValue().trim().equals("")) {
-        	for(AlumnosVO vo: lstAlumnos){
+        	for(AlumnosListVO vo: lstAlumnos){
         		String nombre = vo.getAlumnoNombre()+" "+vo.getAlumnoApPaterno()+" "+vo.getAlumnoApMaterno();
-        		//alumno.getAlumnoTutor()
-        		//curso
         		if(nombre.toUpperCase().contains(searchField.getValue().toUpperCase()) || 
         				vo.getAlumnoTutor().toUpperCase().contains(searchField.getValue().toUpperCase())){
         			lstAlumnosGrid.add(vo);
@@ -260,9 +259,9 @@ public class StudentsList extends VerticalLayout {
   //Metodo de salvar
     private void saveStudent(AlumnosVO alumnosVo,
             AbstractEditorDialog.Operation operation) {
-    	System.out.println(alumnosVo.getAlumnoNombre()+ " - " + alumnosVo.getAlumnoImagen());
-    	System.out.println(form.getBuffer().getFileName());
-    	System.out.println(form.getBuffer().getInputStream());
+//    	System.out.println(alumnosVo.getAlumnoNombre()+ " - " + alumnosVo.getAlumnoImagen());
+//    	System.out.println(form.getBuffer().getFileName());
+//    	System.out.println(form.getBuffer().getInputStream());
     	if(Objects.nonNull(form.getBuffer().getInputStream())){
     		try {
 				alumnosVo.setAlumnoImagen(IOUtils.toByteArray(form.getBuffer().getInputStream()));
