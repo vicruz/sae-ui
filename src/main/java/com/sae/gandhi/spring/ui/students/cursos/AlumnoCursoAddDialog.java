@@ -2,7 +2,9 @@ package com.sae.gandhi.spring.ui.students.cursos;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import com.sae.gandhi.spring.vo.CursosVO;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -41,7 +44,7 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 	private Checkbox chDiscount;
 	private TextField txtBeca;
 	private TextField txtDiscount;
-	
+	private DatePicker startDatePicker = new DatePicker("Fecha Ingreso");
 	
 	public AlumnoCursoAddDialog(BiConsumer<AlumnoCursoVO, Operation> itemSaver,
 			Consumer<AlumnoCursoVO> itemDeleter, CursosService cursosService,  
@@ -65,6 +68,7 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 	}
 	
 	public void addCursosCombobox(){
+		HorizontalLayout hlCourse = new HorizontalLayout();
 		CursosVO cursoEdit = null;
 		comboBox.setLabel("Curso");
 		comboBox.setRequired(true);
@@ -79,10 +83,14 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 		
 		if(getMainOperation().getNameInText().equals(AbstractEditorDialog.Operation.ADD.getNameInText())){
 			lst = cursosService.findCoursesNotInStudent(alumnoId);
+			//Fecha de ingreso al curso
+			startDatePicker.setVisible(false);
 		}else{
 			comboBox.setEnabled(false);
+			startDatePicker.setEnabled(false);
 			//comboBox.setPreventInvalidInput(true);
 			cursoEdit = cursosService.findById(getCurrentItem().getCursoId());
+			startDatePicker.setValue(getCurrentItem().getAlumnoCursoFechaIngreso());
 			lst = new ArrayList<>();
 			lst.add(cursoEdit);
 		}
@@ -95,10 +103,14 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 		
 		comboBox.addValueChangeListener(event -> addInfoPayment());
 		
-		vlCourse.add(comboBox);
+		hlCourse.add(comboBox, startDatePicker);
+		//vlCourse.add(comboBox);
+		vlCourse.add(hlCourse);
 		
 		getBinder().forField(comboBox)
             .bind(AlumnoCursoVO::getCursoVO, AlumnoCursoVO::setCursoVO); //Establece setter y getter para su bindeo
+		getBinder().forField(startDatePicker)
+        	.bind(AlumnoCursoVO::getAlumnoCursoFechaIngreso, AlumnoCursoVO::setAlumnoCursoFechaIngreso); //Establece setter y getter para su bindeo de la fecha de ingreso
 		
 	} 
 	
@@ -219,6 +231,13 @@ public class AlumnoCursoAddDialog  extends AbstractEditorDialog<AlumnoCursoVO> {
 				txtBeca.setValue("");
 			}
 			
+			//Poner fecha al campo de fecha de ingreso
+			if(getMainOperation().getNameInText().equals(AbstractEditorDialog.Operation.ADD.getNameInText())){
+				Calendar cal = Calendar.getInstance();
+				startDatePicker.setValue(LocalDate.of(cal.get(Calendar.YEAR), 
+						cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
+				startDatePicker.setVisible(true);
+			}
 			
 			vlCourse.add(flDiscounts);
 		}

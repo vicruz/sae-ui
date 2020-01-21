@@ -81,14 +81,14 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 
 	private AlumnosService alumnosService;
 	private CursosService cursosService;
-	private CursoCostosList cursoCostosList;
-	private CostosService costosService;
+//	private CursoCostosList cursoCostosList;
+//	private CostosService costosService;
 	private CursoCostosService cursoCostoService;
 	private AlumnoCursoService alumnoCursoService;
 
 	private final H4 header = new H4("Editar Alumno");
-	private final DatePicker startDatePicker = new DatePicker("Inicio Curso");
-	private final DatePicker endDatePicker = new DatePicker("Fin Curso");
+//	private final DatePicker startDatePicker = new DatePicker("Inicio Curso");
+//	private final DatePicker endDatePicker = new DatePicker("Fin Curso");
 	private HorizontalLayout hlContent = new HorizontalLayout();
 	private Label lbStatus = new Label();
 	private TextField txtName = new TextField("Nombre");
@@ -120,8 +120,8 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 			AlumnoCursoService alumnoCursoService) {
 		this.alumnosService = alumnosService;
 		this.cursosService = cursosService;
-		this.cursoCostosList = cursoCostosList;
-		this.costosService = costosService;
+//		this.cursoCostosList = cursoCostosList;
+//		this.costosService = costosService;
 		this.cursoCostoService = cursoCostoService;
 		this.alumnoCursoService = alumnoCursoService;
 	}
@@ -416,7 +416,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		  	.withCancelButton(ButtonOption.caption("NO")) .open();
 	}
 
-	private void cancelButton() {
+//	private void cancelButton() {
 		/*
 		 * ConfirmDialog .createQuestion() .withCaption("Cancelar Curso")
 		 * .withMessage("Deseas cancelar el curso?") .withOkButton(() -> {
@@ -427,7 +427,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		 * ButtonOption.caption("SI"))
 		 * .withCancelButton(ButtonOption.caption("NO")) .open();
 		 */
-	}
+//	}
 
 	/// Boton Add de tabs
 	private void addEventButton() {
@@ -556,7 +556,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.getElement().setAttribute("title", "Editar");
         return edit;
     }
-    
+    /*
     //
     private Button createCourseCancelButton(AlumnoCursoVO alumnoCursoVO) {
         Button edit = new Button("");
@@ -568,7 +568,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.getElement().setAttribute("title", "Editar");
         return edit;
     }
-    
+    */
     private Button createCourseEditButton(AlumnoCursoVO alumnoCursoVO) {
         Button edit = new Button("");
         edit.addClickListener(event -> 

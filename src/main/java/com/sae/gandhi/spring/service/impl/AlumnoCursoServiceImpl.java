@@ -59,7 +59,8 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		alumnoCurso.setAlumnoCursoActivo(true);
 		alumnoCurso.setAlumnoCursoBeca(alumnoCursoVO.getAlumnoCursoBeca());
 		alumnoCurso.setAlumnoCursoDescuento(alumnoCursoVO.getAlumnoCursoDescuento());
-		alumnoCurso.setAlumnoCursoIngreso(cal.getTime());
+		alumnoCurso.setAlumnoCursoIngreso(
+				SaeDateUtils.localDateToDate(alumnoCursoVO.getAlumnoCursoFechaIngreso()));
 		alumnoCurso.setAlumnoId(alumnoCursoVO.getAlumnoId());
 		if(alumnoCursoVO.getCursoVO()!=null){
 			alumnoCurso.setCursoId(alumnoCursoVO.getCursoVO().getCursoId());			
