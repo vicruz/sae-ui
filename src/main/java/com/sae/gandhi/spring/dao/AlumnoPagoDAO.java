@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.sae.gandhi.spring.entity.AlumnoPagos;
@@ -34,4 +35,8 @@ public interface AlumnoPagoDAO extends JpaRepository<AlumnoPagos, Integer> {
 	public List<AlumnoPagos> findByCursoCostoIdPayed(Integer cursoCostoId);
 	
 	public void deleteByCursoCostoId(Integer cursoCostoId);
+	
+	@Modifying
+	@Query("update AlumnoPagos ap set ap.alumnoPagoEstatus = ?2 where ap.alumnoCursoId = ?1")
+	public void updateStatusPayments(Integer alumnoCursoId, Integer alumnoPagoEstatus);
 }

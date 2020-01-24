@@ -385,10 +385,16 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 */
 	}
 
+	/**
+	 * Da de baja un curso del alumno. Poniendo el estatus de los pagos y curso en BAJA/CANCELADO  
+	 */
 	@Override
-	public void delete(Integer alumnoCursoId) {
-		// TODO Auto-generated method stub
-
+	public boolean delete(Integer alumnoCursoId) {
+		//borrar de alumnoPagos todos los pagos excepto si
+		alumnoPagoDAO.updateStatusPayments(alumnoCursoId, SaeEnums.Pago.CANCELADO.getStatusId());
+		alumnoCursoDAO.updateStatusCurso(false, alumnoCursoId);
+		
+		return true;
 	}
 
 	@Override
@@ -514,6 +520,20 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 				calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
 			}
 		}
+	}
+
+	//Obtener los cursos activos del alumno
+	@Override
+	public List<AlumnoCursoVO> findByStudentActive(Integer alumnoId) {
+		List<AlumnoCurso> lstAlumno;
+		List<AlumnoCursoVO> lstAlumnoVO = new ArrayList<>();
+		
+		lstAlumno = alumnoCursoDAO.findByAlumnoIdAndActive(alumnoId);
+		if(lstAlumno!=null && !lstAlumno.isEmpty()){
+			lstAlumnoVO = AlumnoCursoBuilder.createListAlumnoCursoVO(lstAlumno);
+		}
+		
+		return lstAlumnoVO;
 	}
 	
 	

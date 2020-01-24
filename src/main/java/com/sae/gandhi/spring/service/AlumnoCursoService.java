@@ -11,9 +11,10 @@ public interface AlumnoCursoService {
 
 	public void save(AlumnoCursoVO alumnoCursoVO);
 	public void update(AlumnoCursoVO alumnoCursoVO);
-	public void delete(Integer alumnoCursoId);
+	public boolean delete(Integer alumnoCursoId);
 	public AlumnoCursoVO findById(Integer alumnoCursoId);
 	public List<AlumnoCursoVO> findByStudent(Integer alumnoId);
+	public List<AlumnoCursoVO> findByStudentActive(Integer alumnoId);
 	public void createStudentPayment(CursoCostos cursoCostos, AlumnoCurso alumnoCurso, Date fechaInicio, Date fechaFin);
 	
 }

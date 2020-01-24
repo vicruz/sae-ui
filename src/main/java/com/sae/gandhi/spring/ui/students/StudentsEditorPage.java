@@ -366,8 +366,8 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		grid.addColumn(AlumnoCursoVO::getAlumnoCursoEstatus).setHeader("Estatus").setResizable(true);
 		// Se envian metodos que cumplen con la funcion requerida
 		grid.addColumn(new ComponentRenderer<>(this::createCoursePayButton)).setHeader("Pagos").setFlexGrow(0);
-		//grid.addColumn(new ComponentRenderer<>(this::createCourseCancelButton)).setHeader("Borrar").setFlexGrow(0);
 		grid.addColumn(new ComponentRenderer<>(this::createCourseEditButton)).setHeader("Editar").setFlexGrow(0);
+		grid.addColumn(new ComponentRenderer<>(this::createCourseCancelButton)).setHeader("Baja").setFlexGrow(0);
 		grid.setSelectionMode(SelectionMode.SINGLE);
 		updateView();
 		add(hlTab, grid);
@@ -526,14 +526,26 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 
 	// Eliminar
 	private void deleteAlumnoCurso(AlumnoCursoVO alumnoCurso) {
-		/*cursoCostoService.delete(cursoCostos.getCursoCostoId());
-
-		Notification.show("Costo eliminado", 3000, Position.BOTTOM_END);
-		cursoCostosList.updateView(cursoId);*/
+		ConfirmDialog
+        .createQuestion()
+        .withCaption("Baja de	 Curso")
+        .withMessage("Deseas dar de baja el curso?")
+        .withOkButton(() -> {
+        	if(alumnoCursoService.delete(alumnoCurso.getAlumnoCursoId())){
+        		Notification.show("El curso "+alumnoCurso.getCursoNombre() +" se ha dado de baja", 3000, Position.BOTTOM_END);
+        		updateView();
+        	}else{
+        		Notification.show("Ocurrió un error al dar de baja el curso "+ alumnoCurso.getCursoNombre(), 
+        				3000, Position.BOTTOM_END);
+        	}
+        }, ButtonOption.focus(), ButtonOption.caption("SI"))
+        .withCancelButton(ButtonOption.caption("NO"))
+        .open();
 	}
 	
 	private void updateView() {
-        List<AlumnoCursoVO> lstAlumnos = alumnoCursoService.findByStudent(alumnoId);
+        //List<AlumnoCursoVO> lstAlumnos = alumnoCursoService.findByStudent(alumnoId);
+		List<AlumnoCursoVO> lstAlumnos = alumnoCursoService.findByStudentActive(alumnoId);
         grid.setItems(lstAlumnos);
 
         /*if (searchField.getValue().length() > 0) {
@@ -556,19 +568,19 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.getElement().setAttribute("title", "Editar");
         return edit;
     }
-    /*
+    
     //
     private Button createCourseCancelButton(AlumnoCursoVO alumnoCursoVO) {
-        Button edit = new Button("");
+        Button delete = new Button("", event -> deleteAlumnoCurso(alumnoCursoVO));
 //        edit.addClickListener(event -> 
 //        	{edit.getUI().ifPresent(ui -> ui.navigate("pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
-        edit.setIcon(new Icon(VaadinIcon.ERASER));
-        edit.addClassName("review__edit");
-        edit.getElement().setAttribute("theme", "tertiary");
-        edit.getElement().setAttribute("title", "Editar");
-        return edit;
+        delete.setIcon(new Icon(VaadinIcon.CLOSE_CIRCLE));
+        delete.addClassName("review__edit");
+        delete.getElement().setAttribute("theme", "tertiary");
+        delete.getElement().setAttribute("title", "Eliminar");
+        return delete;
     }
-    */
+    
     private Button createCourseEditButton(AlumnoCursoVO alumnoCursoVO) {
         Button edit = new Button("");
         edit.addClickListener(event -> 

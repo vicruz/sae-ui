@@ -46,7 +46,8 @@ public class SaeEnums {
 		PREPARADO(1,"PREPARADO"),
 		COMPLETO(2,"COMPLETO"),
 		PARCIAL(3,"PARCIAL"),
-		ADEUDO(4,"ADEUDO");
+		ADEUDO(4,"ADEUDO"),
+		CANCELADO(5,"CANCELAR");
 		
 		
 		private Integer statusId;
