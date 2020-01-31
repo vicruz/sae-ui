@@ -105,6 +105,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 
 	private Button btnChangeStatus;
 	private Button btnSave;
+	private Button addButton = new Button();
 	private Tabs tabs = new Tabs();
 
 	// Image
@@ -340,11 +341,12 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 	private void addTabs() {
 		HorizontalLayout hlTab = new HorizontalLayout();
 		Tab tabCursos = new Tab(CURSOS);
-		Button addButton = new Button();
+//		Button addButton = new Button();
 		addButton.setIcon(new Icon(VaadinIcon.PLUS));
 		addButton.getStyle().set("borderRadius", "50%"); // Se hace redondo
 		addButton.getStyle().set("backgroundColor", "lightgray");
 		addButton.addClickListener(event -> addEventButton());
+		addButton.setEnabled(alumnoVO.getAlumnoActivo());
 
 		tabs.add(tabCursos);
 		tabs.setFlexGrowForEnclosedTabs(1);
@@ -405,9 +407,23 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 			  alumnoVO.setAlumnoActivo(!alumnoVO.getAlumnoActivo());
 			  
 			  if(alumnoVO.getAlumnoActivo()){
-					btnChangeStatus.setText("Baja");			
+					btnChangeStatus.setText("Baja");
+					addButton.setEnabled(true);
 				}else{
 					btnChangeStatus.setText("Activar");
+					addButton.setEnabled(false);
+					//Desactivar todos sus cursos
+					List<AlumnoCursoVO> lstAlumnos = alumnoCursoService.findByStudentActive(alumnoId);
+					for(AlumnoCursoVO vo: lstAlumnos){
+						if(alumnoCursoService.delete(vo.getAlumnoCursoId())){
+			        		Notification.show("El curso "+vo.getCursoNombre() +" se ha dado de baja", 3000, Position.BOTTOM_END);
+			        		updateView();
+			        	}else{
+			        		Notification.show("Ocurrió un error al dar de baja el curso "+ vo.getCursoNombre(), 
+			        				3000, Position.BOTTOM_END);
+			        	}
+					}
+					
 				}
 			  
 			  Notification.show(mensajeNotification,
@@ -415,19 +431,6 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 				  ButtonOption.caption("SI"))
 		  	.withCancelButton(ButtonOption.caption("NO")) .open();
 	}
-
-//	private void cancelButton() {
-		/*
-		 * ConfirmDialog .createQuestion() .withCaption("Cancelar Curso")
-		 * .withMessage("Deseas cancelar el curso?") .withOkButton(() -> {
-		 * cursoVO.setCursoStatus(SaeEnums.Curso.CANCELADO.getStatusId());
-		 * cursosService.delete(cursoVO.getCursoId()); updateLabel();
-		 * Notification.show("Curso "+cursoVO.getCursoNombre() +" cancelado",
-		 * 3000, Position.BOTTOM_END); }, ButtonOption.focus(),
-		 * ButtonOption.caption("SI"))
-		 * .withCancelButton(ButtonOption.caption("NO")) .open();
-		 */
-//	}
 
 	/// Boton Add de tabs
 	private void addEventButton() {
@@ -566,6 +569,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");
+        edit.setEnabled(alumnoVO.getAlumnoActivo());
         return edit;
     }
     
@@ -578,6 +582,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         delete.addClassName("review__edit");
         delete.getElement().setAttribute("theme", "tertiary");
         delete.getElement().setAttribute("title", "Eliminar");
+        delete.setEnabled(alumnoVO.getAlumnoActivo());
         return delete;
     }
     
@@ -595,6 +600,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");
+        edit.setEnabled(alumnoVO.getAlumnoActivo());
         return edit;
     }
 	
