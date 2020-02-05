@@ -26,6 +26,9 @@ import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 @Service
 public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	
+	private static final BigDecimal CIEN = new BigDecimal(100);
+	private static final Integer DECIMALES = 2;
+	
 	@Autowired
 	AlumnoPagoDAO alumnoPagoDAO;
 	
@@ -106,7 +109,28 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 
 			//Almacenar el pago
 			alumnoPagoBitacoraDAO.save(alumnoPagoBitacora);
-
+			
+			//Validar si la fecha de pago es menor o igual a la fecha limite, ajustar el monto a pagar y calcular beca/descuento 
+			//del monto inicial
+			if(!alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago().after(alumnoPagos.getAlumnoPagoFechaLimite())){
+				//Obtener beca/descuento
+				BigDecimal beca = alumnoPago.get().getAlumnoCurso().getAlumnoCursoBeca();
+				BigDecimal descuento = alumnoPago.get().getAlumnoCurso().getAlumnoCursoDescuento();
+				BigDecimal montoDescuento = BigDecimal.ZERO;
+				
+				if(beca!=null){
+					montoDescuento = alumnoPago.get().getCursoCostos().getCostos().getCostoMonto()
+							.multiply(beca)
+							.divide(CIEN,DECIMALES,RoundingMode.HALF_UP);
+				}
+				
+				if(descuento!=null){
+					montoDescuento = descuento;
+				}
+				
+				alumnoPagos.setAlumnoPagoMonto(alumnoPago.get().getCursoCostos().getCostos().getCostoMonto().subtract(montoDescuento));
+			}
+			
 			//Actualizar el pago
 			alumnoPagos.setAlumnoPagoPago(alumnoPago.get().getAlumnoPagoPago().add(vo.getAlumnoPagoPago()).add(montoSaldo));
 			alumnoPagos.setAlumnoPagoFechaPago(alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago());

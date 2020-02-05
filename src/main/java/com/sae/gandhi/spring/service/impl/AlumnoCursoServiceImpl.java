@@ -232,6 +232,7 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		for(CursoCostos cursoCosto : lstCursoCostos){
 			//Obtener el monto a descontar
 			BigDecimal montoDescuento = BigDecimal.ZERO;
+			BigDecimal montoTotal = BigDecimal.ZERO;
 			//Se estableció la beca
 			if(alumnoCursoVO.getAlumnoCursoBeca()!=null){
 				montoDescuento = cursoCosto.getCostos().getCostoMonto()
@@ -243,12 +244,13 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 				montoDescuento = alumnoCursoVO.getAlumnoCursoDescuento();
 			}
 			
+			montoTotal = cursoCosto.getCostos().getCostoMonto().subtract(montoDescuento);
 			
 			//Obtener los alumnosPagos que correspondan al curso costo y descontar el monto al valor total
 			List<AlumnoPagos> lstAlumnoPago = alumnoPagoDAO.findByAlumnoCursoIdAndCursoCostoId(alumnoCurso.getAlumnoCursoId(), cursoCosto.getCursoCostoId());
 			for(AlumnoPagos alumnoPago : lstAlumnoPago){
 				//Se ajusta el monto a pagar
-				alumnoPago.setAlumnoPagoMonto(alumnoPago.getAlumnoPagoMonto().subtract(montoDescuento));
+				alumnoPago.setAlumnoPagoMonto(montoTotal);
 				
 				//Solo se realizaran operaciones si se ha realizado un pago
 				if(alumnoPago.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0){

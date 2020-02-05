@@ -23,8 +23,8 @@ public class Schedulers {
 	@Autowired
 	private CursosService cursosService;
 	
-	//Se ejecuta todos los dias a las 00:10 a.m.
-	@Scheduled(cron="0 10 0 * * *")
+	//Se ejecuta todos los dias a las 12:00 p.m.
+	@Scheduled(cron="0 0 12 * * *")
 	//@Scheduled(cron="0 0/2 * * * *") //Para debug, cada 5 minutos
 	public void updatePayments() {
 		log.info("Iniciando la busqueda de pagos vencidos: " + Calendar.getInstance().getTime());

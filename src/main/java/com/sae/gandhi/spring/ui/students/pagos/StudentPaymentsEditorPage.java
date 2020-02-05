@@ -358,8 +358,8 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		Label label = new Label();
 		// Calendar cal = Calendar.getInstance();
 		// cal.setTime(vo.getAlumnoPagoFechaLimite());
-		System.out.println("-----------" + vo.getAlumnoPagoFechaLimite().getMonth().name() + " "
-				+ vo.getAlumnoPagoFechaLimite().getYear());
+		/*System.out.println("-----------" + vo.getAlumnoPagoFechaLimite().getMonth().name() + " "
+				+ vo.getAlumnoPagoFechaLimite().getYear());*/
 		StringBuilder sb = new StringBuilder(vo.getCostoNombre());
 		sb.append(" ").append(SaeEnums.Mes.getMes(vo.getAlumnoPagoFechaLimite().getMonth().getValue()))
 				// .append(vo.getAlumnoPagoFechaLimite().getMonth().name())
