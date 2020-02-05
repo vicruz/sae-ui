@@ -76,6 +76,8 @@ public class SaeEnums {
 				return PARCIAL;
 			case 4: 
 				return ADEUDO;
+			case 5: 
+				return CANCELADO;
 			default:
 				return null;
 			}

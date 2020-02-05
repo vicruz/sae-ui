@@ -412,20 +412,9 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 				}else{
 					btnChangeStatus.setText("Activar");
 					addButton.setEnabled(false);
-					//Desactivar todos sus cursos
-					List<AlumnoCursoVO> lstAlumnos = alumnoCursoService.findByStudentActive(alumnoId);
-					for(AlumnoCursoVO vo: lstAlumnos){
-						if(alumnoCursoService.delete(vo.getAlumnoCursoId())){
-			        		Notification.show("El curso "+vo.getCursoNombre() +" se ha dado de baja", 3000, Position.BOTTOM_END);
-			        		updateView();
-			        	}else{
-			        		Notification.show("Ocurrió un error al dar de baja el curso "+ vo.getCursoNombre(), 
-			        				3000, Position.BOTTOM_END);
-			        	}
-					}
-					
+					//los cursos no se dan de baja, solo se evitará que se agreguen pagos o se hagan cambios 
 				}
-			  
+			  updateView();
 			  Notification.show(mensajeNotification,
 					  3000, Position.BOTTOM_END); }, ButtonOption.focus(),
 				  ButtonOption.caption("SI"))
@@ -531,7 +520,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 	private void deleteAlumnoCurso(AlumnoCursoVO alumnoCurso) {
 		ConfirmDialog
         .createQuestion()
-        .withCaption("Baja de	 Curso")
+        .withCaption("Baja de Curso")
         .withMessage("Deseas dar de baja el curso?")
         .withOkButton(() -> {
         	if(alumnoCursoService.delete(alumnoCurso.getAlumnoCursoId())){
@@ -569,7 +558,6 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
         edit.getElement().setAttribute("title", "Editar");
-        edit.setEnabled(alumnoVO.getAlumnoActivo());
         return edit;
     }
     

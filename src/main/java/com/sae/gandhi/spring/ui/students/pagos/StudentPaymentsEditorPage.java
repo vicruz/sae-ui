@@ -249,8 +249,10 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 				.setHeader("Fecha Límite").setFlexGrow(2).setResizable(true);
 		// Boton para editar
 		Column<AlumnoPagoVO> editorColumn = grid.addComponentColumn(vo -> {
-			if (vo.getEstatusId() == SaeEnums.Pago.ADEUDO.getStatusId()
-					|| vo.getEstatusId() == SaeEnums.Pago.PREPARADO.getStatusId()) {
+			if (vo.getEstatusId() == SaeEnums.Pago.ADEUDO.getStatusId() //tiene adeudo
+					|| vo.getEstatusId() == SaeEnums.Pago.PREPARADO.getStatusId() //esta preparado
+					|| alumnoVO.getAlumnoActivo() //alumno esta activo
+					) {
 				Button buttonEdit = new Button();
 				buttonEdit.setIcon(new Icon(VaadinIcon.PENCIL));
 				buttonEdit.addClassName("review__edit");
@@ -391,7 +393,11 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 						isAdmin);
 				vo.setAlumnoPagoPago(BigDecimal.ZERO);
 				form.open(vo, AbstractEditorDialog.Operation.ADD);
-			});			
+			});	
+			
+			if(!alumnoVO.getAlumnoActivo()){
+				button.setEnabled(false);
+			}
 		}
 		return button;
 	}
@@ -406,6 +412,10 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			button.addClickListener(event -> {
 				deletePayment(vo);
 			});			
+		}
+		
+		if(!alumnoVO.getAlumnoActivo()){
+			button.setEnabled(false);
 		}
 		return button;
 	}
