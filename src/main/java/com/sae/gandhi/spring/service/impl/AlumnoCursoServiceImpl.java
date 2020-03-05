@@ -62,11 +62,18 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		alumnoCurso.setAlumnoCursoIngreso(
 				SaeDateUtils.localDateToDate(alumnoCursoVO.getAlumnoCursoFechaIngreso()));
 		alumnoCurso.setAlumnoId(alumnoCursoVO.getAlumnoId());
+		
 		if(alumnoCursoVO.getCursoVO()!=null){
 			alumnoCurso.setCursoId(alumnoCursoVO.getCursoVO().getCursoId());			
 		}else{
 			alumnoCurso.setCursoId(alumnoCursoVO.getCursoId());
 		}
+		
+		//Si no hay fecha, se pone la fecha actual
+		if(alumnoCurso.getAlumnoCursoIngreso()==null){
+			alumnoCurso.setAlumnoCursoIngreso(cal.getTime());
+		}
+		
 		alumnoCurso = alumnoCursoDAO.save(alumnoCurso);
 		
 		//////////////////////////////////////
@@ -76,10 +83,6 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		
 		for (CursoCostos cursoCostos : lstCursoCostos) {
 			Date initDate = SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaInicio());
-			
-			if(cal.getTime().after(initDate)){
-				initDate = cal.getTime();
-			}
 			
 			createStudentPayment(cursoCostos, alumnoCurso, initDate, 
 					SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
@@ -258,7 +261,8 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 				}
 				
 				//El saldo solamente se ajustará si el pago realizado es mayor al monto a cobrar
-				if(alumnoPago.getAlumnoPagoPago().compareTo(alumnoPago.getAlumnoPagoMonto())>0)
+				//y es de una beca (Angelica menciona que el descuento no genera saldo a favor '20200210')
+				if(alumnoPago.getAlumnoPagoPago().compareTo(alumnoPago.getAlumnoPagoMonto())>0 && alumnoCursoVO.getAlumnoCursoBeca()!=null)
 					saldo = saldo.add(alumnoPago.getAlumnoPagoPago().subtract(alumnoPago.getAlumnoPagoMonto()));
 				
 				//Modificar etiqueta de pago

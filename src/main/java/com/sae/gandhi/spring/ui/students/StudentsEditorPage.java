@@ -553,7 +553,10 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
     private Button createCoursePayButton(AlumnoCursoVO alumnoCursoVO) {
         Button edit = new Button("");
         edit.addClickListener(event -> 
-        	{edit.getUI().ifPresent(ui -> ui.navigate("alumnos/pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
+        	{
+        		edit.getUI().ifPresent(ui -> ui.navigate("alumnos/pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));
+        		grid.select(alumnoCursoVO);
+        	});
         edit.setIcon(new Icon(VaadinIcon.WALLET));
         edit.addClassName("review__edit");
         edit.getElement().setAttribute("theme", "tertiary");
@@ -563,7 +566,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
     
     //
     private Button createCourseCancelButton(AlumnoCursoVO alumnoCursoVO) {
-        Button delete = new Button("", event -> deleteAlumnoCurso(alumnoCursoVO));
+        Button delete = new Button("", event -> { grid.select(alumnoCursoVO); deleteAlumnoCurso(alumnoCursoVO);});
 //        edit.addClickListener(event -> 
 //        	{edit.getUI().ifPresent(ui -> ui.navigate("pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));});
         delete.setIcon(new Icon(VaadinIcon.CLOSE_CIRCLE));
@@ -578,6 +581,7 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         Button edit = new Button("");
         edit.addClickListener(event -> 
         	{
+        		grid.select(alumnoCursoVO);
         		formCursoAdd = new AlumnoCursoAddDialog(this::saveAlumnoCurso, this::deleteAlumnoCurso, 
         				this.cursosService,	cursoCostoService, alumnoId);
         		formCursoAdd.open(alumnoCursoVO,

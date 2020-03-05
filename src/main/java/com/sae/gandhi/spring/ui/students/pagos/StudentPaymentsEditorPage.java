@@ -258,7 +258,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 				buttonEdit.addClassName("review__edit");
 				buttonEdit.getElement().setAttribute("theme", "tertiary");
 				buttonEdit.getElement().setAttribute("title", "Editar");
-				buttonEdit.addClickListener(e -> editor.editItem(vo));
+				buttonEdit.addClickListener(e -> {editor.editItem(vo); grid.select(vo); });
 				
 				//if(!sessionService.isAdmin()){
 				if(!isAdmin){
@@ -385,6 +385,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		if(vo.getEstatusId() != SaeEnums.Pago.COMPLETO.getStatusId()){
 			button.setIcon(new Icon(VaadinIcon.DOLLAR));
 			button.addClickListener(event -> {
+				grid.select(vo);
 				alumnoVO = alumnosService.findById(alumnoVO.getAlumnoId());
 				form = new StudentPaymentDialog(this::savePayment, this::deletePayment,
 						vo.getAlumnoPagoId(), createConceptLabel(vo).getText(), vo.getAlumnoPagoMonto(), 
@@ -408,6 +409,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		button.getElement().setAttribute("theme", "tertiary");
 		button.getElement().setAttribute("title", "Editar");
 		if(vo.getAlumnoPagoPago() == null || vo.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0 ){
+			grid.select(vo);
 			button.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
 			button.addClickListener(event -> {
 				deletePayment(vo);

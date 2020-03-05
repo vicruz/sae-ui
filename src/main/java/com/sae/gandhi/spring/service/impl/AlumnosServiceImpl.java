@@ -90,4 +90,16 @@ public class AlumnosServiceImpl implements AlumnosService {
 		return lst;
 	}
 
+	@Override
+	public List<AlumnosListVO> getAlumnosListActive() {
+		List<AlumnosListVO> lst = alumnosDAO.getAlumnosListActive(); 
+
+		//Obtener el curso del alumno
+		for(AlumnosListVO vo : lst){
+			vo.setCursoNombre(cursosDAO.getGradeCourseByStudent(vo.getAlumnoId()));
+		}
+		
+		return lst;
+	}
+
 }

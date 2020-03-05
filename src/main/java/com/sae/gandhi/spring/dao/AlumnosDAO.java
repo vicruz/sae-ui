@@ -40,4 +40,11 @@ public interface AlumnosDAO extends JpaRepository<Alumnos, Integer> {
 //			+ "		where ac2.alumnoId = al.alumnoId"
 //			+ "		and curso2.cursoStatus = 2)")
 	public List<AlumnosListVO> getAlumnosList();
+	
+	@Query("Select new com.sae.gandhi.spring.vo.AlumnosListVO(al.alumnoId, al.alumnoNombre, "
+			+ "al.alumnoApPaterno, al.alumnoApMaterno, al.alumnoTutor, al.alumnoTutorTelefono1, "
+			+ "al.alumnoImagen) "
+			+ "from Alumnos al "
+			+ "where al.alumnoActivo = 1")
+	public List<AlumnosListVO> getAlumnosListActive();
 }

@@ -2,7 +2,6 @@ package com.sae.gandhi.spring.ui.students.pagos;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -71,8 +70,6 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		.bind(AlumnoPagoVO::getUsaSaldo, AlumnoPagoVO::setUsaSaldo);
 		
 		dpFechaPago = new DatePicker();
-		dpFechaPago.setValue(SaeDateUtils.calendarToLocalDate(Calendar.getInstance()));
-		System.out.println(LocalDate.now());
 		dpFechaPago.setLabel("Fecha de pago");
 		getBinder().forField(dpFechaPago).bind(AlumnoPagoVO::getAlumnoPagoFechaPago, AlumnoPagoVO::setAlumnoPagoFechaPago);
 		
@@ -100,6 +97,8 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		
 		vlPayment.add(txtPaymentAmount);
 		getFormLayout().add(vlPayment);
+		
+		dpFechaPago.setValue(SaeDateUtils.calendarToLocalDate(Calendar.getInstance()));
 	}
 
 	/**

@@ -15,4 +15,5 @@ public interface AlumnosService {
 	public void update(AlumnosVO alumnoVO);
 	public void changeActivo(boolean status, Integer alumnoId);
 	public List<AlumnosListVO> getAlumnosList();
+	public List<AlumnosListVO> getAlumnosListActive();
 }

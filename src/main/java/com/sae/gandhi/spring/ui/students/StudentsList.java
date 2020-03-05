@@ -236,7 +236,7 @@ public class StudentsList extends VerticalLayout {
     
     //Carga los datos del grid
     private void loadData() {
-        lstAlumnos = alumnosService.getAlumnosList();
+        lstAlumnos = alumnosService.getAlumnosListActive();
         grid.setItems(lstAlumnos);
     }
     
