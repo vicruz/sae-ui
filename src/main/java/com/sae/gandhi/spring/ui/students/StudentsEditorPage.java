@@ -555,7 +555,6 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
         edit.addClickListener(event -> 
         	{
         		edit.getUI().ifPresent(ui -> ui.navigate("alumnos/pagos/"+alumnoCursoVO.getAlumnoId()+"/"+alumnoCursoVO.getCursoId()));
-        		grid.select(alumnoCursoVO);
         	});
         edit.setIcon(new Icon(VaadinIcon.WALLET));
         edit.addClassName("review__edit");

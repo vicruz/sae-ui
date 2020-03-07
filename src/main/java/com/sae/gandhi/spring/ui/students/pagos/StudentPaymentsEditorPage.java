@@ -409,9 +409,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		button.getElement().setAttribute("theme", "tertiary");
 		button.getElement().setAttribute("title", "Editar");
 		if(vo.getAlumnoPagoPago() == null || vo.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0 ){
-			grid.select(vo);
 			button.setIcon(new Icon(VaadinIcon.CLOSE_SMALL));
 			button.addClickListener(event -> {
+				grid.select(vo);
 				deletePayment(vo);
 			});			
 		}
