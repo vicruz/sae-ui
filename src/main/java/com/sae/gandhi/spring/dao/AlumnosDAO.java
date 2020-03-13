@@ -27,7 +27,7 @@ public interface AlumnosDAO extends JpaRepository<Alumnos, Integer> {
 	
 	@Query("Select new com.sae.gandhi.spring.vo.AlumnosListVO(al.alumnoId, al.alumnoNombre, "
 			+ "al.alumnoApPaterno, al.alumnoApMaterno, al.alumnoTutor, al.alumnoTutorTelefono1, "
-			+ "al.alumnoImagen) "
+			+ "al.alumnoImagen,al.alumnoActivo) "
 			+ "from Alumnos al ")
 //			+ "join ac.alumno al "
 //			+ "join ac.curso curso "
@@ -43,7 +43,7 @@ public interface AlumnosDAO extends JpaRepository<Alumnos, Integer> {
 	
 	@Query("Select new com.sae.gandhi.spring.vo.AlumnosListVO(al.alumnoId, al.alumnoNombre, "
 			+ "al.alumnoApPaterno, al.alumnoApMaterno, al.alumnoTutor, al.alumnoTutorTelefono1, "
-			+ "al.alumnoImagen) "
+			+ "al.alumnoImagen,al.alumnoActivo) "
 			+ "from Alumnos al "
 			+ "where al.alumnoActivo = 1")
 	public List<AlumnosListVO> getAlumnosListActive();

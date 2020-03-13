@@ -15,10 +15,10 @@ import com.sae.gandhi.spring.utils.StreamImage;
 import com.sae.gandhi.spring.vo.AlumnosListVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -49,7 +49,7 @@ public class StudentsList extends VerticalLayout {
 	private static final long serialVersionUID = -1953074122084336367L;
 
 	private final TextField searchField = new TextField("", "Buscar Alumnos");
-    private final H3 header = new H3("Alumnos");
+	private final Checkbox cbAlumnos = new Checkbox("Ver Todos", false);
     
     private AlumnosService alumnosService;
     
@@ -83,9 +83,7 @@ public class StudentsList extends VerticalLayout {
         searchField.addValueChangeListener(e -> updateView());
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
-//        Button newButton = new Button("Nuevo Costo", new Icon("lumo", "plus"));
-        Button newButton = new Button("Nuevo Alumno");//,event -> form.open(new AlumnosVO(),
-//                AbstractEditorDialog.Operation.ADD));
+        Button newButton = new Button("Nuevo Alumno");
         newButton.setIcon(new Icon(VaadinIcon.PLUS));
         newButton.getElement().setAttribute("theme", "primary");
         newButton.addClassName("view-toolbar__button");
@@ -100,14 +98,34 @@ public class StudentsList extends VerticalLayout {
         container.setClassName("view-container");
         container.setAlignItems(Alignment.STRETCH);
 
-//        grid.addColumn(AlumnosVO::getAlumnoNombre).setHeader("Nombre");
 
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createDivStudents));
         //grid.addColumn(new ComponentRenderer<>(this::createInactiveButton)).setFlexGrow(0);
         grid.setSelectionMode(SelectionMode.SINGLE);
-      
-        container.add(header, grid);
+        
+        //Check para ver a todos los alumnos
+        Label lbTitulo = new Label();
+        lbTitulo.getStyle().set("fontSize", "18px"); 
+        lbTitulo.getStyle().set("fontWeight", "bold");
+        lbTitulo.setWidth("80%");
+        lbTitulo.setText("Alumnos");
+        
+        HorizontalLayout hlContent = new HorizontalLayout();
+        hlContent.setPadding(true);
+        hlContent.getStyle().set("padding", "0px");
+        hlContent.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        
+        hlContent.add(lbTitulo, cbAlumnos);
+        hlContent.setVerticalComponentAlignment(Alignment.CENTER, cbAlumnos);
+        
+        //Evento de check
+        cbAlumnos.addValueChangeListener(evt -> {
+        	loadData();
+        });
+        
+        
+        container.add(hlContent, grid);
         add(container);
     }
     
@@ -124,10 +142,11 @@ public class StudentsList extends VerticalLayout {
         	.set("min-width", "250px");
         
         //Color rojo cuando el alumno es inactivo, azul cuando esta activo
-        /*if(alumno.getAlumnoActivo()){
-        	div.getStyle().set("background-image", "linear-gradient(blue 5%, white 80%)");
+        /*div.getStyle().set("border-top-style", "outset");
+        if(alumno.getAlumnoActivo()){
+        	div.getStyle().set("border-top-color", "blue");
         }else{
-        	div.getStyle().set("background-image", "linear-gradient(red 5%, white 80%)");
+        	div.getStyle().set("border-top-color", "gray");
         }*/
         
         
@@ -225,6 +244,9 @@ public class StudentsList extends VerticalLayout {
         btnPayments.getElement().setAttribute("theme", "tertiary");
         btnPayments.getElement().setAttribute("title", "Pagos");
         btnPayments.setWidth("15%");
+        if(!alumno.getAlumnoActivo()){
+        	btnPayments.setEnabled(false);
+        }
         hlDataCourse.add(btnPayments);
                 
         
@@ -236,8 +258,13 @@ public class StudentsList extends VerticalLayout {
     
     //Carga los datos del grid
     private void loadData() {
-        lstAlumnos = alumnosService.getAlumnosListActive();
-        grid.setItems(lstAlumnos);
+    	if(!cbAlumnos.getValue()){
+    		lstAlumnos = alumnosService.getAlumnosListActive();
+    	}else{
+    		lstAlumnos = alumnosService.getAlumnosList();
+    	}
+    	grid.setItems(lstAlumnos);
+        
     }
     
     private void updateView() {

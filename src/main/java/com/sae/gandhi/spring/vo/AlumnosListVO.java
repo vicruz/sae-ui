@@ -17,6 +17,7 @@ public class AlumnosListVO implements Serializable{
 	private byte[] alumnoImagen;
 	private String cursoNombre;
 	private Integer alumnoStatus;
+	private Boolean alumnoActivo;
 	
 	public AlumnosListVO(Integer alumnoId, String alumnoNombre, String alumnoApPaterno, String alumnoApMaterno,
 			String alumnoTutor, String alumnoTutorTelefono1, byte[] alumnoImagen) {
@@ -28,6 +29,19 @@ public class AlumnosListVO implements Serializable{
 		this.alumnoTutor = alumnoTutor;
 		this.alumnoTutorTelefono1 = alumnoTutorTelefono1;
 		this.alumnoImagen = alumnoImagen;
+	}
+	
+	public AlumnosListVO(Integer alumnoId, String alumnoNombre, String alumnoApPaterno, String alumnoApMaterno,
+			String alumnoTutor, String alumnoTutorTelefono1, byte[] alumnoImagen, boolean alumnoActivo) {
+		super();
+		this.alumnoId = alumnoId;
+		this.alumnoNombre = alumnoNombre;
+		this.alumnoApPaterno = alumnoApPaterno;
+		this.alumnoApMaterno = alumnoApMaterno;
+		this.alumnoTutor = alumnoTutor;
+		this.alumnoTutorTelefono1 = alumnoTutorTelefono1;
+		this.alumnoImagen = alumnoImagen;
+		this.alumnoActivo = alumnoActivo;
 	}
 	
 	public AlumnosListVO(Integer alumnoId, String alumnoNombre, String alumnoApPaterno, String alumnoApMaterno,
@@ -55,6 +69,20 @@ public class AlumnosListVO implements Serializable{
 		this.alumnoImagen = alumnoImagen;
 		this.cursoNombre = cursoNombre;
 		this.alumnoStatus = alumnoStatus;
+	}
+	
+	public AlumnosListVO(Integer alumnoId, String alumnoNombre, String alumnoApPaterno, String alumnoApMaterno,
+			String alumnoTutor, String alumnoTutorTelefono1, byte[] alumnoImagen, String cursoNombre, Boolean alumnoActivo) {
+		super();
+		this.alumnoId = alumnoId;
+		this.alumnoNombre = alumnoNombre;
+		this.alumnoApPaterno = alumnoApPaterno;
+		this.alumnoApMaterno = alumnoApMaterno;
+		this.alumnoTutor = alumnoTutor;
+		this.alumnoTutorTelefono1 = alumnoTutorTelefono1;
+		this.alumnoImagen = alumnoImagen;
+		this.cursoNombre = cursoNombre;
+		this.alumnoActivo = alumnoActivo;
 	}
 	
 	public Integer getAlumnoId() {
@@ -112,6 +140,14 @@ public class AlumnosListVO implements Serializable{
 
 	public void setAlumnoStatus(Integer alumnoStatus) {
 		this.alumnoStatus = alumnoStatus;
+	}
+
+	public Boolean getAlumnoActivo() {
+		return alumnoActivo;
+	}
+
+	public void setAlumnoActivo(Boolean alumnoActivo) {
+		this.alumnoActivo = alumnoActivo;
 	}
 
 }
