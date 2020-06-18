@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring.ui.cursos;
 
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -14,18 +15,25 @@ import org.claspina.confirmdialog.ConfirmDialog;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.MainView;
+import com.sae.gandhi.spring.service.AlumnoCursoService;
 import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.service.CursoCostosService;
 import com.sae.gandhi.spring.service.CursosService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.ui.cursos.pagos.CursoCostoEditorDialog;
 import com.sae.gandhi.spring.ui.cursos.pagos.CursoCostosList;
+import com.sae.gandhi.spring.ui.cursos.students.CursoStudentEditorDialog;
+import com.sae.gandhi.spring.ui.cursos.students.CursoStudentList;
+import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
+import com.sae.gandhi.spring.vo.AlumnoCursoVO;
+import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
@@ -56,6 +64,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 	private static final String COSTOS = "Costos";
 	private static final String ALUMNOS = "Alumnos";
 	private CursoCostoEditorDialog formCostoAdd;
+	private CursoStudentEditorDialog formStudentAdd;
 	private Binder<CursosVO> binder = new Binder<>();
 	
 	private Integer cursoId;
@@ -63,8 +72,10 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 
 	private CursosService cursosService;
 	private CursoCostosList cursoCostosList;
+	private CursoStudentList cursoStudentList;
 	private CostosService costosService;
 	private CursoCostosService cursoCostoService;
+	private AlumnoCursoService alumnoCursoService;
 	
 	private final H4 header = new H4("Editar Curso"); 
 	private final DatePicker startDatePicker = new DatePicker("Inicio Curso");
@@ -77,11 +88,14 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 	
 	@Autowired
 	public CursosEditorPage(CursosService cursosService, CursoCostosList cursoCostosList, 
-			CostosService costosService, CursoCostosService cursoCostoService){
+			CostosService costosService, CursoCostosService cursoCostoService,
+			CursoStudentList cursoStudentList, AlumnoCursoService alumnoCursoService){
 		this.cursosService = cursosService;
 		this.cursoCostosList = cursoCostosList;
 		this.costosService = costosService;
 		this.cursoCostoService = cursoCostoService;
+		this.cursoStudentList = cursoStudentList;
+		this.alumnoCursoService = alumnoCursoService;
 	}
 	
 	@Override
@@ -89,6 +103,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 		cursoId = parameter;
 		//formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
 		cursoCostosList.updateView(cursoId);
+		cursoStudentList.updateView(cursoId);
 		loadData();
 		addTitle();
 		addFields();
@@ -249,12 +264,10 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
         }
 	}
 	
-	
 	private void addTabs(){
 		HorizontalLayout hlTab = new HorizontalLayout();
 		Tab tabCostos = new Tab(COSTOS);
 		Tab tabStudents = new Tab(ALUMNOS);
-		tabStudents.setEnabled(false);
 		
 		Button addButton = new Button();
 		addButton.setIcon(new Icon(VaadinIcon.PLUS));
@@ -274,7 +287,8 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 		divCostos.setHeight("30vh");
 		
 		Div divStudents = new Div();
-		divStudents.setText(ALUMNOS);
+		divStudents.add(cursoStudentList);
+		divStudents.setHeight("30vh");
 		divStudents.setVisible(false);
 		
 		Map<Tab, Div> tabsToPages = new HashMap<>();
@@ -298,7 +312,6 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 		
 		add(hlTab, pages);
 	}
-	
 	
 	private void saveButton(){
 		binder.writeBeanIfValid(cursoVO);
@@ -329,10 +342,12 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
     		costoVO.setCursoCostoDiaPago(5); //
     		costoVO.setCursoCostoGeneraAdeudo(true);
     		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
-    		formCostoAdd.init();
+//    		formCostoAdd.init();
     		formCostoAdd.open(costoVO, AbstractEditorDialog.Operation.ADD);
     	}else{
-    		System.out.println("Add Alumnos");
+    		formStudentAdd = new CursoStudentEditorDialog(this::saveCursoStudent, this::deleteCursoStudent, this.alumnoCursoService, cursoId);
+    		formStudentAdd.open(new Grid<>(), AbstractEditorDialog.Operation.ADD);
+    		formStudentAdd.init();
     	}
     	
 	}
@@ -365,4 +380,32 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
         cursoCostosList.updateView(cursoId);
     }
 	
+    ////////////////////////////////////////////////////////////////
+    //Metodos de guardar estudiantes
+    ////////////////////////////////////////////////////////////////
+    //Metodo de salvar
+    private void saveCursoStudent(Grid<AlumnosVO> cursoCostos,
+    		AbstractEditorDialog.Operation operation) {
+    	Set<AlumnosVO> set = cursoCostos.getSelectedItems();
+    	Calendar cal = Calendar.getInstance();
+    	set.forEach((e)->{
+    		AlumnoCursoVO alumnoCurso = new AlumnoCursoVO();
+    		alumnoCurso.setAlumnoId(e.getAlumnoId());
+    		alumnoCurso.setAlumnoCursoFechaIngreso(SaeDateUtils.calendarToLocalDate(cal));
+    		alumnoCurso.setAlumnoCursoAplicaBeca(false);
+    		alumnoCurso.setAlumnoCursoAplicaDescuento(false);
+    		alumnoCurso.setCursoVO(cursoVO);
+    		alumnoCursoService.save(alumnoCurso);    		
+    	});
+    	
+    	Notification.show("Curso actualizado", 5000, Notification.Position.BOTTOM_END);
+    	cursoStudentList.updateView(cursoId);
+    }
+    
+    //Eliminar
+    private void deleteCursoStudent(Grid<AlumnosVO> cursoCostos) {
+    	//Sin funcion
+    }
+
+
 }

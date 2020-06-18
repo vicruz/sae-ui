@@ -1,6 +1,7 @@
 package com.sae.gandhi.spring.service.impl;
 
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -89,7 +90,7 @@ public class CursosServiceImpl implements CursosService {
 		Optional<Cursos> optionalCurso = cursosDAO.findById(cursoId);
 		Cursos curso = optionalCurso.get();
 		
-		List<AlumnoCurso> listAlumnos = alumnoCursoDAO.findByCursoId(cursoId);
+		List<AlumnoCurso> listAlumnos = alumnoCursoDAO.findByCursoIdAndAlumnoCursoActivo(cursoId, true);
 		
 		if(!listAlumnos.isEmpty()){
 			return false;
@@ -110,7 +111,11 @@ public class CursosServiceImpl implements CursosService {
 	//Identifica los cursos a los que no se encuentra inscrito el alumno
 	@Override
 	public List<CursosVO> findCoursesNotInStudent(Integer alumnoId) {
-		List<Cursos> lst = cursosDAO.findCoursesNotInStudent(alumnoId);
+		//List<Cursos> lst = cursosDAO.findCoursesNotInStudent(alumnoId);
+		List<Integer> lstInteger = new ArrayList<>();
+		lstInteger.add(SaeEnums.Curso.ACTIVO.getStatusId());
+		lstInteger.add(SaeEnums.Curso.PREPARADO.getStatusId());
+		List<Cursos> lst = cursosDAO.findCoursesNotInStudentAndInStatus(lstInteger, alumnoId);
 		return CursosBuilder.createListCursoVO(lst);
 	}
 

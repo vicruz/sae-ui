@@ -47,4 +47,6 @@ public interface AlumnosDAO extends JpaRepository<Alumnos, Integer> {
 			+ "from Alumnos al "
 			+ "where al.alumnoActivo = 1")
 	public List<AlumnosListVO> getAlumnosListActive();
+	
+	public List<Alumnos> findByAlumnoIdIn(List<Integer> lstAlumnoId);
 }

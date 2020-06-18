@@ -73,7 +73,7 @@ public class CursoCostosServiceImpl implements CursoCostosService {
 		
 		//Guardar el curso costo en los alumnos
 		Optional<Cursos> optional = cursosDAO.findById(cursoCostos.getCursoId());
-		List<AlumnoCurso> lst = alumnoCursoDAO.findByCursoId(cursoCostos.getCursoId());
+		List<AlumnoCurso> lst = alumnoCursoDAO.findByCursoIdAndAlumnoCursoActivo(cursoCostos.getCursoId(), true);
 		Cursos curso = optional.orElse(null);
 		Date initDate = curso.getCursoFechaInicio();
 		

@@ -270,6 +270,20 @@
         flex: auto;
         height: 100%;
       }
+      
+      /*Estilos de la lista de cursos*/
+.card-container {
+	min-width: 250px;
+	padding-bottom: 10px;
+	display: flex;
+	border-style: none;
+	border-width: 1px;
+	background: yellow;
+	border-radius: 30px;
+	bottom: 5px;
+}
+      
+      
     </style>
   </template>
 </dom-module>

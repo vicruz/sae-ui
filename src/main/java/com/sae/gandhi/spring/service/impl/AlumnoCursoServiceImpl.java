@@ -26,7 +26,9 @@ import com.sae.gandhi.spring.service.AlumnoCursoService;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.builder.AlumnoCursoBuilder;
+import com.sae.gandhi.spring.utils.builder.AlumnosBuilder;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
+import com.sae.gandhi.spring.vo.AlumnosVO;
 
 @Service
 @Transactional
@@ -540,6 +542,39 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		}
 		
 		return lstAlumnoVO;
+	}
+
+	@Override
+	public List<AlumnosVO> findByCurso(Integer cursoId) {
+		List<AlumnoCurso> lstAlumnoCurso;
+		List<Integer> lstAlumnoId;
+		List<Alumnos> lstAlumnos;
+		List<AlumnosVO> lstAlumnosVO = new ArrayList<>();
+		
+		lstAlumnoCurso = alumnoCursoDAO.findByCursoIdAndAlumnoCursoActivo(cursoId, true);
+		if(lstAlumnoCurso!=null && !lstAlumnoCurso.isEmpty()){
+			lstAlumnoId = new ArrayList<>();
+			for(AlumnoCurso ac : lstAlumnoCurso){
+				lstAlumnoId.add(ac.getAlumnoId());
+			}
+			
+			lstAlumnos = alumnosDAO.findByAlumnoIdIn(lstAlumnoId);
+			lstAlumnosVO = AlumnosBuilder.createListAlumnosVO(lstAlumnos);
+		}
+		
+		return lstAlumnosVO;
+	}
+
+	@Override
+	public AlumnoCursoVO findByCursoIdAndAlumnoId(Integer cursoId, Integer alumnoId) {
+		AlumnoCurso alumnoCurso = alumnoCursoDAO.findByCursoIdAndAlumnoId(cursoId, alumnoId);
+		return AlumnoCursoBuilder.createAlumnoCursoVO(alumnoCurso);
+	}
+
+	@Override
+	public List<AlumnosVO> findStudentNotInCurso(Integer cursoId) {
+		List<Alumnos> lstAlumnos = alumnoCursoDAO.findStudentNotInCurso(cursoId);
+		return AlumnosBuilder.createListAlumnosVO(lstAlumnos);
 	}
 	
 	

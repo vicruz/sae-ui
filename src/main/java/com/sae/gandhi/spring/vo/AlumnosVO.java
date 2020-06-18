@@ -119,5 +119,8 @@ public class AlumnosVO implements Serializable{
 	public void setAlumnoSaldo(BigDecimal alumnoSaldo) {
 		this.alumnoSaldo = alumnoSaldo;
 	}
+	public String getAlumnoNombreCompleto(){
+		return this.alumnoNombre + " " + this.alumnoApPaterno + " " + this.alumnoApMaterno;
+	}
 	
 }
