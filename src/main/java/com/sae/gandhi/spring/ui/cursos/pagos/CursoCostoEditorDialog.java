@@ -1,18 +1,19 @@
 package com.sae.gandhi.spring.ui.cursos.pagos;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
-import com.sae.gandhi.spring.vo.CostosVO;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.converter.StringToBigDecimalConverter;
 
 public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> {
 
@@ -21,30 +22,34 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private CostosService costosService;
-	private Integer cursoId;
+//	private CostosService costosService;
+//	private Integer cursoId;
 	
-	private ComboBox<CostosVO> comboBox = new ComboBox<>();
+	//private ComboBox<CostosVO> comboBox = new ComboBox<>();
+	private TextField tfCosto = new TextField("Costo");
+	private TextField tfMonto = new TextField("Monto");
 	private Checkbox cbUniquePay = new Checkbox("Pago Único");
 	private Checkbox cbApplyScholarship = new Checkbox("Aplica Beca");
 	private Checkbox cbGeneradeDebit = new Checkbox("Genera Adeudo");
 	private ComboBox<Integer> cmbDay = new ComboBox<>();
 	
 	public CursoCostoEditorDialog(BiConsumer<CursoCostosVO, Operation> itemSaver,
-			Consumer<CursoCostosVO> itemDeleter, CostosService costosService, Integer cursoId){
+			Consumer<CursoCostosVO> itemDeleter){
 		super("Costos", itemSaver, itemDeleter);
-		this.costosService = costosService;
-		this.cursoId = cursoId;
+//		this.costosService = costosService;
+//		this.cursoId = cursoId;
 		init();
+		tfCosto.focus();
 	}
 	
 	public void init(){
-		addCostoCombobox();
-		addChecks();		
+		//addCostoCombobox();
+		addTextBoxs();
+		addChecks();
 	}
 	
 	//https://vaadin.com/components/vaadin-combo-box/java-examples/using-templates
-	private void addCostoCombobox(){
+	/*private void addCostoCombobox(){
 		comboBox.setLabel("Costos");
 		comboBox.setRequired(true);
 		//Muestra los pagos en un template indicando el nombre y debajo el costo de cada curso 
@@ -72,7 +77,30 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 		getBinder().forField(comboBox)
             .bind(CursoCostosVO::getCostosVO, CursoCostosVO::setCostosVO); //Establece setter y getter para su bindeo
 	}
+	*/
 	
+	private void addTextBoxs() {
+		tfCosto.setRequired(true);
+		tfCosto.setErrorMessage("Nombre del costo es requerido");
+		
+		tfMonto.setRequired(true);
+		tfMonto.setPattern("\\d+(\\.)?(\\d{1,2})?"); //Formato #0.00
+		tfMonto.setPreventInvalidInput(true);
+		tfMonto.setErrorMessage("El monto debe ser mayor a $0.00");
+		
+		getFormLayout().add(tfCosto);
+		getFormLayout().add(tfMonto);
+		
+		getBinder().forField(tfCosto)
+        .bind(CursoCostosVO::getCostoNombre, CursoCostosVO::setCostoNombre); 
+		
+		getBinder().forField(tfMonto)
+		.withConverter(
+            new StringToBigDecimalConverter(BigDecimal.ZERO, "Debe ingresar un número."))
+		.withNullRepresentation(BigDecimal.ZERO)
+        .bind(CursoCostosVO::getCostoMonto, CursoCostosVO::setCostoMonto); //Establece setter y getter para su bindeo 
+	
+	}
 	private void addChecks(){
 		List<Integer> lstDays = new ArrayList<>();
 		
@@ -90,9 +118,9 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 			
 		
 		getFormLayout().add(cbUniquePay);
+		getFormLayout().add(cmbDay);
 		getFormLayout().add(cbApplyScholarship);
 		getFormLayout().add(cbGeneradeDebit);
-		getFormLayout().add(cmbDay);
 		
 		getBinder().forField(cbUniquePay)
 			.bind(CursoCostosVO::getCursoCostoPagoUnico, CursoCostosVO::setCursoCostoPagoUnico);
@@ -131,8 +159,30 @@ public class CursoCostoEditorDialog extends AbstractEditorDialog<CursoCostosVO> 
 
 	@Override
 	protected Boolean validateFields() {
-		// TODO Auto-generated method stub
-		return true;
+		boolean isValid = true;
+		if(tfCosto.getValue()==null || tfCosto.getValue().equals("")) {
+			tfCosto.focus();
+			isValid =  false;
+		}
+		if(tfMonto.getValue()==null || tfCosto.getValue().equals("")) { 
+			tfMonto.focus();
+			isValid = false;
+		}
+		try {
+			if(Double.valueOf(tfMonto.getValue()).compareTo(0D)<=0) {
+				tfMonto.focus();
+				isValid = false;
+			}
+		}catch(NumberFormatException e) {
+			tfMonto.focus();
+			isValid = false;
+		}
+		
+		if(!isValid) {
+			Notification.show("Los campos 'Costo' y 'Monto' son obligatorios",5000,Notification.Position.MIDDLE);
+		}
+		
+		return isValid;
 	}
 
 }

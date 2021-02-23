@@ -20,6 +20,11 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 public class ExampleTemplate extends PolymerTemplate<ExampleTemplate.ExampleModel> {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6606144819457084829L;
+
+	/**
      * Template model which defines the single "value" property.
      */
     public interface ExampleModel extends TemplateModel {

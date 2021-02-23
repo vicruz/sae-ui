@@ -3,12 +3,9 @@ package com.sae.gandhi.spring.service.impl;
 import org.springframework.stereotype.Component;
 
 import com.sae.gandhi.spring.service.SessionService;
-import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.UsuariosVO;
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 
 @Component
-//@VaadinSessionScope
 public class SessionServiceImpl implements SessionService{
 
 	private UsuariosVO usuarioVO;

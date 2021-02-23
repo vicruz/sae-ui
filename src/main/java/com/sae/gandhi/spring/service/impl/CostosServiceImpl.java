@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,8 @@ public class CostosServiceImpl implements CostosService {
 
 	@Override
 	public List<CostosVO> findNotInCurso(Integer cursoId) {
-		return CostosBuilder.createListCostoVO(costosDAO.findAllNotInCurso(cursoId));
+		//return CostosBuilder.createListCostoVO(costosDAO.findAllNotInCurso(cursoId));
+		return new ArrayList<>();
 	}
 	
 	

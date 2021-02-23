@@ -15,12 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sae.gandhi.spring.dao.AlumnoCursoDAO;
 import com.sae.gandhi.spring.dao.AlumnoPagoDAO;
 import com.sae.gandhi.spring.dao.AlumnosDAO;
-import com.sae.gandhi.spring.dao.CostosDAO;
 import com.sae.gandhi.spring.dao.CursoCostosDAO;
 import com.sae.gandhi.spring.entity.AlumnoCurso;
 import com.sae.gandhi.spring.entity.AlumnoPagos;
 import com.sae.gandhi.spring.entity.Alumnos;
-import com.sae.gandhi.spring.entity.Costos;
 import com.sae.gandhi.spring.entity.CursoCostos;
 import com.sae.gandhi.spring.service.AlumnoCursoService;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
@@ -49,8 +47,8 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	@Autowired
 	private AlumnosDAO alumnosDAO;
 	
-	@Autowired
-	private CostosDAO costosDAO;
+//	@Autowired
+//	private CostosDAO costosDAO;
 	
 
 	@Override
@@ -240,7 +238,7 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 			BigDecimal montoTotal = BigDecimal.ZERO;
 			//Se estableció la beca
 			if(alumnoCursoVO.getAlumnoCursoBeca()!=null){
-				montoDescuento = cursoCosto.getCostos().getCostoMonto()
+				montoDescuento = cursoCosto.getCostoMonto()
 						.multiply(alumnoCursoVO.getAlumnoCursoBeca())
 						.divide(CIEN,DECIMALES,RoundingMode.HALF_UP);
 			}
@@ -249,7 +247,7 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 				montoDescuento = alumnoCursoVO.getAlumnoCursoDescuento();
 			}
 			
-			montoTotal = cursoCosto.getCostos().getCostoMonto().subtract(montoDescuento);
+			montoTotal = cursoCosto.getCostoMonto().subtract(montoDescuento);
 			
 			//Obtener los alumnosPagos que correspondan al curso costo y descontar el monto al valor total
 			List<AlumnoPagos> lstAlumnoPago = alumnoPagoDAO.findByAlumnoCursoIdAndCursoCostoId(alumnoCurso.getAlumnoCursoId(), cursoCosto.getCursoCostoId());
@@ -429,14 +427,15 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	public void createStudentPayment(CursoCostos cursoCostos, AlumnoCurso alumnoCurso, Date fechaInicio, Date fechaFin){
 		AlumnoPagos alumnoPago;
 		BigDecimal cursoMonto = BigDecimal.ZERO;
-		
+		/*
 		if(cursoCostos.getCostos()==null){
 			Optional<Costos> optional = costosDAO.findById(cursoCostos.getCostoId());
 			Costos costo = optional.orElse(null);
 			cursoMonto = costo.getCostoMonto();
 		}else{
 			cursoMonto = cursoCostos.getCostos().getCostoMonto();
-		}
+		}*/
+		cursoMonto = cursoCostos.getCostoMonto();
 		
 		//Si el curso es pago único, solo se crea un pago con fecha límite al final del curso
 		if(cursoCostos.getCursoCostoPagoUnico()){

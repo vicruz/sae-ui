@@ -62,11 +62,6 @@ public class CursoCostosServiceImpl implements CursoCostosService {
 		CursoCostos cursoCostos = CursoCostoBuilder.createCursoCosto(cursoCostosVo);
 		Calendar cal = Calendar.getInstance();
 		
-		if(cursoCostosVo.getCostosVO()!=null){
-			cursoCostos.setCostoId(cursoCostosVo.getCostosVO().getCostoId());			
-		}else{
-			cursoCostos.setCostoId(cursoCostosVo.getCostoId());
-		}
 		cursoCostos.setCursoCostoActivo(true);
 		cursoCostos.setFechaCreacion(cal.getTime());
 		cursoCostos = cursoCostosDAO.save(cursoCostos);

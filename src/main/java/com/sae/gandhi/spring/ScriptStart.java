@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.Calendar;
 
-import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sae.gandhi.spring.service.AlumnoCursoService;
@@ -15,14 +13,12 @@ import com.sae.gandhi.spring.service.CostosService;
 import com.sae.gandhi.spring.service.CursoCostosService;
 import com.sae.gandhi.spring.service.CursosService;
 import com.sae.gandhi.spring.service.UsuariosService;
-import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.AlumnoCursoVO;
 import com.sae.gandhi.spring.vo.AlumnosVO;
 import com.sae.gandhi.spring.vo.CostosVO;
 import com.sae.gandhi.spring.vo.CursoCostosVO;
 import com.sae.gandhi.spring.vo.CursosVO;
 import com.sae.gandhi.spring.vo.UsuariosVO;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 
 //@SpringComponent
 public class ScriptStart {//implements ApplicationRunner{

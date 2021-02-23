@@ -12,7 +12,7 @@ public interface CostosDAO extends JpaRepository<Costos, Integer> {
 	@Query("Select c from Costos c where c.costoActivo = 1 order by c.fechaCreacion desc")
 	public List<Costos> findAllActive();
 	
-	@Query("Select c from Costos c where c.costoId not in (Select cc.costoId from CursoCostos cc where cc.cursoId = ?1)")
-	public List<Costos> findAllNotInCurso(Integer cursoId);
+	//@Query("Select c from Costos c where c.costoId not in (Select cc.costoId from CursoCostos cc where cc.cursoId = ?1)")
+	//public List<Costos> findAllNotInCurso(Integer cursoId);
 	
 }

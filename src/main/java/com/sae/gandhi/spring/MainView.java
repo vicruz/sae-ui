@@ -6,7 +6,6 @@ import com.sae.gandhi.spring.security.SecurityUtils;
 import com.sae.gandhi.spring.service.UsuariosService;
 import com.sae.gandhi.spring.ui.cursos.CursosList;
 import com.sae.gandhi.spring.ui.dashboard.DashboardUI;
-import com.sae.gandhi.spring.ui.pagos.CostosList;
 import com.sae.gandhi.spring.ui.students.StudentsList;
 import com.sae.gandhi.spring.ui.user.UsersList;
 import com.sae.gandhi.spring.utils.SaeConstants;
@@ -58,7 +57,7 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		title.addClassName("main-layout__title");
 
 		RouterLink dahsboard = new RouterLink(null, DashboardUI.class);
-		dahsboard.add(new Icon(VaadinIcon.LIST), new Text("Dashboard"));
+		dahsboard.add(new Icon(VaadinIcon.LIST), new Text(" Dashboard"));
 		// Only show as active for the exact URL, but not for sub paths
 		dahsboard.setHighlightCondition(HighlightConditions.sameLocation());
 		dahsboard.getElement().getStyle().set("padding-right", "5px");
@@ -67,25 +66,25 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		RouterLink categories = new RouterLink(null, CategoriesList.class);
 		categories.add(new Icon(VaadinIcon.ARCHIVES), new Text("Categories"));
 		*/
-		RouterLink payments = new RouterLink(null, CostosList.class);
+/*		RouterLink payments = new RouterLink(null, CostosList.class);
 		payments.add(new Icon(VaadinIcon.COIN_PILES), new Text("Costos"));
 		payments.getElement().getStyle().set("padding-right", "5px");
-		
+*/		
 		RouterLink courses = new RouterLink(null, CursosList.class);
-		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
+		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text(" Cursos"));
 		courses.getElement().getStyle().set("padding-right", "5px");
 		
 		RouterLink students = new RouterLink(null, StudentsList.class);
-		students.add(new Icon(VaadinIcon.DIPLOMA_SCROLL), new Text("Alumnos"));
+		students.add(new Icon(VaadinIcon.DIPLOMA_SCROLL), new Text(" Alumnos"));
 		students.getElement().getStyle().set("padding-right", "5px");
 		
 		RouterLink users = new RouterLink(null, UsersList.class);
-		users.add(new Icon(VaadinIcon.USER), new Text("Usuarios"));
+		users.add(new Icon(VaadinIcon.USER), new Text(" Usuarios"));
 		users.getElement().setAttribute("theme", "icon-on-top");
 		users.getElement().getStyle().set("padding-right", "5px");
 		
 		RouterLink logout = new RouterLink();
-		logout.add(VaadinIcon.ARROW_RIGHT.create(), new Text("Salir"));
+		logout.add(VaadinIcon.ARROW_RIGHT.create(), new Text(" Salir"));
 		Div divLogout = new Div();
 		divLogout.add(logout);
 		divLogout.addClickListener(e->{ 
@@ -98,7 +97,8 @@ public class MainView extends Div implements RouterLayout, PageConfigurator {
 		
 
 		//Div navigation = new Div(reviews, categories, payments, courses);
-		Div navigation = new Div(dahsboard, payments, courses, students);//,users,divLogout);
+		//Div navigation = new Div(dahsboard, payments, courses, students);//,users,divLogout);
+		Div navigation = new Div(dahsboard, courses, students);
 		if (SecurityUtils.isAccessGranted(UsersList.class)) {
 			navigation.add(users);
 		}

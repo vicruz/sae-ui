@@ -4,20 +4,14 @@ package com.sae.gandhi.spring;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.entity.Customer;
-import com.sae.gandhi.spring.form.customer.CustomerForm;
 import com.sae.gandhi.spring.service.CustomerService;
-import com.sae.gandhi.spring.utils.SaeConstants;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.Route;
 
 /**
  * The main view contains a simple label element and a template element.
@@ -55,11 +49,11 @@ public class MainView2 extends VerticalLayout {
 //    	    form.setCustomer(new Customer()); //Envia un nuevo elemento a la forma
     	});
     	
-    	HorizontalLayout filtering = new HorizontalLayout(filterText,
-    		    clearFilterTextBtn);
+//    	HorizontalLayout filtering = new HorizontalLayout(filterText,
+//    		    clearFilterTextBtn);
     	
-    	HorizontalLayout toolbar = new HorizontalLayout(filtering,
-    		    addCustomerBtn);
+//    	HorizontalLayout toolbar = new HorizontalLayout(filtering,
+//    		    addCustomerBtn);
     	
     	///Grid y agregar elemento
     	grid.setSizeFull();

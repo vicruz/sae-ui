@@ -26,13 +26,11 @@ public class CustomerForm extends FormLayout{
 	
 	private CustomerService service = CustomerService.getInstance();
 	private Customer customer;
-	private MainView view;
 	
 	//Para bindear los campos de la vista
 	private Binder<Customer> binder = new Binder<>(Customer.class);
 	
 	public CustomerForm(MainView view) {
-	    this.view = view;
 	    binder.bindInstanceFields(this);
 	    
 	    HorizontalLayout buttons = new HorizontalLayout(save, delete);
@@ -63,13 +61,11 @@ public class CustomerForm extends FormLayout{
 	
 	private void delete() {
 	    service.delete(customer);
-//	    view.updateList();
 	    setCustomer(null);
 	}
 
 	private void save() {
 	    service.save(customer);
-//	    view.updateList();
 	    setCustomer(null);
 	}
 	

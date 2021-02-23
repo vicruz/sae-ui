@@ -24,25 +24,23 @@ public interface AlumnoPagoBitacoraDAO extends JpaRepository<AlumnoPagosBitacora
 	 */
 	
 	//Encuentra los pagos por alumno pago
-	@Query("Select new com.sae.gandhi.spring.entity.vo.AlumnoPagoBitacoraVO(curso.cursoNombre, costo.costoNombre, ap.alumnoPagoFechaLimite, "
+	@Query("Select new com.sae.gandhi.spring.entity.vo.AlumnoPagoBitacoraVO(curso.cursoNombre, cc.costoNombre, ap.alumnoPagoFechaLimite, "
 			+ "ap.alumnoPagoMonto, apb.alumnoPagosBitacoraFechaPago, apb.alumnoPagosBitacoraPago, apb.alumnoPagosBitacoraSaldo, ap.alumnoPagoEstatus) "
 			+ "from AlumnoPagos ap "
 			+ "join ap.alumnoCurso ac "
 			+ "join ap.cursoCostos cc "
 			+ "join cc.cursos curso "
-			+ "join cc.costos costo "
 			+ "left join ap.lstAlumnoPagosBitacora apb "
 			+ "where ac.alumnoId = ?1 order by ac.alumnoCursoId, ap.alumnoPagoId")
 	public List<AlumnoPagoBitacoraVO> findByAlumnoId(Integer idAlumnoPago);
 	
 	//Encuentra los pagos por alumno pago
-	@Query("Select new com.sae.gandhi.spring.entity.vo.AlumnoPagoBitacoraVO(curso.cursoNombre, costo.costoNombre, ap.alumnoPagoFechaLimite, "
+	@Query("Select new com.sae.gandhi.spring.entity.vo.AlumnoPagoBitacoraVO(curso.cursoNombre, cc.costoNombre, ap.alumnoPagoFechaLimite, "
 			+ "ap.alumnoPagoMonto, apb.alumnoPagosBitacoraFechaPago, apb.alumnoPagosBitacoraPago, apb.alumnoPagosBitacoraSaldo, ap.alumnoPagoEstatus) "
 			+ "from AlumnoPagos ap "
 			+ "join ap.alumnoCurso ac "
 			+ "join ap.cursoCostos cc "
 			+ "join cc.cursos curso "
-			+ "join cc.costos costo "
 			+ "left join ap.lstAlumnoPagosBitacora apb "
 			+ "where ac.alumnoId = ?1 and ac.cursoId = ?2 order by ac.alumnoCursoId, ap.alumnoPagoId")
 		public List<AlumnoPagoBitacoraVO> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);

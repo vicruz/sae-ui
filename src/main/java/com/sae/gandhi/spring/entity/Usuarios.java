@@ -1,5 +1,7 @@
 package com.sae.gandhi.spring.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,8 +10,13 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="USUARIOS")
-public class Usuarios {
+public class Usuarios implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8171269251066893406L;
+
 	@Id
 	@Column(name="USUARIO_LOGIN")
 	@NotNull

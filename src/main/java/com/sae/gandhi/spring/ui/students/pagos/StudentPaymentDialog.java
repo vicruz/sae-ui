@@ -72,6 +72,7 @@ public class StudentPaymentDialog extends AbstractEditorDialog<AlumnoPagoVO> {
 		dpFechaPago = new DatePicker();
 		dpFechaPago.setLabel("Fecha de pago");
 		getBinder().forField(dpFechaPago).bind(AlumnoPagoVO::getAlumnoPagoFechaPago, AlumnoPagoVO::setAlumnoPagoFechaPago);
+		dpFechaPago.focus();
 		
 		txtPaymentAmount = new TextField("Monto a pagar:");
 		txtPaymentAmount.setRequired(true);

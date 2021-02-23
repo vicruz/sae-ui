@@ -1,4 +1,4 @@
-package com.sae.gandhi.spring.scheule;
+package com.sae.gandhi.spring.schedule;
 
 import java.util.Calendar;
 

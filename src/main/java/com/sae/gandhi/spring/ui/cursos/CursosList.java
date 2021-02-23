@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sae.gandhi.spring.MainView;
 import com.sae.gandhi.spring.service.CursosService;
-import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.vo.CursosVO;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.Div;
@@ -26,6 +26,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -52,7 +53,7 @@ public class CursosList extends VerticalLayout {
     
     private Grid<CursosVO> grid = new Grid<>();
     List<CursosVO> lstCursos;
-    private SessionService sessionService;
+    //private SessionService sessionService;
     private boolean isAdmin;
     
     @Autowired
@@ -107,13 +108,14 @@ public class CursosList extends VerticalLayout {
         	.setHeader("Inicio").setWidth("6em").setResizable(true);
         grid.addColumn(new LocalDateRenderer<>(CursosVO::getCursoFechaFin,DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)))
         	.setHeader("Fin").setWidth("6em").setResizable(true);
-        grid.addColumn(CursosVO::getInscritos).setHeader("Alumnos").setWidth("6em").setResizable(true);
+//        grid.addColumn(CursosVO::getInscritos).setHeader("Alumnos").setWidth("6em").setResizable(true);
         //grid.addColumn(CursosVO::getCursoStatus).setHeader("Estatus").setWidth("6em").setResizable(true);
         
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createStatusLabel)).setHeader("Estatus").setWidth("6em").setResizable(true);
         grid.addColumn(new ComponentRenderer<>(this::createEditButton)).setHeader("Editar").setFlexGrow(0);
         grid.addColumn(new ComponentRenderer<>(this::createInactiveButton)).setHeader("Cancelar").setFlexGrow(0);
+        grid.addColumn(new ComponentRenderer<>(this::createCopyButton)).setHeader("Copiar").setFlexGrow(0);
         grid.setSelectionMode(SelectionMode.SINGLE);
       
         container.add(header, grid);
@@ -194,6 +196,29 @@ public class CursosList extends VerticalLayout {
         return edit;
     }
     
+    //Boton de Copiar
+    private Button createCopyButton(CursosVO curso) {
+        Button copy = new Button("",event -> copyCurso(curso));
+//                AbstractEditorDialog.Operation.EDIT));
+        //edit.setIcon(new Icon("lumo", "close"));
+        copy.setIcon(new Icon(VaadinIcon.COPY));
+        copy.addClassName("review__edit");
+        copy.getElement().setAttribute("theme", "tertiary");
+        copy.getElement().setAttribute("title", "Eliminar");
+        
+        //Si el usuario NO es ADMIN, se deshabilita
+        //if(!sessionService.isAdmin()){
+        if(!isAdmin){
+        	copy.setEnabled(false);
+        }
+        
+        if(curso.getCursoStatus()==3 || curso.getCursoStatus()==4){
+        	copy.setEnabled(false);
+        }
+        
+        return copy;
+    }
+    
     //Carga los datos del grid
     private void loadData(){
     	lstCursos = cursosService.findAllActive();
@@ -240,21 +265,54 @@ public class CursosList extends VerticalLayout {
         .withOkButton(() -> {
         	if(cursosService.delete(curso.getCursoId())){
         		Notification.show("Curso "+curso.getCursoNombre() +" Cancelado", 3000, Position.BOTTOM_END);
-//        		RouterLink courses = new RouterLink(null, CursosEditorPage.class);
- //       		courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
         		loadData();
         	}else{
         		Notification.show("El curso "+ curso.getCursoNombre() +" tiene alumnos registrados y no puede ser dado de baja", 
         				3000, Position.BOTTOM_END);
         	}
-//            System.out.println("YES. Implement logic here.");
         }, ButtonOption.focus(), ButtonOption.caption("SI"))
         .withCancelButton(ButtonOption.caption("NO"))
         .open();
+    }
+    
+    //Copiar curso
+    private void copyCurso(CursosVO curso) {
     	
+    	Dialog dialog = new Dialog();
+    	TextField textField = new TextField("Curso");
+    	dialog.add(textField);
     	
-//    	cursosService.deactivate(curso);
+    	Button buttonCancel = new Button("Cancelar");
+    	Button buttonAdd = new Button("Copiar");
     	
+    	buttonCancel.addClickListener(e->dialog.close());
+    	buttonAdd.addClickListener(e->cloneCurso(curso, textField.getValue(), dialog));
+    	
+    	buttonCancel.getElement().setAttribute("theme", "error");
+    	buttonAdd.getElement().setAttribute("theme", "primary");
+    	
+    	HorizontalLayout buttonBar = new HorizontalLayout(buttonAdd, buttonCancel);
+
+    	dialog.add(buttonBar);
+    	
+    	dialog.open();    	
+    }
+    
+    private void cloneCurso(CursosVO cursos, String cursoName, Dialog dialog) {
+    	if(cursoName==null || cursoName.isEmpty()) {
+    		Notification.show("Debes poner un nombre al nuevo curso", 3000, Position.BOTTOM_END);
+    		return;
+    	}
+    	
+    	cursos.setCursoNombre(cursoName);
+    	if(cursosService.copyCourse(cursos)) {
+    		Notification.show("Curso '" + cursoName + "' creado correctamente", 3000, Position.BOTTOM_END);
+    		loadData();
+    	}else {
+    		Notification.show("ERROR al crear el curso '" + cursoName + "'", 3000, Position.BOTTOM_END);
+    	}
+    	
+    	dialog.close();
     }
     
 }

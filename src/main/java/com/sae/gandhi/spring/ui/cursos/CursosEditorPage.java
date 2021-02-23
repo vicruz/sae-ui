@@ -73,7 +73,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 	private CursosService cursosService;
 	private CursoCostosList cursoCostosList;
 	private CursoStudentList cursoStudentList;
-	private CostosService costosService;
+//	private CostosService costosService;
 	private CursoCostosService cursoCostoService;
 	private AlumnoCursoService alumnoCursoService;
 	
@@ -92,7 +92,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 			CursoStudentList cursoStudentList, AlumnoCursoService alumnoCursoService){
 		this.cursosService = cursosService;
 		this.cursoCostosList = cursoCostosList;
-		this.costosService = costosService;
+//		this.costosService = costosService;
 		this.cursoCostoService = cursoCostoService;
 		this.cursoStudentList = cursoStudentList;
 		this.alumnoCursoService = alumnoCursoService;
@@ -341,7 +341,8 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
     		costoVO.setCursoId(cursoId);
     		costoVO.setCursoCostoDiaPago(5); //
     		costoVO.setCursoCostoGeneraAdeudo(true);
-    		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
+    		//formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto, this.costosService, cursoId);
+    		formCostoAdd = new CursoCostoEditorDialog(this::saveCursoCosto, this::deleteCursoCosto);
 //    		formCostoAdd.init();
     		formCostoAdd.open(costoVO, AbstractEditorDialog.Operation.ADD);
     	}else{

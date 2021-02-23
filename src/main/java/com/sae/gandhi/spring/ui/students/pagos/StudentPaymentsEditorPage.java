@@ -84,7 +84,6 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	private CursosService cursosService;
 	private AlumnoPagoService alumnoPagoService;
 	private ReportService reportService;
-//	private SessionService sessionService;
 	
 	private Grid<AlumnoPagoVO> grid;
 	private Binder<AlumnoPagoVO> binder;
@@ -141,7 +140,6 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 
 		searchField.setPrefixComponent(new Icon("lumo", "search"));
 		searchField.addClassName("view-toolbar__search-field");
-		// searchField.addValueChangeListener(e -> updateView());
 		searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
 		viewToolbar.add(searchField);
@@ -222,8 +220,6 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		report.addClassName("review__edit");
 		report.getElement().setAttribute("theme", "tertiary");
 		report.getElement().setAttribute("title", "Descargar");
-		//report.setWidth("30%");
-		//download.add(new Button(new Icon(VaadinIcon.DOWNLOAD_ALT)));
 		download.add(report);
 		 
 		hlLayout.getStyle().set("width", "100%");
@@ -356,15 +352,9 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 
 	private Label createConceptLabel(AlumnoPagoVO vo) {
 		Label label = new Label();
-		// Calendar cal = Calendar.getInstance();
-		// cal.setTime(vo.getAlumnoPagoFechaLimite());
-		/*System.out.println("-----------" + vo.getAlumnoPagoFechaLimite().getMonth().name() + " "
-				+ vo.getAlumnoPagoFechaLimite().getYear());*/
 		StringBuilder sb = new StringBuilder(vo.getCostoNombre());
 		sb.append(" ").append(SaeEnums.Mes.getMes(vo.getAlumnoPagoFechaLimite().getMonth().getValue()))
-				// .append(vo.getAlumnoPagoFechaLimite().getMonth().name())
 				.append(" ")
-				// .append(cal.get(Calendar.YEAR));
 				.append(vo.getAlumnoPagoFechaLimite().getYear());
 
 		label.setText(sb.toString());
@@ -446,10 +436,6 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			}
 			AlumnoPagoVO alumnoPagoVOtmp = alumnoPagoService.save(alumnoPagoVO, alumnoVO.getAlumnoId(), alumnoVO.getAlumnoSaldo());
 			
-			//restar el saldo al alumno/vista
-			//if(alumnoPagoVO.getUsaSaldo())
-			//alumnoVO.setAlumnoSaldo(alumnoVO.getAlumnoSaldo().subtract(alumnoPagoVO.get));
-			
 			try {
 				BeanUtils.copyProperties(alumnoPagoVO, alumnoPagoVOtmp);
 			} catch (IllegalAccessException | InvocationTargetException e) {
@@ -470,11 +456,8 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
         .withCaption("Eliminar Pago")
         .withMessage("Deseas eliminar el Pago?")
         .withOkButton(() -> {
-//            System.out.println("YES. Implement logic here.");
         	alumnoPagoService.delete(alumnoPagoVO);
             Notification.show("Pago eliminado", 3000, Position.BOTTOM_END);
-            //RouterLink courses = new RouterLink(null, CursosEditorPage.class);
-    		//courses.add(new Icon(VaadinIcon.ACADEMY_CAP), new Text("Cursos"));
             update();
         }, ButtonOption.focus(), ButtonOption.caption("SI"))
         .withCancelButton(ButtonOption.caption("NO"))

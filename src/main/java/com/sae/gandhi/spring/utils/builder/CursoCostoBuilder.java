@@ -16,13 +16,9 @@ public class CursoCostoBuilder {
 		
 		try {
 			BeanUtils.copyProperties(vo, cursoCostos);
-			vo.setCostoMonto(cursoCostos.getCostos().getCostoMonto());
-			vo.setCostoNombre(cursoCostos.getCostos().getCostoNombre());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -46,10 +42,8 @@ public class CursoCostoBuilder {
 		try {
 			BeanUtils.copyProperties(curso, cursoCostosVo);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

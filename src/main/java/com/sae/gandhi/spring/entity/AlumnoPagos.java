@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +18,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ALUMNO_PAGOS")
-public class AlumnoPagos {
+public class AlumnoPagos implements Serializable {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8186354188743614885L;
 
 	@Id
 	@Column(name = "ALUMNOPAGO_ID")

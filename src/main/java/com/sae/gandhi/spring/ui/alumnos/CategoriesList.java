@@ -2,7 +2,6 @@ package com.sae.gandhi.spring.ui.alumnos;
 
 import com.sae.gandhi.spring.MainView;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
@@ -17,7 +16,11 @@ import com.vaadin.flow.router.Route;
 @PageTitle("Categories List")
 public class CategoriesList extends VerticalLayout {
 
-    private final TextField searchField = new TextField("", "Search categories");
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3151919812818601772L;
+	private final TextField searchField = new TextField("", "Search categories");
     private final H2 header = new H2("Categories");
 
 
@@ -26,8 +29,6 @@ public class CategoriesList extends VerticalLayout {
 
         addSearchBar();
         addContent();
-
-//        updateView();
     }
 
     private void initView() {
@@ -41,14 +42,11 @@ public class CategoriesList extends VerticalLayout {
 
         searchField.setPrefixComponent(new Icon("lumo", "search"));
         searchField.addClassName("view-toolbar__search-field");
-//        searchField.addValueChangeListener(e -> updateView());
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
         Button newButton = new Button("New category", new Icon("lumo", "plus"));
         newButton.getElement().setAttribute("theme", "primary");
         newButton.addClassName("view-toolbar__button");
-        /*newButton.addClickListener(e -> form.open(new Category(),
-                AbstractEditorDialog.Operation.ADD));*/
 
         viewToolbar.add(searchField, newButton);
         add(viewToolbar);

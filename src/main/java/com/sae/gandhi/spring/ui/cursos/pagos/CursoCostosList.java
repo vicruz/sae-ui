@@ -58,7 +58,7 @@ public class CursoCostosList extends VerticalLayout {
 
         grid.addColumn(CursoCostosVO::getCostoNombre).setHeader("Concepto").setWidth("6em").setResizable(true);
         grid.addColumn(new NumberRenderer<>(CursoCostosVO::getCostoMonto, "$%(,.2f",Locale.US, "$0.00")).setHeader("Monto").setWidth("6em").setResizable(true);
-        grid.addColumn(new NumberRenderer<>(CursoCostosVO::getCursoCostoDiaPago,"")).setHeader("Dia de pago").setWidth("6em").setResizable(true);
+        grid.addColumn(CursoCostosVO::getCursoCostoDiaPago).setHeader("Dia de pago").setWidth("6em").setResizable(true);
         
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createUniqueIcon)).setHeader("Único").setFlexGrow(0);

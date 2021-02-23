@@ -26,9 +26,6 @@ import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 @Service
 public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	
-	private static final BigDecimal CIEN = new BigDecimal(100);
-	private static final Integer DECIMALES = 2;
-	
 	@Autowired
 	AlumnoPagoDAO alumnoPagoDAO;
 	
@@ -89,6 +86,7 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 			
 			//Validar si la fecha de pago es menor o igual a la fecha limite, ajustar el monto a pagar y calcular beca/descuento 
 			//del monto inicial
+			/*
 			if(!alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago().after(alumnoPagos.getAlumnoPagoFechaLimite())){
 				//Obtener beca/descuento
 				BigDecimal beca = alumnoPago.get().getAlumnoCurso().getAlumnoCursoBeca();
@@ -96,7 +94,7 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 				BigDecimal montoDescuento = BigDecimal.ZERO;
 				
 				if(beca!=null){
-					montoDescuento = alumnoPago.get().getCursoCostos().getCostos().getCostoMonto()
+					montoDescuento = alumnoPago.get().getCursoCostos().getCostoMonto()
 							.multiply(beca)
 							.divide(CIEN,DECIMALES,RoundingMode.HALF_UP);
 				}
@@ -105,9 +103,9 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 					montoDescuento = descuento;
 				}
 				
-				alumnoPagos.setAlumnoPagoMonto(alumnoPago.get().getCursoCostos().getCostos().getCostoMonto().subtract(montoDescuento));
+				alumnoPagos.setAlumnoPagoMonto(alumnoPago.get().getCursoCostos().getCostoMonto().subtract(montoDescuento));
 			}
-			
+			*/
 			
 			//Calculos del saldo
 			//saber si el pago se realizó con saldo y el monto del saldo utilizado
@@ -158,6 +156,7 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	@Override
 	public void updateMontoFechaExceed() {
 		Calendar fechaActual = Calendar.getInstance();
+		fechaActual.add(Calendar.MONTH, 4);
 		//Solo busca los pagos que hayan excedido la fecha límite y se encuentren en "pendiente" o "Adeudo
 		//Pagos que tenga activo el campo "Genera Adeudo"
 		List<AlumnoPagos> lstAlumno = alumnoPagoDAO.findPagoLimitExceed(SaeEnums.Pago.PREPARADO.getStatusId(),
@@ -180,7 +179,8 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 			//Calculo del % a sumar al pago
 			/////////////////////////////////
 			//Monto original
-			montoOriginal = alumnoPagos.getCursoCostos().getCostos().getCostoMonto();
+			montoOriginal = alumnoPagos.getCursoCostos().getCostoMonto();
+			if(montoOriginal == null) continue; //solucion a remover la tabla de costos
 			
 			//Porcentaje
 			porcentaje = mesesDiff * 10;

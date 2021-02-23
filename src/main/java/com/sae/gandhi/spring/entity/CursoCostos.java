@@ -1,5 +1,7 @@
 package com.sae.gandhi.spring.entity;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,7 +20,12 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="CURSO_COSTOS")
-public class CursoCostos {
+public class CursoCostos implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7570690923137059221L;
 
 	@Id
 	@Column(name="CURSOCOSTO_ID")
@@ -29,10 +35,6 @@ public class CursoCostos {
 	@Column(name="CURSO_ID")
 	@NotNull
 	private Integer cursoId;
-	
-	@Column(name="COSTO_ID")
-	@NotNull
-	private Integer costoId;
 	
 	@Column(name="CURSOCOSTO_DIA_PAGO")
 	private Integer cursoCostoDiaPago;
@@ -57,9 +59,11 @@ public class CursoCostos {
 	@Temporal(TemporalType.DATE)
 	private Date fechaCreacion;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="COSTO_ID", insertable=false, updatable=false)
-	private Costos costos;
+	@Column(name="COSTO_NOMBRE")
+	private String costoNombre;
+	
+	@Column(name="COSTO_MONTO")
+	private BigDecimal costoMonto;
 	
 	public Integer getCursoCostoId() {
 		return cursoCostoId;
@@ -73,12 +77,7 @@ public class CursoCostos {
 	public void setCursoId(Integer cursoId) {
 		this.cursoId = cursoId;
 	}
-	public Integer getCostoId() {
-		return costoId;
-	}
-	public void setCostoId(Integer costoId) {
-		this.costoId = costoId;
-	}
+	
 	public Integer getCursoCostoDiaPago() {
 		return cursoCostoDiaPago;
 	}
@@ -121,12 +120,17 @@ public class CursoCostos {
 	public void setCursos(Cursos cursos) {
 		this.cursos = cursos;
 	}
-	public Costos getCostos() {
-		return costos;
+	public String getCostoNombre() {
+		return costoNombre;
 	}
-	public void setCostos(Costos costos) {
-		this.costos = costos;
+	public void setCostoNombre(String costoNombre) {
+		this.costoNombre = costoNombre;
 	}
-
+	public BigDecimal getCostoMonto() {
+		return costoMonto;
+	}
+	public void setCostoMonto(BigDecimal costoMonto) {
+		this.costoMonto = costoMonto;
+	}
 	
 }

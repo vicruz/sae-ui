@@ -1,5 +1,6 @@
 package com.sae.gandhi.spring.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -15,7 +16,13 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="COSTOS")
-public class Costos {
+public class Costos implements Serializable {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2659818645588046610L;
 
 	@Id
 	@Column(name="COSTO_ID")

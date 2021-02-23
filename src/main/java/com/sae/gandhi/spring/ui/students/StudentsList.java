@@ -159,7 +159,7 @@ public class StudentsList extends VerticalLayout {
         //Image image = new Image("frontend/images/usuario.jpg","alt");
         
         if(Objects.isNull(alumno.getAlumnoImagen())){
-        	image = new Image("frontend/images/usuario.jpg","");        	
+        	image = new Image("frontend/images/usuario.jpg","");
         }else{
         	//ByteArrayInputStream bis = new ByteArrayInputStream(alumno.getAlumnoImagen());
         	StreamImage stream = new StreamImage(alumno.getAlumnoImagen());

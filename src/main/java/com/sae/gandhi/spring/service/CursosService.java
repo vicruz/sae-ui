@@ -17,5 +17,6 @@ public interface CursosService {
 	public void updateStartedCourses();
 	public void updateFinishedCourses();
 	public void updateCourse(Integer cursoStatus, Integer cursoId);
+	public boolean copyCourse(CursosVO cursoVo);
 	
 }

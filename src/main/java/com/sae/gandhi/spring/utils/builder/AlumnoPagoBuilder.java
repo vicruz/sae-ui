@@ -62,7 +62,7 @@ public class AlumnoPagoBuilder {
 			
 			BeanUtils.copyProperties(vo, tmp);
 			vo.setCursoNombre(alumnoPago.getAlumnoCurso().getCurso().getCursoNombre());
-			vo.setCostoNombre(alumnoPago.getCursoCostos().getCostos().getCostoNombre());
+			vo.setCostoNombre(alumnoPago.getCursoCostos().getCostoNombre());
 			vo.setEstatusId(alumnoPago.getAlumnoPagoEstatus());
 			vo.setAlumnoPagoFechaLimite(fechaLimite);
 			vo.setAlumnoPagoFechaPago(fechaPago);
