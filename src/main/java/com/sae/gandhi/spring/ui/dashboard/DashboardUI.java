@@ -55,7 +55,7 @@ public class DashboardUI extends VerticalLayout{
 		}
 		
         BarDataset dataset = new BarDataset()
-                .setLabel("Cursos")
+                .setLabel("Alumnos")
                 //.addBackgroundColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE, Color.GRAY, Color.BLACK)
                 .setBorderWidth(2);
         
