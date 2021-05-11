@@ -216,6 +216,7 @@ public class StudentsList extends VerticalLayout {
         
         //Estatus de pago del alumno
         //TODO
+        /*
         Label lbStatus = new Label();
         lbStatus.getStyle().set("fontSize", "12px");
         lbStatus.setText("pagado");
@@ -223,7 +224,7 @@ public class StudentsList extends VerticalLayout {
         lbStatus.getStyle().set("background", "ffffc0");
         hlDataCourse.add(lbStatus);
         hlDataCourse.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER, lbStatus);
-        
+        */
         ///Boton para editar al alumno
         Button edit = new Button("");
         edit.addClickListener(event -> 
