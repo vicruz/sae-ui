@@ -53,7 +53,7 @@ public class StudentsList extends VerticalLayout {
     
     private AlumnosService alumnosService;
     
-    private StudentDialog form;// = new StudentDialog(this::saveStudent, this::deleteStudent);
+    private StudentDialog form;
     
     //Gris que contendrá los costos
     private final Grid<AlumnosListVO> grid = new Grid<>();
@@ -101,7 +101,6 @@ public class StudentsList extends VerticalLayout {
 
         //Se envian metodos que cumplen con la funcion requerida
         grid.addColumn(new ComponentRenderer<>(this::createDivStudents));
-        //grid.addColumn(new ComponentRenderer<>(this::createInactiveButton)).setFlexGrow(0);
         grid.setSelectionMode(SelectionMode.SINGLE);
         
         //Check para ver a todos los alumnos
@@ -287,9 +286,7 @@ public class StudentsList extends VerticalLayout {
   //Metodo de salvar
     private void saveStudent(AlumnosVO alumnosVo,
             AbstractEditorDialog.Operation operation) {
-//    	System.out.println(alumnosVo.getAlumnoNombre()+ " - " + alumnosVo.getAlumnoImagen());
-//    	System.out.println(form.getBuffer().getFileName());
-//    	System.out.println(form.getBuffer().getInputStream());
+
     	if(Objects.nonNull(form.getBuffer().getInputStream())){
     		try {
 				alumnosVo.setAlumnoImagen(IOUtils.toByteArray(form.getBuffer().getInputStream()));

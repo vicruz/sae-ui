@@ -306,7 +306,7 @@ public class CursosEditorPage extends VerticalLayout implements HasUrlParameter<
 		    selectedPage.setVisible(true);
 		    pagesShown.add(selectedPage);
 		    
-		    System.out.println(tabs.getSelectedTab().getLabel());
+//		    System.out.println(tabs.getSelectedTab().getLabel());
 		});
 		
 		

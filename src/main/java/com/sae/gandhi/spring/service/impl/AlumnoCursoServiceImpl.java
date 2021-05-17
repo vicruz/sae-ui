@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sae.gandhi.spring.dao.AlumnoCursoDAO;
+import com.sae.gandhi.spring.dao.AlumnoPagoBitacoraDAO;
 import com.sae.gandhi.spring.dao.AlumnoPagoDAO;
 import com.sae.gandhi.spring.dao.AlumnosDAO;
 import com.sae.gandhi.spring.dao.CursoCostosDAO;
@@ -21,6 +22,7 @@ import com.sae.gandhi.spring.entity.AlumnoPagos;
 import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.entity.CursoCostos;
 import com.sae.gandhi.spring.service.AlumnoCursoService;
+import com.sae.gandhi.spring.utils.SaeConstants;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.builder.AlumnoCursoBuilder;
@@ -47,10 +49,9 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	@Autowired
 	private AlumnosDAO alumnosDAO;
 	
-//	@Autowired
-//	private CostosDAO costosDAO;
+	@Autowired
+	private AlumnoPagoBitacoraDAO alumnoPagoBitacoraDAO;
 	
-
 	@Override
 	public void save(AlumnoCursoVO alumnoCursoVO) {
 		AlumnoCurso alumnoCurso = new AlumnoCurso();
@@ -86,106 +87,6 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 			
 			createStudentPayment(cursoCostos, alumnoCurso, initDate, 
 					SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
-/*			
-			AlumnoPagos alumnoPago;
-			
-			//Si el curso es pago único, solo se crea un pago con fecha límite al final del curso
-			if(cursoCostos.getCursoCostoPagoUnico()){
-				alumnoPago = new AlumnoPagos();
-				alumnoPago.setAlumnoPagoFechaLimite(
-						SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
-				
-				alumnoPago.setAlumnoCursoId(alumnoCurso.getAlumnoCursoId());
-				alumnoPago.setAlumnoPagoEstatus(1); //TODO estatus de pagos
-				alumnoPago.setAlumnoPagoPago(BigDecimal.ZERO);
-				alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto());
-				alumnoPago.setCursoCostoId(cursoCostos.getCursoCostoId());
-				
-				//Realizar cálculo para modifica el pago si es de beca
-				if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-						alumnoCurso.getAlumnoCursoBeca()!=null && alumnoCurso.getAlumnoCursoBeca().compareTo(BigDecimal.ZERO) > 0 ){
-					alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto().subtract(
-							cursoCostos.getCostos().getCostoMonto()
-							.multiply(alumnoCurso.getAlumnoCursoBeca())
-							.divide(CIEN,DECIMALES,RoundingMode.HALF_UP)));
-				}
-				
-				//Realizar cálculo para modifica el pago si es de beca
-				if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-						alumnoCurso.getAlumnoCursoDescuento()!=null && alumnoCurso.getAlumnoCursoDescuento().compareTo(BigDecimal.ZERO) > 0){
-					alumnoPago.setAlumnoPagoMonto(
-							cursoCostos.getCostos().getCostoMonto()
-							.subtract(alumnoCurso.getAlumnoCursoDescuento()));
-				}
-				
-				alumnoPagoDAO.save(alumnoPago);
-				continue;
-			}
-			
-			//Si el curso no es único, se crea un pago por cada mes para la duracion del curso
-			if(!cursoCostos.getCursoCostoPagoUnico()){
-				//Crear el 1er pago con fecha límite el día X del 1er mes del curso.				
-				Calendar calLimite = Calendar.getInstance();
-				calLimite.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaInicio()));				
-				calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
-				
-				//Si el alumno entró después de iniciado el curso, los pagos se crearan con el mes de ingreso del alumno al curso
-				Calendar calIngresoAlumno = Calendar.getInstance();
-				calIngresoAlumno.setTime(alumnoCurso.getAlumnoCursoIngreso());
-				if(calLimite.before(calIngresoAlumno)){
-					calLimite = calIngresoAlumno;
-				}
-				
-				Calendar calEnd = Calendar.getInstance();
-				calEnd.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
-				
-				//Mientras la fecha límite de pago sea menor a la fecha de fin de curso, creará un 
-				//registro de pago para cada mes
-				while(calLimite.before(calEnd)){
-					alumnoPago = new AlumnoPagos();
-					
-					if(calLimite.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
-						calLimite.add(Calendar.DAY_OF_MONTH, -1);
-					}else if(calLimite.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
-						calLimite.add(Calendar.DAY_OF_MONTH, -2);
-					}
-					
-					alumnoPago.setAlumnoPagoFechaLimite(calLimite.getTime());
-					
-					alumnoPago.setAlumnoCursoId(alumnoCurso.getAlumnoCursoId());
-					alumnoPago.setAlumnoPagoEstatus(1); //TODO estatus de pagos
-					alumnoPago.setAlumnoPagoPago(BigDecimal.ZERO);
-					alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto());
-					alumnoPago.setCursoCostoId(cursoCostos.getCursoCostoId());
-					
-					//Realizar cálculo para modifica el pago si es de beca
-					if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-							alumnoCurso.getAlumnoCursoBeca()!=null && alumnoCurso.getAlumnoCursoBeca().compareTo(BigDecimal.ZERO) > 0 ){
-						alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto().subtract(
-								cursoCostos.getCostos().getCostoMonto()
-								.multiply(alumnoCurso.getAlumnoCursoBeca())
-								.divide(CIEN,DECIMALES,RoundingMode.HALF_UP)));
-					}
-					
-					//Realizar cálculo para modifica el pago si es de beca
-					if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-							alumnoCurso.getAlumnoCursoDescuento()!=null && alumnoCurso.getAlumnoCursoDescuento().compareTo(BigDecimal.ZERO) > 0){
-						alumnoPago.setAlumnoPagoMonto(
-								cursoCostos.getCostos().getCostoMonto()
-								.subtract(alumnoCurso.getAlumnoCursoDescuento()));
-					}
-					
-					alumnoPagoDAO.save(alumnoPago);
-					
-					//Sumar 1 mes a la fecha límite de pago y regresar el día de pago al original
-					calLimite.add(Calendar.MONTH, 1);
-					calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
-				}
-				
-				
-			}
-*/	
-			
 		}
 	}
 
@@ -199,6 +100,9 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		Optional<AlumnoCurso> optional;
 		Optional<Alumnos> alumnoOptional;
 		BigDecimal saldo = BigDecimal.ZERO;
+		Date fechaFin;
+		int mesesDiff;
+		int porcentaje;
 		
 		optional = alumnoCursoDAO.findById(alumnoCursoVO.getAlumnoCursoId());
 		alumnoOptional = alumnosDAO.findById(alumnoCursoVO.getAlumnoId());
@@ -225,10 +129,6 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		alumnoCurso.setAlumnoCursoBeca(alumnoCursoVO.getAlumnoCursoBeca());
 		alumnoCurso.setAlumnoCursoDescuento(alumnoCursoVO.getAlumnoCursoDescuento());
 		
-		///////////////////////////////////////////
-		//Ajustar el monto a pagar del curso
-		///////////////////////////////////////////
-		
 		//Obtener los costos en los que aplicará la beca/descuento
 		List<CursoCostos> lstCursoCostos = cursoCostosDAO.findByAlumnoCursoIdAndBeca(alumnoCurso.getAlumnoCursoId());
 		
@@ -236,24 +136,35 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 			//Obtener el monto a descontar
 			BigDecimal montoDescuento = BigDecimal.ZERO;
 			BigDecimal montoTotal = BigDecimal.ZERO;
-			//Se estableció la beca
-			if(alumnoCursoVO.getAlumnoCursoBeca()!=null){
-				montoDescuento = cursoCosto.getCostoMonto()
-						.multiply(alumnoCursoVO.getAlumnoCursoBeca())
-						.divide(CIEN,DECIMALES,RoundingMode.HALF_UP);
-			}
-			
-			if(alumnoCursoVO.getAlumnoCursoDescuento()!=null){
-				montoDescuento = alumnoCursoVO.getAlumnoCursoDescuento();
-			}
-			
-			montoTotal = cursoCosto.getCostoMonto().subtract(montoDescuento);
 			
 			//Obtener los alumnosPagos que correspondan al curso costo y descontar el monto al valor total
 			List<AlumnoPagos> lstAlumnoPago = alumnoPagoDAO.findByAlumnoCursoIdAndCursoCostoId(alumnoCurso.getAlumnoCursoId(), cursoCosto.getCursoCostoId());
 			for(AlumnoPagos alumnoPago : lstAlumnoPago){
+
 				//Se ajusta el monto a pagar
-				alumnoPago.setAlumnoPagoMonto(montoTotal);
+				//1. Se calcula el porcentaje de adeudo con el monto total, este monto se calcula con la fecha limite y
+				//	1.1. Fecha de 1er pago obtenida de la bitacora, si no existe
+				//	1.2. Fecha actual
+				if(alumnoPago.getAlumnoPagoFechaPago()!=null) {
+					//No debe fallar ya que si existe un pago, existe una bitacora del momento en que se hizo
+					fechaFin = alumnoPagoBitacoraDAO.findByAlumnopagoIdOrderByAlumnoPagosBitacoraId(alumnoPago.getAlumnoPagoId()).get(0).getAlumnoPagosBitacoraFechaPago();
+				}else {
+					fechaFin = Calendar.getInstance().getTime();
+				}
+				mesesDiff = SaeDateUtils.calcularMesesAFecha(alumnoPago.getAlumnoPagoFechaLimite(), fechaFin);
+				mesesDiff +=1;
+				
+				//Ajuste de beca/descuento
+				montoTotal = getBecaDiscountAmount(cursoCosto.getCostoMonto(), becaEdicion, descuentoEdicion); 
+				
+				//Porcentaje
+				porcentaje = mesesDiff * 10;
+				
+				//Monto calculado
+				montoDescuento = montoTotal.add(montoTotal.multiply(BigDecimal.valueOf(porcentaje))
+						.divide(BigDecimal.valueOf(100),RoundingMode.HALF_UP));
+				
+				alumnoPago.setAlumnoPagoMonto(montoDescuento);
 				
 				//Solo se realizaran operaciones si se ha realizado un pago
 				if(alumnoPago.getAlumnoPagoPago().compareTo(BigDecimal.ZERO)==0){
@@ -284,111 +195,7 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 			}
 		}
 		
-		System.out.println("Saldo: " + saldo);
 		alumno.setAlumnoSaldo(saldo);
-		//Si el saldo es mayor a 0, sumar al saldo actual del alumno
-		
-/*		
-		//////////////////////////////////////
-		//Crear los costos asociados al curso
-		List<CursoCostos> lstCursoCostos = 
-				cursoCostosDAO.findByCursoIdAndCursoCostoActivo(alumnoCurso.getCursoId(), true);
-		
-		for (CursoCostos cursoCostos : lstCursoCostos) {
-			AlumnoPagos alumnoPago;
-			
-			//Si el curso es pago único, solo se crea un pago con fecha límite al final del curso
-			if(cursoCostos.getCursoCostoPagoUnico()){
-				alumnoPago = new AlumnoPagos();
-				alumnoPago.setAlumnoPagoFechaLimite(
-						SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
-				
-				alumnoPago.setAlumnoCursoId(alumnoCurso.getAlumnoCursoId());
-				alumnoPago.setAlumnoPagoEstatus(1); //TODO estatus de pagos
-				alumnoPago.setAlumnoPagoPago(BigDecimal.ZERO);
-				alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto());
-				alumnoPago.setCursoCostoId(cursoCostos.getCursoCostoId());
-				
-				//Realizar cálculo para modifica el pago si es de beca
-				if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-						alumnoCurso.getAlumnoCursoBeca()!=null && alumnoCurso.getAlumnoCursoBeca().compareTo(BigDecimal.ZERO) > 0 ){
-					alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto().subtract(
-							cursoCostos.getCostos().getCostoMonto()
-							.multiply(alumnoCurso.getAlumnoCursoBeca())
-							.divide(CIEN,DECIMALES,RoundingMode.HALF_UP)));
-				}
-				
-				//Realizar cálculo para modifica el pago si es de beca
-				if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-						alumnoCurso.getAlumnoCursoDescuento()!=null && alumnoCurso.getAlumnoCursoDescuento().compareTo(BigDecimal.ZERO) > 0){
-					alumnoPago.setAlumnoPagoMonto(
-							cursoCostos.getCostos().getCostoMonto()
-							.subtract(alumnoCurso.getAlumnoCursoDescuento()));
-				}
-				
-				alumnoPagoDAO.save(alumnoPago);
-				continue;
-			}
-			
-			//Si el curso genera adeudo, se crea un pago por cada mes para la duracion del curso
-			if(cursoCostos.getCursoCostoGeneraAdeudo()){
-				//Crear el 1er pago con fecha límite el dí X del 1er mes
-				Calendar calLimite = Calendar.getInstance();
-				calLimite.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaInicio()));				
-				calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
-				
-				Calendar calEnd = Calendar.getInstance();
-				calEnd.setTime(SaeDateUtils.localDateToDate(alumnoCursoVO.getCursoVO().getCursoFechaFin()));
-				
-				//Mientras la fecha límite de pago sea menor a la fecha de fin de curso, creará un 
-				//registro de pago para cada mes
-				while(calLimite.before(calEnd)){
-					alumnoPago = new AlumnoPagos();
-					
-					if(calLimite.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
-						calLimite.add(Calendar.DAY_OF_MONTH, -1);
-					}else if(calLimite.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
-						calLimite.add(Calendar.DAY_OF_MONTH, -2);
-					}
-					
-					alumnoPago.setAlumnoPagoFechaLimite(calLimite.getTime());
-					
-					alumnoPago.setAlumnoCursoId(alumnoCurso.getAlumnoCursoId());
-					alumnoPago.setAlumnoPagoEstatus(1); //TODO estatus de pagos
-					alumnoPago.setAlumnoPagoPago(BigDecimal.ZERO);
-					alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto());
-					alumnoPago.setCursoCostoId(cursoCostos.getCursoCostoId());
-					
-					//Realizar cálculo para modifica el pago si es de beca
-					if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-							alumnoCurso.getAlumnoCursoBeca()!=null && alumnoCurso.getAlumnoCursoBeca().compareTo(BigDecimal.ZERO) > 0 ){
-						alumnoPago.setAlumnoPagoMonto(cursoCostos.getCostos().getCostoMonto().subtract(
-								cursoCostos.getCostos().getCostoMonto()
-								.multiply(alumnoCurso.getAlumnoCursoBeca())
-								.divide(CIEN,DECIMALES,RoundingMode.HALF_UP)));
-					}
-					
-					//Realizar cálculo para modifica el pago si es de beca
-					if(cursoCostos.getCursoCostoAplicaBeca()!=null && cursoCostos.getCursoCostoAplicaBeca() && 
-							alumnoCurso.getAlumnoCursoDescuento()!=null && alumnoCurso.getAlumnoCursoDescuento().compareTo(BigDecimal.ZERO) > 0){
-						alumnoPago.setAlumnoPagoMonto(
-								cursoCostos.getCostos().getCostoMonto()
-								.subtract(alumnoCurso.getAlumnoCursoDescuento()));
-					}
-					
-					alumnoPagoDAO.save(alumnoPago);
-					
-					//Sumar 1 mes a la fecha límite de pago y regresar el día de pago al original
-					calLimite.add(Calendar.MONTH, 1);
-					calLimite.set(Calendar.DAY_OF_MONTH, cursoCostos.getCursoCostoDiaPago());
-				}
-				
-				
-			}
-	
-			
-		}
-*/
 	}
 
 	/**
@@ -427,14 +234,7 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 	public void createStudentPayment(CursoCostos cursoCostos, AlumnoCurso alumnoCurso, Date fechaInicio, Date fechaFin){
 		AlumnoPagos alumnoPago;
 		BigDecimal cursoMonto = BigDecimal.ZERO;
-		/*
-		if(cursoCostos.getCostos()==null){
-			Optional<Costos> optional = costosDAO.findById(cursoCostos.getCostoId());
-			Costos costo = optional.orElse(null);
-			cursoMonto = costo.getCostoMonto();
-		}else{
-			cursoMonto = cursoCostos.getCostos().getCostoMonto();
-		}*/
+	
 		cursoMonto = cursoCostos.getCostoMonto();
 		
 		//Si el curso es pago único, solo se crea un pago con fecha límite al final del curso
@@ -576,5 +376,16 @@ public class AlumnoCursoServiceImpl implements AlumnoCursoService {
 		return AlumnosBuilder.createListAlumnosVO(lstAlumnos);
 	}
 	
+	private BigDecimal getBecaDiscountAmount(BigDecimal originalAmount, BigDecimal beca, BigDecimal discount) {
+		BigDecimal montoDescuento = BigDecimal.ZERO;
+		if(beca!=null && beca.compareTo(BigDecimal.ZERO)>0){
+			montoDescuento = originalAmount.multiply(beca)
+					.divide(SaeConstants.CIEN,SaeConstants.DECIMALES,RoundingMode.HALF_UP);
+		}			
+		if(discount!=null && discount.compareTo(BigDecimal.ZERO)>0){
+			montoDescuento = discount;
+		}
+		return originalAmount.subtract(montoDescuento); 
+	}
 	
 }

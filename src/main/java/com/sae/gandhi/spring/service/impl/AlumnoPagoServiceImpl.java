@@ -17,6 +17,7 @@ import com.sae.gandhi.spring.entity.AlumnoPagos;
 import com.sae.gandhi.spring.entity.AlumnoPagosBitacora;
 import com.sae.gandhi.spring.entity.Alumnos;
 import com.sae.gandhi.spring.service.AlumnoPagoService;
+import com.sae.gandhi.spring.utils.SaeConstants;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.builder.AlumnoPagoBuilder;
@@ -27,13 +28,13 @@ import com.sae.gandhi.spring.vo.AlumnoPagoVO;
 public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	
 	@Autowired
-	AlumnoPagoDAO alumnoPagoDAO;
+	private AlumnoPagoDAO alumnoPagoDAO;
 	
 	@Autowired
-	AlumnoPagoBitacoraDAO alumnoPagoBitacoraDAO;
+	private AlumnoPagoBitacoraDAO alumnoPagoBitacoraDAO;
 	
 	@Autowired
-	AlumnosDAO alumnosDAO;
+	private AlumnosDAO alumnosDAO;
 
 	@Override
 	public List<AlumnoPagoVO> findByAlumnoId(Integer alumnoId) {
@@ -83,48 +84,47 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 					SaeDateUtils.localDateToDate(vo.getAlumnoPagoFechaPago()));
 			alumnoPagoBitacora.setAlumnoPagosBitacoraPago(vo.getAlumnoPagoPago());
 			
-			
-			//Validar si la fecha de pago es menor o igual a la fecha limite, ajustar el monto a pagar y calcular beca/descuento 
-			//del monto inicial
-			/*
-			if(!alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago().after(alumnoPagos.getAlumnoPagoFechaLimite())){
-				//Obtener beca/descuento
-				BigDecimal beca = alumnoPago.get().getAlumnoCurso().getAlumnoCursoBeca();
-				BigDecimal descuento = alumnoPago.get().getAlumnoCurso().getAlumnoCursoDescuento();
-				BigDecimal montoDescuento = BigDecimal.ZERO;
+			//Calcular el monto real a pagar de acuerdo a la fecha de pago
+			//Escenario. Pasan 3 meses sin uso del sistema, se tiene un adeudo de 2 meses.
+			//Se realiza el pago con una fecha que genera solo 1 mes de adeudo, se debe actualizar el monto al adeudo correspondiente
+			//Esto solo aplica cuando el estatus es ADEUDO
+			if(alumnoPagos.getAlumnoPagoEstatus().equals(SaeEnums.Pago.ADEUDO.getStatusId())) {
+				int mesesDiff = SaeDateUtils.calcularMesesAFecha(alumnoPagos.getAlumnoPagoFechaLimite(), alumnoPagoBitacora.getAlumnoPagosBitacoraFechaPago());
+				mesesDiff +=1;
+				BigDecimal montoOriginal = alumnoPagos.getCursoCostos().getCostoMonto();
 				
-				if(beca!=null){
-					montoDescuento = alumnoPago.get().getCursoCostos().getCostoMonto()
-							.multiply(beca)
-							.divide(CIEN,DECIMALES,RoundingMode.HALF_UP);
+				if(alumnoPagos.getCursoCostos().getCursoCostoAplicaBeca()) {
+					montoOriginal = getBecaDiscountAmount(montoOriginal, alumnoPagos.getAlumnoCurso().getAlumnoCursoBeca(), alumnoPagos.getAlumnoCurso().getAlumnoCursoDescuento());
+					
+					int porcentaje = mesesDiff * 10;
+					
+					montoOriginal = montoOriginal.add(montoOriginal.multiply(BigDecimal.valueOf(porcentaje))
+							.divide(BigDecimal.valueOf(100),RoundingMode.HALF_UP));
 				}
 				
-				if(descuento!=null){
-					montoDescuento = descuento;
-				}
 				
-				alumnoPagos.setAlumnoPagoMonto(alumnoPago.get().getCursoCostos().getCostoMonto().subtract(montoDescuento));
+				//Asignar monto - descuento al pago que debe realizar el alumno
+				alumnoPagos.setAlumnoPagoMonto(montoOriginal);				
 			}
-			*/
 			
 			//Calculos del saldo
 			//saber si el pago se realizó con saldo y el monto del saldo utilizado
 			if(vo.getUsaSaldo() && alumnoSaldo.compareTo(BigDecimal.ZERO)>0){
 				Optional<Alumnos> optional = alumnosDAO.findById(alumnoId);
 				Alumnos alumno = optional.get();
-				BigDecimal tmp = alumnoPagos.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago());
+				BigDecimal tmp = alumnoPagos.getAlumnoPagoMonto().subtract(alumnoPago.get().getAlumnoPagoPago()).subtract(vo.getAlumnoPagoPago());
+				montoSaldo = tmp;
 				
 				//Si el valor tmp es mayor al saldo, el monto utilizado será el saldo completo
 				if(tmp.compareTo(alumnoSaldo)>=0){
 					montoSaldo = alumnoSaldo;
 				}
-				//En caso contrario, el saldo utilizado será el del tmp
-				else{
-					montoSaldo = tmp;
-				}
 				
+				if(tmp.compareTo(BigDecimal.ZERO)<=0) {
+					montoSaldo = BigDecimal.ZERO;
+				}
 				//Actualizacion del saldo en el alumno
-				alumno.setAlumnoSaldo(alumno.getAlumnoSaldo().subtract(montoSaldo));
+				alumno.setAlumnoSaldo(alumno.getAlumnoSaldo().subtract(montoSaldo));					
 			}
 			alumnoPagoBitacora.setAlumnoPagosBitacoraSaldo(montoSaldo);
 
@@ -156,7 +156,9 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 	@Override
 	public void updateMontoFechaExceed() {
 		Calendar fechaActual = Calendar.getInstance();
-		fechaActual.add(Calendar.MONTH, 4);
+		//TODO Para prueba
+		//fechaActual.add(Calendar.MONTH, 4);
+		
 		//Solo busca los pagos que hayan excedido la fecha límite y se encuentren en "pendiente" o "Adeudo
 		//Pagos que tenga activo el campo "Genera Adeudo"
 		List<AlumnoPagos> lstAlumno = alumnoPagoDAO.findPagoLimitExceed(SaeEnums.Pago.PREPARADO.getStatusId(),
@@ -182,6 +184,9 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 			montoOriginal = alumnoPagos.getCursoCostos().getCostoMonto();
 			if(montoOriginal == null) continue; //solucion a remover la tabla de costos
 			
+			//Ajuste de beca/descuento
+			montoOriginal = getBecaDiscountAmount(montoOriginal, alumnoPagos.getAlumnoCurso().getAlumnoCursoBeca(), alumnoPagos.getAlumnoCurso().getAlumnoCursoDescuento()); 
+			
 			//Porcentaje
 			porcentaje = mesesDiff * 10;
 			
@@ -203,5 +208,16 @@ public class AlumnoPagoServiceImpl implements AlumnoPagoService {
 		
 	}
 
+	private BigDecimal getBecaDiscountAmount(BigDecimal originalAmount, BigDecimal beca, BigDecimal discount) {
+		BigDecimal montoDescuento = BigDecimal.ZERO;
+		if(beca!=null && beca.compareTo(BigDecimal.ZERO)>0){
+			montoDescuento = originalAmount.multiply(beca)
+					.divide(SaeConstants.CIEN,SaeConstants.DECIMALES,RoundingMode.HALF_UP);
+		}			
+		if(discount!=null && discount.compareTo(BigDecimal.ZERO)>0){
+			montoDescuento = discount;
+		}
+		return originalAmount.subtract(montoDescuento); 
+	}
 
 }

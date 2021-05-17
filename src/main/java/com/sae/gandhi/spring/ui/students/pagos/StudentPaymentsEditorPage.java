@@ -340,9 +340,10 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			// System.out.println(event.getItem().getAlumnoPagoId() + " - "
 			// +event.getItem().getAlumnoPagoFechaLimite());
 			alumnoPagoService.updateFechaMonto(event.getItem());
+			event.getItem().setEstatusId(SaeEnums.Pago.PREPARADO.getStatusId());
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			Notification
-					.show("Se ha actualizado el monto a $" +NumberFormat.getCurrencyInstance().format(event.getItem().getAlumnoPagoMonto()) + 
+					.show("Se ha actualizado el monto a " +NumberFormat.getCurrencyInstance().format(event.getItem().getAlumnoPagoMonto()) + 
 							" y la fecha límite de pago a " + 
 							event.getItem().getAlumnoPagoFechaLimite().format(formatter));
 		});
@@ -445,7 +446,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 			grid.getDataProvider().refreshItem(alumnoPagoVO);
 		}
 		
-		System.out.println(alumnoPagoVO);
+//		System.out.println(alumnoPagoVO);
 
 	}
 

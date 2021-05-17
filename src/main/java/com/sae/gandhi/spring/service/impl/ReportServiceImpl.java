@@ -47,6 +47,9 @@ public class ReportServiceImpl implements ReportService {
 		List<AlumnoPagoBitacoraVO> lstAlumnoPagos;
 		List<AlumnoReportVO> lstReporte = new ArrayList<>();
 		AlumnoReportVO reportVO;
+		Map<String, Double> mapDebt = new HashMap<>();
+		Double debt;
+		String concept;
 		
 		if(cursosVO!=null)
 			grado = "Curso: "+cursosVO.getCursoNombre(); 
@@ -61,16 +64,28 @@ public class ReportServiceImpl implements ReportService {
 		
 		for (AlumnoPagoBitacoraVO pagos : lstAlumnoPagos) {
 			reportVO = new AlumnoReportVO();
+			
+			//Establecer los adeudos
+			concept = pagos.getConcepto()+ " " + SaeDateUtils.formatMonthYear(pagos.getFechaLimite());
+			
+			
 	
 			reportVO.setfCurso(pagos.getCurso());
-			reportVO.setfConcepto(pagos.getConcepto()+ " " +
-					SaeDateUtils.formatMonthYear(pagos.getFechaLimite()));
+			reportVO.setfConcepto(concept);
 			reportVO.setfMonto(pagos.getMonto()!=null?pagos.getMonto().doubleValue():BigDecimal.ZERO.doubleValue());
 			reportVO.setfPago(pagos.getPago()!=null?pagos.getPago().doubleValue():BigDecimal.ZERO.doubleValue());
 			reportVO.setfSaldo(pagos.getSaldo()!=null?pagos.getSaldo().doubleValue():BigDecimal.ZERO.doubleValue());
 			reportVO.setfFechaPago(pagos.getFechaPago()==null?"":sdf2.format(pagos.getFechaPago()));
 			reportVO.setfEstatus(SaeEnums.Pago.getPago(pagos.getEstatus()).getStatus());
-			reportVO.setfAdeudo(reportVO.getfMonto()-reportVO.getfPago()-reportVO.getfSaldo());
+			
+			
+			debt = reportVO.getfMonto() - reportVO.getfPago() - reportVO.getfSaldo();
+			if(mapDebt.containsKey(concept)) {
+				debt = mapDebt.get(concept) - reportVO.getfPago() - reportVO.getfSaldo();
+			}
+			mapDebt.put(concept, debt);
+			
+			reportVO.setfAdeudo(debt);
 			
 			lstReporte.add(reportVO);
 		}

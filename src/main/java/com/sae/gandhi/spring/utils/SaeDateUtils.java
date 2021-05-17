@@ -70,13 +70,13 @@ public class SaeDateUtils {
             //Para esto ocupo el metoddo ponerAnioMesActual
             Date aFecha = ponerAnioMesActual(fechaInicio,fechaFin).getTime();
             if(formatearDate(fechaFin, "dd/MM/yyyy").compareTo(
-                    formatearDate(aFecha,"dd/MM/yyyy")) < 0){
+                    formatearDate(aFecha,"dd/MM/yyyy")) <= 0){
                 diffMonth = diffMonth - 1;
             }
             //Si la fecha de finalización es menor que la fecha de inicio, retorno que los meses
             // transcurridos entre las dos fechas es 0
             if(diffMonth < 0){
-                diffMonth = 0;
+                diffMonth = -1;
             }
             return diffMonth;
         } catch (Exception e) {

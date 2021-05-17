@@ -40,12 +40,13 @@
 		</repository>
 		<repository>
 			<id>Vaadin Directory</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
+			<url>https://maven.vaadin.com/vaadin-addons</url>
 		</repository>
 		<repository>
 			<id>vaadin-addons</id>
-			<url>http://maven.vaadin.com/vaadin-addons</url>
+			<url>https://maven.vaadin.com/vaadin-addons</url>
 		</repository>
+		
 	</repositories>
 
 	<dependencyManagement>
@@ -153,7 +154,17 @@
 		<dependency>
     		<groupId>net.sf.jasperreports</groupId>
     		<artifactId>jasperreports</artifactId>
-    		<version>5.6.1</version>
+    		<version>6.1.0</version>
+    		<exclusions>
+    			<exclusion>
+    				<groupId>com.lowagie</groupId>
+    				<artifactId>itext</artifactId>
+    			</exclusion>
+    			<exclusion>
+    				<groupId>org.olap4j</groupId>
+		    		<artifactId>olap4j</artifactId>
+    			</exclusion>
+    		</exclusions>
 		</dependency>
 		
 		<dependency>
@@ -161,6 +172,21 @@
     		<artifactId>itextpdf</artifactId>
     		<version>5.5.3</version>
 		</dependency>
+		
+		
+		
+		
+		<dependency>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>2.1.7</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.olap4j</groupId>
+		    <artifactId>olap4j</artifactId>
+		    <version>1.2.0</version>
+		</dependency>
+				
         
         <!-- Charts.js -->
         <dependency>
@@ -236,6 +262,31 @@
 						<configuration>
 							<jvmArguments>-Dvaadin.productionMode</jvmArguments>
 						</configuration>
+					</plugin>
+					<!-- copy frontend folder to src -->
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.6</version>
+						<executions>
+							<execution>
+								<id>copy frontend folder</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${baseDir}/src</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${baseDir}/src/main/resources/META-INF/resources/</directory>
+											<includes>
+												<include>**/*</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

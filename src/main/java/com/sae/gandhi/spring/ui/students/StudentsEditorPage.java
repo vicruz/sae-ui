@@ -293,51 +293,6 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		add(hlButtons);
 	}
 
-	// private void addTabs() {
-	// HorizontalLayout hlTab = new HorizontalLayout();
-	// Tab tabCursos = new Tab(CURSOS);
-	// Button addButton = new Button();
-	// addButton.setIcon(new Icon(VaadinIcon.PLUS));
-	// addButton.getStyle().set("borderRadius", "50%"); // Se hace redondo
-	// addButton.getStyle().set("backgroundColor", "lightgray");
-	// addButton.addClickListener(event -> addEventButton());
-	//
-	// // tabs.add(tabCostos, tabStudents);
-	// tabs.add(tabCursos);
-	// tabs.setFlexGrowForEnclosedTabs(1);
-	//
-	// hlTab.add(tabs, addButton);
-	// hlTab.setVerticalComponentAlignment(Alignment.START, tabs);
-	// hlTab.setVerticalComponentAlignment(Alignment.END, addButton);
-	//
-	// Div divCursos = new Div();
-	// divCursos.add(cursoCostosList);
-	// divCursos.setHeight("30vh");
-	//
-	// /*
-	// * Div divStudents = new Div(); divStudents.setText(ALUMNOS);
-	// * divStudents.setVisible(false);
-	// */
-	// Map<Tab, Div> tabsToPages = new HashMap<>();
-	// tabsToPages.put(tabCursos, divCursos);
-	// // tabsToPages.put(tabStudents, divStudents);
-	// Div pages = new Div(divCursos);// , divStudents);
-	// Set<Component> pagesShown =
-	// Stream.of(divCursos).collect(Collectors.toSet());
-	//
-	// tabs.addSelectedChangeListener(event -> {
-	// pagesShown.forEach(page -> page.setVisible(false));
-	// pagesShown.clear();
-	// Component selectedPage = tabsToPages.get(tabs.getSelectedTab());
-	// selectedPage.setVisible(true);
-	// pagesShown.add(selectedPage);
-	//
-	// System.out.println(tabs.getSelectedTab().getLabel());
-	// });
-	//
-	// add(hlTab, pages);
-	// }
-
 	private void addTabs() {
 		HorizontalLayout hlTab = new HorizontalLayout();
 		Tab tabCursos = new Tab(CURSOS);
@@ -502,18 +457,8 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		}else{
 			alumnoCursoService.update(alumnoCurso);
 		}
-		/*	cursoCostoService.save(cursoCostos);
-			operationKind = " agregado";
-		} else {
-			cursoCostoService.update(cursoCostos);
-			operationKind = " modificado";
-		}
-		Notification.show("Costo " + operationKind, 3000, Position.BOTTOM_END);
-		cursoCostosList.updateView(cursoId);*/
+		
 		updateView();
-		System.out.println(alumnoCurso);
-		
-		
 	}
 
 	// Eliminar

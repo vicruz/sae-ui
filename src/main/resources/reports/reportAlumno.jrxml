@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportAlumno1" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6ac80d2-2f7c-49cc-87ea-76169f633e02">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="alumno" class="java.lang.String"/>
@@ -143,14 +143,14 @@
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="212" y="0" width="55" height="16" uuid="1bb444c6-f285-46bf-a78b-eef8ef1c065d"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fMonto}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="267" y="0" width="55" height="16" uuid="2f051cf1-76d3-40fe-bacf-52d725407057"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fPago}]]></textFieldExpression>
@@ -164,7 +164,7 @@
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="437" y="0" width="55" height="16" uuid="3025a029-9a71-44e3-91b7-577808fefa31"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fAdeudo}]]></textFieldExpression>
@@ -185,7 +185,7 @@
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="322" y="0" width="55" height="16" uuid="845b0a1b-561e-494a-ba75-b6e96dea9431"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fSaldo}]]></textFieldExpression>

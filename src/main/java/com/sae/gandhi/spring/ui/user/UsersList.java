@@ -193,7 +193,7 @@ public class UsersList extends VerticalLayout{
      		if(event.getItem()!=null && event.getItem().getUsuarioLogin()!=null){
      			usuariosService.save(event.getItem());     			
      		}
-     		System.out.println(event.getItem().toString());
+//     		System.out.println(event.getItem().toString());
      	});
      	
         

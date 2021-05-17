@@ -43,6 +43,8 @@ public interface AlumnoPagoBitacoraDAO extends JpaRepository<AlumnoPagosBitacora
 			+ "join cc.cursos curso "
 			+ "left join ap.lstAlumnoPagosBitacora apb "
 			+ "where ac.alumnoId = ?1 and ac.cursoId = ?2 order by ac.alumnoCursoId, ap.alumnoPagoId")
-		public List<AlumnoPagoBitacoraVO> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);
+	public List<AlumnoPagoBitacoraVO> findByAlumnoIdAndCursoId(Integer alumnoId, Integer cursoId);
+	
+	public List<AlumnoPagosBitacora> findByAlumnopagoIdOrderByAlumnoPagosBitacoraId(Integer alumnopagoId);
 	
 }

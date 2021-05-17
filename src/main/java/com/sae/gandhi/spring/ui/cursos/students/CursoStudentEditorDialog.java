@@ -28,10 +28,9 @@ public class CursoStudentEditorDialog extends AbstractEditorDialog<Grid<AlumnosV
 
 	private AlumnoCursoService alumnoCursoService;
 	private Integer cursoId;
-	private List<Integer> lstAlumnosId;
+	//private List<Integer> lstAlumnosId;
 	
-	private Grid<AlumnosVO> grid = new Grid<>();
-	//private ListBox<AlumnosVO> listbox = new ListBox<>();
+	//private Grid<AlumnosVO> grid = new Grid<>();
 	private List<AlumnosVO> lstAlumnos;
 	
 	public CursoStudentEditorDialog(BiConsumer<Grid<AlumnosVO>, Operation> itemSaver,
@@ -40,7 +39,6 @@ public class CursoStudentEditorDialog extends AbstractEditorDialog<Grid<AlumnosV
 		super("Alumnos", itemSaver, itemDeleter);
 		this.alumnoCursoService = alumnoCursoService;
 		this.cursoId = cursoId;
-		//init();
 	}
 	
 	public void init(){
@@ -72,21 +70,12 @@ public class CursoStudentEditorDialog extends AbstractEditorDialog<Grid<AlumnosV
 		//grid.setSelectionMode(SelectionMode.MULTI);
 		
 		this.getCurrentItem().asMultiSelect().addValueChangeListener(event -> {
-		//grid.asMultiSelect().addValueChangeListener(event -> {
-			lstAlumnosId = event.getValue().stream().map(AlumnosVO::getAlumnoId).collect(Collectors.toList());
-			System.out.println("ddsdds: " + lstAlumnosId.size());
+			//lstAlumnosId = event.getValue().stream().map(AlumnosVO::getAlumnoId).collect(Collectors.toList());
 		});
 		
 		container.add(viewToolbar,this.getCurrentItem());
-		//container.add(viewToolbar,grid);
 		add(container);
-		//add(grid);
         
-        //////////////////////////////////////////////////////////
-        
-		/*listbox.setItems(lstAlumnos);
-		listbox.set
-        add(listbox);*/
 	}
 	
 	private void updateView() {
@@ -102,7 +91,8 @@ public class CursoStudentEditorDialog extends AbstractEditorDialog<Grid<AlumnosV
         } else {
         	lstAlumnosGrid = lstAlumnos;
         }
-        grid.setItems(lstAlumnosGrid);
+        //grid.setItems(lstAlumnosGrid);
+        this.getCurrentItem().setItems(lstAlumnosGrid);
     }
 	
 	
