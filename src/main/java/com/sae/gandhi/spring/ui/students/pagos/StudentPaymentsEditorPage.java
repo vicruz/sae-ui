@@ -370,6 +370,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 	}
 
 	private Button createPayButton(AlumnoPagoVO vo) {
+		
 		Button button = new Button("");
 		button.addClassName("review__edit");
 		button.getElement().setAttribute("theme", "tertiary");
@@ -377,6 +378,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		if(vo.getEstatusId() != SaeEnums.Pago.COMPLETO.getStatusId()){
 			button.setIcon(new Icon(VaadinIcon.DOLLAR));
 			button.addClickListener(event -> {
+				BigDecimal pago = vo.getAlumnoPagoPago();
 				grid.select(vo);
 				alumnoVO = alumnosService.findById(alumnoVO.getAlumnoId());
 				form = new StudentPaymentDialog(this::savePayment, this::deletePayment,
@@ -384,8 +386,13 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 						vo.getAlumnoPagoMonto().subtract(vo.getAlumnoPagoPago()), alumnoVO.getAlumnoSaldo(),
 						//sessionService.isAdmin());
 						isAdmin);
+
+				//Se pone en 0 para que el campo "Monto de pago" aparezca en 0 
 				vo.setAlumnoPagoPago(BigDecimal.ZERO);
 				form.open(vo, AbstractEditorDialog.Operation.ADD);
+				
+				//Volver a cargar el pago por si se oprime el boton "cancelar", el registro tenga los valores actuales
+				vo.setAlumnoPagoPago(pago);
 			});	
 			
 			if(!alumnoVO.getAlumnoActivo()){
