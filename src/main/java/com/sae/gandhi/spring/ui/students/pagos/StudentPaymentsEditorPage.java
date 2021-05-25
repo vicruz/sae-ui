@@ -23,6 +23,7 @@ import com.sae.gandhi.spring.service.CursosService;
 import com.sae.gandhi.spring.service.ReportService;
 //import com.sae.gandhi.spring.service.SessionService;
 import com.sae.gandhi.spring.ui.common.AbstractEditorDialog;
+import com.sae.gandhi.spring.ui.students.StudentsEditorPage;
 import com.sae.gandhi.spring.utils.SaeDateUtils;
 import com.sae.gandhi.spring.utils.SaeEnums;
 import com.sae.gandhi.spring.utils.StreamImage;
@@ -204,7 +205,7 @@ public class StudentPaymentsEditorPage extends VerticalLayout implements HasUrlP
 		// Boton de regresar a la edicion del alumno
 		Button edit = new Button("Editar");
 		edit.addClickListener(event -> {
-			edit.getUI().ifPresent(ui -> ui.navigate("alumnos/edit/" + alumnoVO.getAlumnoId()));
+			edit.getUI().ifPresent(ui -> ui.navigate(StudentsEditorPage.class, alumnoVO.getAlumnoId()));
 		});
 		edit.setIcon(new Icon(VaadinIcon.EDIT));
 		edit.addClassName("review__edit");

@@ -193,12 +193,16 @@ public class StudentsEditorPage extends VerticalLayout implements HasUrlParamete
 		dtFechaNac.setValue(alumnoVO.getAlumnoFechaNac());
 		binder.forField(dtFechaNac).bind(AlumnosVO::getAlumnoFechaNac, AlumnosVO::setAlumnoFechaNac); // Establece setter y getter para su bindeo
 
-		txtTutor.setValue(alumnoVO.getAlumnoTutor());
+		if (Objects.nonNull(alumnoVO.getAlumnoTutor())) {
+			txtTutor.setValue(alumnoVO.getAlumnoTutor());
+		}
 		binder.forField(txtTutor).withConverter(String::trim, String::trim) // Quita espacios a la cadena introducida
 				.withNullRepresentation("") // cuando no existe un texto, debe haber una validación para el bindeo 
 				.bind(AlumnosVO::getAlumnoTutor, AlumnosVO::setAlumnoTutor); // // Establece setter y getter para su bindeo
 
-		txtEmail.setValue(alumnoVO.getAlumnoTutorEmail());
+		if (Objects.nonNull(alumnoVO.getAlumnoTutorEmail())) {
+			txtEmail.setValue(alumnoVO.getAlumnoTutorEmail());			
+		}
 		binder.forField(txtEmail).withConverter(String::trim, String::trim) // Quita espacios a la cadena introducida
 				.withValidator(new EmailValidator("Email incorrecto")).withNullRepresentation("") // cuando no existe un texto, debe haber una validación para el bindeo 
 				.bind(AlumnosVO::getAlumnoTutorEmail, AlumnosVO::setAlumnoTutorEmail); // Establece setter y getter para su bindeo

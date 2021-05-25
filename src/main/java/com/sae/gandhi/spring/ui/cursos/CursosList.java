@@ -158,7 +158,7 @@ public class CursosList extends VerticalLayout {
                 //AbstractEditorDialog.Operation.EDIT));
         		{
         			UI.getCurrent().getSession().lock();
-        			edit.getUI().ifPresent(ui -> ui.navigate("cursos/edit/"+curso.getCursoId()));
+        			edit.getUI().ifPresent(ui -> ui.navigate(CursosEditorPage.class, curso.getCursoId()));
         			UI.getCurrent().getSession().unlock();
         		});
         edit.setIcon(new Icon(VaadinIcon.EDIT));

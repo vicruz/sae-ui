@@ -187,7 +187,8 @@ public class StudentsList extends VerticalLayout {
         //Nombre del tutor y correo
         Label lbCoursePhone = new Label();
         lbCoursePhone.getStyle().set("fontSize", "12px");
-        lbCoursePhone.setText(alumno.getAlumnoTutor() + " - " + alumno.getAlumnoTutorTelefono1());
+        lbCoursePhone.setText((Objects.nonNull(alumno.getAlumnoTutor())?alumno.getAlumnoTutor():"") + " - " + 
+        	(Objects.nonNull(alumno.getAlumnoTutorTelefono1())?alumno.getAlumnoTutorTelefono1():""));
         
         vlNameTutor.add(lbCourseTitle);
         vlNameTutor.add(lbCoursePhone);
